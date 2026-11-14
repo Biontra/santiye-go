@@ -210,24 +210,66 @@ export default function MessagesClient() {
     }
   }, [selectedConvId, activeConv, currentUserId]);
 
-  // Canlı polling: 4 saniyede bir yeni mesajları arka planda senkronize et
+  // Canlı polling ve Realtime: Yeni mesajları ve konuşmaları arka planda anlık senkronize et
   useEffect(() => {
-    if (!selectedConvId) return;
+    if (!currentUserId) return;
 
-    const interval = setInterval(async () => {
-      try {
-        const updatedMsgs = await getMessages(selectedConvId);
-        setMessages((prev) => {
-          if (updatedMsgs.length !== prev.length) {
-            return updatedMsgs;
+    // 1. Supabase Realtime aboneliği
+    const supabase = createClient();
+    const channel = supabase
+      .channel('public:messages')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages' },
+        (payload) => {
+          const newMsg = payload.new as any;
+          if (newMsg && newMsg.conversation_id === selectedConvId) {
+            setMessages((prev) => {
+              if (prev.some((m) => m.id === newMsg.id)) return prev;
+              return [
+                ...prev,
+                {
+                  ...newMsg,
+                  body: newMsg.content || newMsg.body,
+                  content: newMsg.content || newMsg.body,
+                },
+              ];
+            });
           }
-          return prev;
-        });
-      } catch {}
-    }, 4000);
+          // Konuşma listesini de güncelle
+          getConversations(currentUserId).then((c) => setConversations(c));
+        }
+      )
+      .subscribe();
 
-    return () => clearInterval(interval);
-  }, [selectedConvId]);
+    // 2. Canlı Polling: 3 saniyede bir mesajları, 6 saniyede bir konuşmaları yenile
+    const msgInterval = setInterval(async () => {
+      if (selectedConvId) {
+        try {
+          const updatedMsgs = await getMessages(selectedConvId);
+          setMessages((prev) => {
+            if (updatedMsgs.length !== prev.length) {
+              return updatedMsgs;
+            }
+            return prev;
+          });
+        } catch {}
+      }
+    }, 3000);
+
+    const convInterval = setInterval(async () => {
+      try {
+        const updatedConvs = await getConversations(currentUserId);
+        setConversations(updatedConvs);
+      } catch {}
+    }, 6000);
+
+    return () => {
+      supabase.removeChannel(channel);
+      clearInterval(msgInterval);
+      clearInterval(convInterval);
+    };
+  }, [selectedConvId, currentUserId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -274,8 +316,11 @@ export default function MessagesClient() {
         setTimeout(() => setActionNotice(''), 5000);
       }
     } else {
-      setActionNotice(res.error || 'Mesaj gönderilemedi. Lütfen tekrar deneyin.');
-      setTimeout(() => setActionNotice(''), 4000);
+      // Hata durumunda mesaj metnini geri yükle ve kullanıcıyı net bilgilendir
+      setInputText(currentText);
+      setAttachmentPreview(currentAttach);
+      setActionNotice(res.error || 'Mesaj iletilemedi. Lütfen tekrar deneyiniz.');
+      setTimeout(() => setActionNotice(''), 6000);
     }
   };
 

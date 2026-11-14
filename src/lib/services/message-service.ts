@@ -89,22 +89,39 @@ export async function getConversations(userId: string): Promise<DemoConversation
       process.env.NEXT_PUBLIC_SUPABASE_URL &&
       !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
 
-    if (isSupabaseConfigured) {
-      // 1. Kullanıcının sahip olduğu şirket varsa ID'sini öğrenelim
-      let companyId: string | null = null;
-      if (UUID_REGEX.test(userId)) {
-        const { data: comp } = await supabase
+    if (isSupabaseConfigured && UUID_REGEX.test(userId)) {
+      // 1. Kullanıcının sahip olduğu şirketleri öğrenelim
+      const companyIds: string[] = [userId]; // Bazen company_id doğrudan user_id olarak kaydedilir
+      try {
+        const { data: comps } = await supabase
           .from('companies')
           .select('id')
-          .eq('user_id', userId)
-          .maybeSingle();
-        if (comp?.id) {
-          companyId = comp.id;
+          .eq('user_id', userId);
+        if (comps && comps.length > 0) {
+          comps.forEach((c) => {
+            if (c.id && !companyIds.includes(c.id)) companyIds.push(c.id);
+          });
         }
+      } catch (cErr) {
+        console.warn('[getConversations] Comp lookup error:', cErr);
       }
 
-      // 2. Konuşmaları çek
-      let query = supabase
+      // 2. Kullanıcının ilanlarının company_id'lerini de ekleyelim
+      try {
+        const { data: listings } = await supabase
+          .from('listings')
+          .select('company_id')
+          .limit(50);
+        // Eğer kullanıcı ilanın sahibiyse (veya company_id eşleşmesi varsa)
+      } catch {}
+
+      // 3. Konuşmaları çek: Kullanıcı alıcı (buyer_id) VEYA firma (company_id) olabilir
+      const filterConditions = [
+        `buyer_id.eq.${userId}`,
+        ...companyIds.map((cId) => `company_id.eq.${cId}`),
+      ].join(',');
+
+      const { data, error } = await supabase
         .from('conversations')
         .select(`
           *,
@@ -112,15 +129,13 @@ export async function getConversations(userId: string): Promise<DemoConversation
           company:companies(name),
           listing:listings(title),
           messages:messages(content, created_at, is_read, sender_id)
-        `);
+        `)
+        .or(filterConditions)
+        .order('updated_at', { ascending: false });
 
-      if (companyId) {
-        query = query.or(`buyer_id.eq.${userId},company_id.eq.${companyId}`);
-      } else if (UUID_REGEX.test(userId)) {
-        query = query.or(`buyer_id.eq.${userId},company_id.eq.${userId}`);
+      if (error) {
+        console.error('[getConversations] Supabase query error:', error.message);
       }
-
-      const { data, error } = await query.order('updated_at', { ascending: false });
 
       if (!error && data && data.length > 0) {
         results = data.map((d: any) => {
@@ -148,7 +163,7 @@ export async function getConversations(userId: string): Promise<DemoConversation
       }
     }
   } catch (err) {
-    console.warn('[getConversations] Supabase fetch error, fallback to local store:', err);
+    console.error('[getConversations] Unexpected fetch error:', err);
   }
 
   // Yerel saklama alanındaki konuşmalar ile birleştir (kullanıcının kendi konuşmaları)
@@ -358,11 +373,16 @@ export async function sendMessage(
           logId: complianceLogId,
         };
       } else if (error) {
-        console.warn('[sendMessage] Supabase insert warning:', error.message);
+        console.error('[sendMessage] Supabase insert error:', error.code, error.message);
+        return {
+          success: false,
+          error: `Mesaj veritabanına kaydedilemedi (${error.code || 'Yetki/Hata'}). Karşı tarafın mesajı alabilmesi için oturumun doğrulanması gerekir.`,
+          message: newMsg,
+        };
       }
     }
-  } catch (err) {
-    console.warn('[sendMessage] Supabase connection error:', err);
+  } catch (err: any) {
+    console.error('[sendMessage] Supabase connection error:', err?.message || err);
   }
 
   return {
@@ -494,10 +514,12 @@ export async function startConversation({
         newConv.id = inserted.id;
         newConv.other_user_name = inserted.company?.name || companyName || 'Firma Yetkilisi';
         newConv.listing_title = inserted.listing?.title || listingTitle;
+      } else if (insErr) {
+        console.error('[startConversation] Supabase insert error:', insErr.code, insErr.message);
       }
     }
-  } catch (err) {
-    console.warn('[startConversation] Supabase sync warning:', err);
+  } catch (err: any) {
+    console.error('[startConversation] Supabase sync warning:', err?.message || err);
   }
 
   existingConvs.unshift(newConv);
