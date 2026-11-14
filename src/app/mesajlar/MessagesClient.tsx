@@ -83,6 +83,7 @@ export default function MessagesClient() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [currentUserName, setCurrentUserName] = useState<string>('Kullanıcı');
 
   // Güvenlik uyarısı modal durumunu kontrol et
   useEffect(() => {
@@ -108,6 +109,7 @@ export default function MessagesClient() {
         const activeProfile = await getActiveProfile();
         if (activeProfile?.id) {
           setCurrentUserId(activeProfile.id);
+          setCurrentUserName(activeProfile.full_name || 'Kullanıcı');
           setIsAuthenticating(false);
           return;
         }
@@ -119,6 +121,7 @@ export default function MessagesClient() {
 
         if (user?.id) {
           setCurrentUserId(user.id);
+          setCurrentUserName(user.user_metadata?.full_name || user.email || 'Kullanıcı');
           setIsAuthenticating(false);
         } else {
           // Giriş yapılmamışsa doğrudan giriş sayfasına yönlendir
@@ -135,9 +138,11 @@ export default function MessagesClient() {
 
   const loadData = async (
     targetCompanyId?: string | null,
+    targetBuyerId?: string | null,
     targetListingId?: string | null,
     targetListingTitle?: string | null,
-    targetCompanyName?: string | null
+    targetCompanyName?: string | null,
+    targetBuyerName?: string | null
   ) => {
     if (!currentUserId) return;
     setLoading(true);
@@ -145,11 +150,12 @@ export default function MessagesClient() {
     try {
       let convs = await getConversations(currentUserId);
 
-      // Eğer URL'den companyId ve/veya listingId ile gelinmişse otomatik konuşma oluştur veya seç
-      if (targetCompanyId) {
+      // Eğer URL'den firma veya alıcı hedefi ile gelinmişse otomatik konuşma oluştur veya seç
+      if (targetCompanyId || targetBuyerId) {
+        const otherId = targetCompanyId || targetBuyerId;
         const matched = convs.find(
           (c) =>
-            (c.company_id === targetCompanyId || c.buyer_id === targetCompanyId) &&
+            (c.company_id === otherId || c.buyer_id === otherId) &&
             (!targetListingId || c.listing_id === targetListingId)
         );
 
@@ -157,12 +163,18 @@ export default function MessagesClient() {
           setSelectedConvId(matched.id);
         } else {
           // Yeni konuşma başlat
+          const finalBuyerId = targetBuyerId ? targetBuyerId : currentUserId;
+          const finalCompanyId = targetCompanyId ? targetCompanyId : currentUserId;
+          const finalBuyerName = targetBuyerId ? (targetBuyerName || 'Alıcı Müşteri') : currentUserName;
+          const finalCompanyName = targetCompanyId ? (targetCompanyName || 'Firma Yetkilisi') : currentUserName;
+
           const initRes = await startConversation({
-            buyerId: currentUserId,
-            companyId: targetCompanyId,
+            buyerId: finalBuyerId,
+            companyId: finalCompanyId,
             listingId: targetListingId || undefined,
             listingTitle: targetListingTitle || (targetListingId ? 'İlgili İlan Görüşmesi' : undefined),
-            companyName: targetCompanyName || undefined,
+            companyName: finalCompanyName,
+            buyerName: finalBuyerName,
           });
 
           if (initRes.success && initRes.conversation) {
@@ -185,12 +197,14 @@ export default function MessagesClient() {
   useEffect(() => {
     if (currentUserId) {
       const companyId = searchParams.get('companyId');
+      const buyerId = searchParams.get('buyerId');
       const listingId = searchParams.get('listingId');
       const listingTitle = searchParams.get('listingTitle');
       const companyName = searchParams.get('companyName');
-      loadData(companyId, listingId, listingTitle, companyName);
+      const buyerName = searchParams.get('buyerName');
+      loadData(companyId, buyerId, listingId, listingTitle, companyName, buyerName);
     }
-  }, [currentUserId, searchParams]);
+  }, [currentUserId, searchParams, currentUserName]);
 
   const activeConv = conversations.find((c) => c.id === selectedConvId);
 
@@ -257,6 +271,12 @@ export default function MessagesClient() {
           const updatedMsgs = await getMessages(selectedConvId);
           setMessages((prev) => {
             if (updatedMsgs.length !== prev.length) {
+              return updatedMsgs;
+            }
+            const hasChange = updatedMsgs.some(
+              (m, idx) => !prev[idx] || prev[idx].id !== m.id || prev[idx].is_read !== m.is_read
+            );
+            if (hasChange) {
               return updatedMsgs;
             }
             return prev;
@@ -335,13 +355,43 @@ export default function MessagesClient() {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Fotoğraf boyutu 5 MB üzerinde olamaz.');
+      if (file.size > 10 * 1024 * 1024) {
+        alert('Fotoğraf boyutu 10 MB üzerinde olamaz.');
         return;
       }
       const reader = new FileReader();
       reader.onload = () => {
-        setAttachmentPreview(reader.result as string);
+        const rawResult = reader.result as string;
+        // İstemci tarafı akıllı görsel optimizasyonu (hızlı yükleme ve hafif veri boyutu)
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 1200;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            setAttachmentPreview(canvas.toDataURL('image/jpeg', 0.75));
+          } else {
+            setAttachmentPreview(rawResult);
+          }
+        };
+        img.onerror = () => {
+          setAttachmentPreview(rawResult);
+        };
+        img.src = rawResult;
       };
       reader.readAsDataURL(file);
     }
@@ -351,6 +401,9 @@ export default function MessagesClient() {
     if (!selectedConvId || !currentUserId) return;
     if (confirm('Bu kullanıcıyı engellemek istediğinize emin misiniz?')) {
       await blockUser(selectedConvId, currentUserId);
+      setConversations((prev) =>
+        prev.map((c) => (c.id === selectedConvId ? { ...c, is_blocked: true } : c))
+      );
       setActionNotice('Kullanıcı engellendi.');
       setMenuOpen(false);
       setTimeout(() => setActionNotice(''), 3000);
@@ -624,7 +677,14 @@ export default function MessagesClient() {
                 </div>
 
                 {/* Top Safety Banner / Revealed Contact Card */}
-                {revealedDetails ? (
+                {activeConv.is_blocked ? (
+                  <div className="bg-red-50 border-b border-red-200 px-4 py-2.5 text-xs text-red-800 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 font-bold">
+                      <Ban className="w-4 h-4 text-red-600 shrink-0" />
+                      <span>Bu kullanıcı engellenmiştir. Karşılıklı yeni mesaj gönderilemez.</span>
+                    </div>
+                  </div>
+                ) : revealedDetails ? (
                   <div className="p-3 bg-slate-100 border-b border-slate-200">
                     <RevealedContactCard details={revealedDetails} />
                   </div>
@@ -771,10 +831,17 @@ export default function MessagesClient() {
                   onSubmit={handleSend}
                   className="p-3 sm:p-4 bg-white border-t border-slate-200 flex items-center gap-2"
                 >
-                  <label className="p-2.5 rounded-xl border border-slate-200 text-slate-500 hover:text-navy-900 hover:bg-slate-100 cursor-pointer transition">
+                  <label
+                    className={`p-2.5 rounded-xl border border-slate-200 text-slate-500 transition ${
+                      activeConv.is_blocked
+                        ? 'opacity-40 cursor-not-allowed bg-slate-100'
+                        : 'hover:text-navy-900 hover:bg-slate-100 cursor-pointer'
+                    }`}
+                  >
                     <input
                       type="file"
                       accept="image/*"
+                      disabled={!!activeConv.is_blocked}
                       className="hidden"
                       onChange={handleFileUpload}
                     />
@@ -783,16 +850,21 @@ export default function MessagesClient() {
 
                   <input
                     type="text"
+                    disabled={!!activeConv.is_blocked}
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    placeholder="Mesajınızı yazın... (Teklif onayına kadar telefon/IBAN maskelenir)"
-                    className="flex-1 px-4 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-slate-50"
+                    placeholder={
+                      activeConv.is_blocked
+                        ? 'Bu konuşma engellenmiştir, mesaj gönderilemez.'
+                        : 'Mesajınızı yazın... (Teklif onayına kadar telefon/IBAN maskelenir)'
+                    }
+                    className="flex-1 px-4 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-slate-50 disabled:bg-slate-100 disabled:cursor-not-allowed"
                   />
 
                   <button
                     type="submit"
-                    disabled={!inputText.trim() && !attachmentPreview}
-                    className="p-2.5 sm:px-5 sm:py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs sm:text-sm transition disabled:opacity-40 flex items-center gap-2 shadow-sm"
+                    disabled={activeConv.is_blocked || (!inputText.trim() && !attachmentPreview)}
+                    className="p-2.5 sm:px-5 sm:py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs sm:text-sm transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm"
                   >
                     <Send className="w-4 h-4" />
                     <span className="hidden sm:inline">GÖNDER</span>

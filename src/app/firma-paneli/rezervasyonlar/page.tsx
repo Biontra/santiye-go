@@ -204,7 +204,7 @@ export default function CompanyBookingsPage() {
 
                       <div className="flex items-center gap-2 pt-3 w-full justify-end">
                         <Link
-                          href={`/mesajlar?context=booking&id=${b.id}`}
+                          href={`/mesajlar?buyerId=${b.buyer_id || ''}&companyId=${b.company_id || ''}&listingId=${b.listing_id || ''}&listingTitle=${encodeURIComponent(b.listing?.title || 'Rezervasyon')}&buyerName=${encodeURIComponent(b.buyer_name || 'Alıcı Müşteri')}`}
                           className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 font-bold text-xs transition flex items-center gap-1"
                         >
                           <MessageSquare className="w-3.5 h-3.5" />

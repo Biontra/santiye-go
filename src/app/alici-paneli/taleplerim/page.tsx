@@ -357,7 +357,7 @@ export default function BuyerQuoteRequestsPage() {
                                         )}
 
                                         <Link
-                                          href={`/mesajlar?context=quote&id=${q.id}`}
+                                          href={`/mesajlar?companyId=${q.company_id || ''}&quoteId=${q.id}&listingTitle=${encodeURIComponent(req.title || 'Talep Teklifi')}&companyName=${encodeURIComponent(q.company?.name || 'Onaylı Tedarikçi')}`}
                                           className="p-1.5 rounded-lg border border-slate-300 text-slate-600 hover:text-navy-900 hover:bg-slate-100 transition"
                                           title="Firmaya Soru Sor"
                                         >

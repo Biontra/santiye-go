@@ -25,12 +25,14 @@ import {
   markNotificationAsRead,
   markAllNotificationsAsRead,
 } from '@/lib/services/notification-service';
+import { getConversations } from '@/lib/services/message-service';
 
 export default function Header() {
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState<number>(0);
   const [notifDropdownOpen, setNotifDropdownOpen] = useState(false);
 
   const supabase = createClient();
@@ -43,13 +45,22 @@ export default function Header() {
           setProfile(activeProfile);
           const userNotifs = await getUserNotifications(activeProfile.id);
           setNotifications(userNotifs);
+
+          // Okunmamış mesaj sayısını getir
+          try {
+            const convs = await getConversations(activeProfile.id);
+            const totalUnread = convs.reduce((acc, c) => acc + (c.unread_count || 0), 0);
+            setUnreadMessagesCount(totalUnread);
+          } catch {}
         } else {
           setProfile(null);
           setNotifications([]);
+          setUnreadMessagesCount(0);
         }
       } catch {
         setProfile(null);
         setNotifications([]);
+        setUnreadMessagesCount(0);
       }
     }
     checkAuth();
@@ -146,8 +157,10 @@ export default function Header() {
               title="Mesajlarım"
             >
               <MessageSquare className="w-5 h-5" />
-              {profile && (
-                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-orange-500" />
+              {unreadMessagesCount > 0 && (
+                <span className="absolute top-1 right-1 px-1.5 py-0.2 rounded-full bg-orange-500 text-white text-[9px] font-black">
+                  {unreadMessagesCount}
+                </span>
               )}
             </Link>
 
@@ -305,9 +318,12 @@ export default function Header() {
           <div className="flex md:hidden items-center gap-2">
             <Link
               href={profile ? '/mesajlar' : '/giris?redirect=/mesajlar'}
-              className="p-1.5 text-slate-300 hover:text-white"
+              className="relative p-1.5 text-slate-300 hover:text-white"
             >
               <MessageSquare className="w-5 h-5" />
+              {unreadMessagesCount > 0 && (
+                <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-orange-500" />
+              )}
             </Link>
             <Link
               href={profile?.role === 'company' ? '/firma-paneli/yeni-ilan' : '/firma-paneli'}

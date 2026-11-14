@@ -323,7 +323,7 @@ export async function startConversation({
   return { success: true, conversation: newConv };
 }
 
-// 5. OKUNDU İŞARETLE
+// 5. OKUNDU İŞARETLE (Merkezi API Öncelikli)
 export async function markConversationAsRead(
   conversationId: string,
   userId: string
@@ -343,6 +343,17 @@ export async function markConversationAsRead(
       }
     });
     saveStoredMessages(conversationId, msgs);
+  }
+
+  // Sunucu API'sini çağır
+  if (typeof window !== 'undefined') {
+    try {
+      await fetch('/api/messages/read', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversationId, userId }),
+      });
+    } catch {}
   }
 
   try {
@@ -387,7 +398,7 @@ export async function reportMessage(
   return { success: true };
 }
 
-// 7. KULLANICIYI ENGELLE
+// 7. KULLANICIYI ENGELLE (Merkezi API Öncelikli)
 export async function blockUser(
   conversationId: string,
   blockerId: string
@@ -397,6 +408,17 @@ export async function blockUser(
   if (conv) {
     conv.is_blocked = true;
     saveStoredConversations(convs);
+  }
+
+  // Sunucu API'sini çağır
+  if (typeof window !== 'undefined') {
+    try {
+      await fetch('/api/messages/block', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversationId, blockerId }),
+      });
+    } catch {}
   }
 
   try {

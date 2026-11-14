@@ -65,9 +65,58 @@ function generateUUID(): string {
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+/**
+ * Kullanıcı kimliğini (user_id / auth UUID) varsa sahip olduğu firma ID'leri ile eşleştirir.
+ * Bu sayede hem alıcı hem satıcı firma tarafı konuşmaları eksiksiz görüntüler.
+ */
+export async function resolveAssociatedIds(userId: string): Promise<string[]> {
+  const ids = new Set<string>();
+  if (!userId) return [];
+  ids.add(userId);
+
+  // Demo / yerel hesap eşleşmeleri
+  if (userId === 'demo-company-user-001' || userId === 'f0000000-0000-0000-0000-000000000001') {
+    ids.add('demo-company-user-001');
+    ids.add('f0000000-0000-0000-0000-000000000001');
+  }
+  if (userId === 'demo-buyer-user-001' || userId === 'buyer-demo-001') {
+    ids.add('demo-buyer-user-001');
+    ids.add('buyer-demo-001');
+  }
+
+  // Supabase veritabanından firma ve profil eşleşmelerini çek
+  try {
+    const supabase = createClient();
+    const isSupabaseConfigured =
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
+
+    if (isSupabaseConfigured && UUID_REGEX.test(userId)) {
+      const { data: byUser } = await supabase.from('companies').select('id, user_id').eq('user_id', userId);
+      if (byUser && byUser.length > 0) {
+        byUser.forEach((c) => {
+          if (c.id) ids.add(c.id);
+          if (c.user_id) ids.add(c.user_id);
+        });
+      }
+
+      const { data: byId } = await supabase.from('companies').select('id, user_id').eq('id', userId);
+      if (byId && byId.length > 0) {
+        byId.forEach((c) => {
+          if (c.id) ids.add(c.id);
+          if (c.user_id) ids.add(c.user_id);
+        });
+      }
+    }
+  } catch {}
+
+  return Array.from(ids);
+}
+
 export async function serverGetConversations(userId: string): Promise<ServerConversation[]> {
   if (!userId) return [];
   const store = ensureDataFile();
+  const associatedIds = await resolveAssociatedIds(userId);
 
   // 1. Supabase'den çekmeyi dene (eğer canlı db açıksa)
   const supabaseResults: ServerConversation[] = [];
@@ -77,16 +126,13 @@ export async function serverGetConversations(userId: string): Promise<ServerConv
       process.env.NEXT_PUBLIC_SUPABASE_URL &&
       !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
 
-    if (isSupabaseConfigured && UUID_REGEX.test(userId)) {
-      let companyIds = [userId];
-      const { data: comps } = await supabase.from('companies').select('id').eq('user_id', userId);
-      if (comps && comps.length > 0) {
-        comps.forEach((c) => {
-          if (c.id && !companyIds.includes(c.id)) companyIds.push(c.id);
-        });
-      }
+    const validUuids = associatedIds.filter((id) => UUID_REGEX.test(id));
+    if (isSupabaseConfigured && validUuids.length > 0) {
+      const orFilter = [
+        ...validUuids.map((id) => `buyer_id.eq.${id}`),
+        ...validUuids.map((id) => `company_id.eq.${id}`),
+      ].join(',');
 
-      const orFilter = [`buyer_id.eq.${userId}`, ...companyIds.map((c) => `company_id.eq.${c}`)].join(',');
       const { data, error } = await supabase
         .from('conversations')
         .select(`
@@ -101,7 +147,7 @@ export async function serverGetConversations(userId: string): Promise<ServerConv
 
       if (!error && data) {
         data.forEach((d: any) => {
-          const isUserBuyer = d.buyer_id === userId;
+          const isUserBuyer = associatedIds.includes(d.buyer_id);
           const otherName = isUserBuyer
             ? d.company?.name || d.company_name || 'Firma Yetkilisi'
             : d.buyer?.full_name || d.buyer_name || 'Alıcı Müşteri';
@@ -116,7 +162,7 @@ export async function serverGetConversations(userId: string): Promise<ServerConv
             other_user_name: otherName,
             other_user_role: isUserBuyer ? 'company' : 'buyer',
             listing_title: d.listing?.title || d.listing_title,
-            unread_count: msgs.filter((m: any) => !m.is_read && m.sender_id !== userId).length,
+            unread_count: msgs.filter((m: any) => !m.is_read && !associatedIds.includes(m.sender_id)).length,
             last_message: last?.content || last?.body,
             last_message_at: last?.created_at || d.updated_at,
           });
@@ -127,18 +173,18 @@ export async function serverGetConversations(userId: string): Promise<ServerConv
     // Supabase sessizce fallback
   }
 
-  // 2. Sunucu yerel deposundaki konuşmaları filtrele
+  // 2. Sunucu yerel deposundaki konuşmaları filtrele (hem buyer_id hem company_id kontrolü)
   const localMatched = store.conversations.filter(
-    (c) => c.buyer_id === userId || c.company_id === userId
+    (c) => associatedIds.includes(c.buyer_id) || associatedIds.includes(c.company_id)
   );
 
   // Birleştir
   const merged: ServerConversation[] = [...supabaseResults];
   for (const loc of localMatched) {
-    const isUserBuyer = loc.buyer_id === userId;
+    const isUserBuyer = associatedIds.includes(loc.buyer_id);
     const existingIdx = merged.findIndex((m) => m.id === loc.id);
     const msgs = store.messages[loc.id] || [];
-    const unread = msgs.filter((m) => !m.is_read && m.sender_id !== userId).length;
+    const unread = msgs.filter((m) => !m.is_read && !associatedIds.includes(m.sender_id)).length;
     const last = msgs[msgs.length - 1];
 
     const item: ServerConversation = {
@@ -234,11 +280,11 @@ export async function serverStartConversation({
 }): Promise<{ success: boolean; conversation: ServerConversation }> {
   const store = ensureDataFile();
 
-  // Var olan konuşmayı ara
+  // Var olan konuşmayı ara (iki yönlü eşleşme ve ilan kontrolü)
   let existing = store.conversations.find(
     (c) =>
-      c.buyer_id === buyerId &&
-      c.company_id === companyId &&
+      ((c.buyer_id === buyerId && c.company_id === companyId) ||
+       (c.buyer_id === companyId && c.company_id === buyerId)) &&
       (!listingId || c.listing_id === listingId)
   );
 
@@ -255,6 +301,25 @@ export async function serverStartConversation({
     return { success: true, conversation: existing };
   }
 
+  // İsim çözümleme garantisi
+  let resolvedBuyerName = buyerName;
+  if (!resolvedBuyerName) {
+    if (buyerId === 'demo-buyer-user-001' || buyerId === 'buyer-demo-001') {
+      resolvedBuyerName = 'Ahmet Yılmaz (Müteahhit)';
+    } else {
+      resolvedBuyerName = 'Alıcı Müşteri';
+    }
+  }
+
+  let resolvedCompanyName = companyName;
+  if (!resolvedCompanyName) {
+    if (companyId === 'demo-company-user-001' || companyId === 'f0000000-0000-0000-0000-000000000001') {
+      resolvedCompanyName = 'Anadolu İş Makineleri Parkı';
+    } else {
+      resolvedCompanyName = 'Firma Yetkilisi';
+    }
+  }
+
   const newId = generateUUID();
   const newConv: ServerConversation = {
     id: newId,
@@ -265,14 +330,14 @@ export async function serverStartConversation({
     is_blocked: false,
     created_at: nowIso,
     updated_at: nowIso,
-    other_user_name: companyName || 'Firma Yetkilisi',
+    other_user_name: resolvedCompanyName,
     other_user_role: 'company',
     listing_title: listingTitle,
     unread_count: 0,
     last_message: initialMessage || 'Konuşma başlatıldı.',
     last_message_at: nowIso,
-    company_name: companyName,
-    buyer_name: buyerName,
+    company_name: resolvedCompanyName,
+    buyer_name: resolvedBuyerName,
   };
 
   store.conversations.unshift(newConv);
@@ -330,6 +395,12 @@ export async function serverSendMessage({
 
   const store = ensureDataFile();
 
+  // Engellenmiş konuşma kontrolü
+  const conv = store.conversations.find((c) => c.id === conversationId);
+  if (conv?.is_blocked) {
+    throw new Error('Bu konuşma engellenmiştir, mesaj gönderilemez.');
+  }
+
   // Maskeleme
   const maskRes = sanitizeContent(body.trim());
   const finalBody = maskRes.sanitizedText;
@@ -354,7 +425,6 @@ export async function serverSendMessage({
   store.messages[conversationId].push(newMsg);
 
   // Konuşmayı güncelle
-  const conv = store.conversations.find((c) => c.id === conversationId);
   if (conv) {
     conv.last_message = finalBody;
     conv.last_message_at = nowIso;
@@ -393,4 +463,76 @@ export async function serverSendMessage({
     detectedTypes: maskRes.detectedTypes,
     infoNotice: maskRes.infoNotice,
   };
+}
+
+export async function serverMarkAsRead(conversationId: string, userId: string): Promise<boolean> {
+  if (!conversationId || !userId) return false;
+  const associatedIds = await resolveAssociatedIds(userId);
+  const store = ensureDataFile();
+
+  let modified = false;
+
+  // Yerel depoda karşı tarafın gönderdiği mesajları okundu yap
+  const msgs = store.messages[conversationId] || [];
+  msgs.forEach((m) => {
+    if (!associatedIds.includes(m.sender_id) && !m.is_read) {
+      m.is_read = true;
+      (m as any).read_at = new Date().toISOString();
+      modified = true;
+    }
+  });
+
+  const conv = store.conversations.find((c) => c.id === conversationId);
+  if (conv) {
+    conv.unread_count = 0;
+    modified = true;
+  }
+
+  if (modified) {
+    saveDataFile(store);
+  }
+
+  // Canlı Supabase senkronizasyonu
+  try {
+    const supabase = createClient();
+    const isSupabaseConfigured =
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
+
+    if (isSupabaseConfigured && UUID_REGEX.test(conversationId)) {
+      await supabase
+        .from('messages')
+        .update({ is_read: true, read_at: new Date().toISOString() })
+        .eq('conversation_id', conversationId);
+    }
+  } catch {}
+
+  return true;
+}
+
+export async function serverBlockUser(conversationId: string, _blockerId: string): Promise<boolean> {
+  if (!conversationId) return false;
+  const store = ensureDataFile();
+  const conv = store.conversations.find((c) => c.id === conversationId);
+  if (conv) {
+    conv.is_blocked = true;
+    conv.updated_at = new Date().toISOString();
+    saveDataFile(store);
+  }
+
+  try {
+    const supabase = createClient();
+    const isSupabaseConfigured =
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
+
+    if (isSupabaseConfigured && UUID_REGEX.test(conversationId)) {
+      await supabase
+        .from('conversations')
+        .update({ is_blocked: true })
+        .eq('id', conversationId);
+    }
+  } catch {}
+
+  return true;
 }

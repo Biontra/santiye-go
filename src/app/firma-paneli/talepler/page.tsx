@@ -349,7 +349,7 @@ export default function CompanyQuoteRequestsPage() {
                       )}
 
                       <Link
-                        href={`/mesajlar?context=quote_req&id=${req.id}`}
+                        href={`/mesajlar?buyerId=${req.buyer_id || ''}&quoteId=${req.id}&listingTitle=${encodeURIComponent(req.title || 'Talep Görüşmesi')}`}
                         className="w-full py-2 px-3 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 font-bold text-xs transition flex items-center justify-center gap-1.5"
                       >
                         <MessageSquare className="w-3.5 h-3.5 text-navy-900" />
