@@ -4,7 +4,6 @@
 -- ==============================================================================
 
 -- 1. EKSİK FİRMALARI PROFİLLERDEN OTOMATİK OLUŞTUR
--- Rolü 'company' olan ama companies tablosunda kaydı olmayan kullanıcılar için firma kaydı açar
 INSERT INTO public.companies (
     id,
     user_id,
@@ -16,7 +15,7 @@ INSERT INTO public.companies (
     is_demo
 )
 SELECT 
-    p.id, -- Şirket id'si olarak kullanıcı id'sini veya yeni uuid'yi kullan
+    p.id,
     p.id,
     COALESCE(p.full_name, 'Şantiye GO Onaylı Tedarikçi'),
     COALESCE(p.phone, '+905320000000'),
@@ -29,11 +28,11 @@ LEFT JOIN public.companies c ON c.user_id = p.id
 WHERE p.role = 'company' AND c.id IS NULL
 ON CONFLICT (user_id) DO NOTHING;
 
--- 2. ÇİMENTO İLANINDAKİ ASILI KALAN FİRMAYI EĞER YOKSA OLUŞTUR
--- İlandaki '262b3974-767a-478f-9bc5-f83ad643caea' id'li firmanın varlığını garanti altına al
+-- 2. ÇİMENTO İLANINDAKİ ASILI KALAN FİRMAYI GÜVENLE BAĞLA VEYA OLUŞTUR
 DO $$
 DECLARE
     v_first_company_user UUID;
+    v_existing_comp_id UUID;
 BEGIN
     SELECT id INTO v_first_company_user 
     FROM public.profiles 
@@ -41,8 +40,14 @@ BEGIN
     LIMIT 1;
 
     IF v_first_company_user IS NOT NULL THEN
-        -- Eğer ilandaki company_id companies tablosunda yoksa ekle
-        IF NOT EXISTS (SELECT 1 FROM public.companies WHERE id = '262b3974-767a-478f-9bc5-f83ad643caea') THEN
+        SELECT id INTO v_existing_comp_id FROM public.companies WHERE user_id = v_first_company_user;
+
+        IF v_existing_comp_id IS NOT NULL THEN
+            UPDATE public.listings 
+            SET company_id = v_existing_comp_id 
+            WHERE company_id = '262b3974-767a-478f-9bc5-f83ad643caea' 
+               OR company_id NOT IN (SELECT id FROM public.companies);
+        ELSE
             INSERT INTO public.companies (
                 id,
                 user_id,
@@ -63,16 +68,12 @@ BEGIN
                 true,
                 false
             )
-            ON CONFLICT (id) DO NOTHING
-            ON CONFLICT (user_id) DO UPDATE 
-            SET id = '262b3974-767a-478f-9bc5-f83ad643caea';
+            ON CONFLICT (id) DO NOTHING;
         END IF;
     END IF;
 END $$;
 
 -- 3. CONVERSATIONS VE MESSAGES TABLOLARININ RLS POLİTİKALARINI SAĞLAMLAŞTIR
--- Kullanıcıların mesaj atabilmesi ve karşı tarafın bu mesajları eksiksiz görebilmesi için:
-
 ALTER TABLE public.conversations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
 
@@ -86,7 +87,6 @@ DROP POLICY IF EXISTS "Users insert messages" ON public.messages;
 DROP POLICY IF EXISTS "Users update messages" ON public.messages;
 
 -- A. CONVERSATIONS İÇİN POLİTİKALAR:
--- Giriş yapmış kullanıcı: Ya alıcıdır (buyer_id = auth.uid()) ya da firmanın sahibidir
 CREATE POLICY "Users view own conversations" ON public.conversations
 FOR SELECT USING (
     auth.uid() = buyer_id 
@@ -110,7 +110,6 @@ FOR UPDATE USING (
 );
 
 -- B. MESSAGES İÇİN POLİTİKALAR:
--- Mesajları sadece o konuşmanın tarafları okuyabilir
 CREATE POLICY "Users view conversation messages" ON public.messages
 FOR SELECT USING (
     conversation_id IN (
@@ -122,7 +121,6 @@ FOR SELECT USING (
     OR sender_id = auth.uid()
 );
 
--- Mesaj gönderme: Giriş yapmış kullanıcı kendi adıyla konuşmaya mesaj ekleyebilir
 CREATE POLICY "Users insert messages" ON public.messages
 FOR INSERT WITH CHECK (
     auth.uid() = sender_id
@@ -139,6 +137,13 @@ FOR UPDATE USING (
     )
 );
 
--- 4. REALTIME YAYININI ETKİNLEŞTİR (Mesajların sayfayı yenilemeden anında düşmesi için)
-ALTER PUBLICATION supabase_realtime ADD TABLE public.messages;
-ALTER PUBLICATION supabase_realtime ADD TABLE public.conversations;
+-- 4. REALTIME YAYININI GÜVENLE ETKİNLEŞTİR
+DO $$ BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.messages;
+EXCEPTION WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.conversations;
+EXCEPTION WHEN duplicate_object THEN null;
+END $$;
