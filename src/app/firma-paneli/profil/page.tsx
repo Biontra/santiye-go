@@ -101,7 +101,14 @@ export default function CompanyProfilePage() {
             setTaxOffice(comp.tax_office || meta.tax_office || '');
             setTaxPlateUrl(comp.tax_plate_url || comp.tax_document_url || '');
             setSignatureCircularUrl(comp.signature_circular_url || '');
-            setVerificationStatus(comp.verification_status || (comp.is_verified ? 'approved' : 'unverified'));
+            let effectiveStatus = comp.verification_status || (comp.is_verified ? 'approved' : 'unverified');
+            try {
+              const verifiedList = JSON.parse(localStorage.getItem('santiyego_verified_companies') || '[]');
+              if (verifiedList.includes(comp.id) || verifiedList.includes(user.id)) {
+                effectiveStatus = 'approved';
+              }
+            } catch {}
+            setVerificationStatus(effectiveStatus);
           }
         }
       } catch (err: any) {

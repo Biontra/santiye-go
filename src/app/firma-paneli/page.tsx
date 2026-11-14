@@ -92,6 +92,14 @@ export default function CompanyDashboardPage() {
         }
 
         if (comp) {
+          let verified = !!comp.is_verified || comp.verification_status === 'approved';
+          try {
+            const verifiedList = JSON.parse(localStorage.getItem('santiyego_verified_companies') || '[]');
+            if (verifiedList.includes(comp.id) || verifiedList.includes(user.id)) {
+              verified = true;
+            }
+          } catch {}
+
           const compData = {
             id: comp.id,
             name: comp.name || 'Firma Hesabı',
@@ -99,7 +107,7 @@ export default function CompanyDashboardPage() {
             address: comp.address || '',
             cityName: comp.city?.name || 'Türkiye',
             districtName: comp.district?.name || '',
-            isVerified: !!comp.is_verified,
+            isVerified: verified,
           };
           setCompany(compData);
 

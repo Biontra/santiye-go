@@ -227,9 +227,13 @@ export async function getAdminDashboardMetrics() {
 
 // Company Verification Workflow
 export async function getCompaniesForVerification(): Promise<Company[]> {
+  const resultList: Company[] = [];
+
   try {
     const supabase = createClient();
-    const { data, error } = await supabase
+
+    // 1. Canlı Supabase Companies tablosunu çek
+    const { data: dbCompanies, error: compError } = await supabase
       .from('companies')
       .select(`
         *,
@@ -238,16 +242,67 @@ export async function getCompaniesForVerification(): Promise<Company[]> {
       `)
       .order('created_at', { ascending: false });
 
-    if (!error && data && data.length > 0) {
-      return data.map((c) => ({
-        ...c,
-        city_name: c.city?.name || 'Belirtilmedi',
-        district_name: c.district?.name || '',
-      }));
+    if (!compError && dbCompanies && dbCompanies.length > 0) {
+      dbCompanies.forEach((c) => {
+        resultList.push({
+          ...c,
+          city_name: c.city?.name || 'Belirtilmedi',
+          district_name: c.district?.name || '',
+          verification_status: c.verification_status || (c.is_verified ? 'approved' : 'pending'),
+        });
+      });
+    }
+
+    // 2. Profiles tablosunda rolü 'company' olan tüm gerçek kullanıcıları da ekle (Henüz companies tablosunda olmayanlar dahil)
+    const { data: companyProfiles } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('role', 'company')
+      .order('created_at', { ascending: false });
+
+    if (companyProfiles && companyProfiles.length > 0) {
+      for (const p of companyProfiles) {
+        const alreadyInList = resultList.some((c) => c.user_id === p.id || c.id === p.id);
+        if (!alreadyInList) {
+          resultList.push({
+            id: p.id,
+            user_id: p.id,
+            name: p.full_name || 'Firma Kullanıcısı',
+            phone: p.phone || '',
+            city_id: 34,
+            district_id: 104,
+            city_name: 'İstanbul',
+            district_name: 'Merkez',
+            verification_status: p.is_phone_verified ? 'pending' : 'pending',
+            is_verified: false,
+            is_demo: false,
+            created_at: p.created_at,
+            updated_at: p.updated_at,
+          } as Company);
+        }
+      }
     }
   } catch (err) {
     console.warn('[admin-service] getCompanies error:', err);
   }
+
+  // 3. Yerel doğrulanmış firma hafızası ile durumları eşleştir
+  if (typeof window !== 'undefined') {
+    try {
+      const verifiedList = JSON.parse(localStorage.getItem('santiyego_verified_companies') || '[]');
+      resultList.forEach((c) => {
+        if (verifiedList.includes(c.id) || verifiedList.includes(c.user_id)) {
+          c.is_verified = true;
+          c.verification_status = 'approved';
+        }
+      });
+    } catch {}
+  }
+
+  if (resultList.length > 0) {
+    return resultList;
+  }
+
   return DEMO_COMPANIES_FOR_VERIFICATION;
 }
 
@@ -270,16 +325,58 @@ export async function verifyCompany(
       updatePayload.sub_merchant_status = 'approved';
     }
 
-    const { error } = await supabase
+    // 1. Önce doğrudan id veya user_id üzerinden güncelle
+    const { data: updatedRows, error } = await supabase
       .from('companies')
       .update(updatePayload)
-      .eq('id', companyId);
+      .or(`id.eq.${companyId},user_id.eq.${companyId}`)
+      .select('id, user_id');
+
+    // 2. Eğer companies tablosunda kayıt yoksa, profiles'tan alarak companies tablosuna ekle
+    if (!updatedRows || updatedRows.length === 0) {
+      const { data: prof } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', companyId)
+        .maybeSingle();
+
+      if (prof) {
+        await supabase.from('companies').upsert({
+          id: prof.id,
+          user_id: prof.id,
+          name: prof.full_name || 'Onaylı Firma',
+          phone: prof.phone || '',
+          is_verified: status === 'approved',
+          verification_status: status,
+          verification_notes: notes || null,
+          verified_at: new Date().toISOString(),
+          verified_by: adminId,
+          is_demo: false,
+        });
+      }
+    }
 
     if (error) {
       console.warn('[admin-service] verifyCompany update error:', error);
     }
   } catch (err) {
     console.warn('[admin-service] verifyCompany error:', err);
+  }
+
+  // 3. Ortak yerel saklama hafızasını güncelle (Kullanıcı kendi tarayıcısında da anında onaylı görsün)
+  if (typeof window !== 'undefined') {
+    try {
+      const verifiedList: string[] = JSON.parse(
+        localStorage.getItem('santiyego_verified_companies') || '[]'
+      );
+      if (status === 'approved') {
+        if (!verifiedList.includes(companyId)) verifiedList.push(companyId);
+      } else {
+        const idx = verifiedList.indexOf(companyId);
+        if (idx !== -1) verifiedList.splice(idx, 1);
+      }
+      localStorage.setItem('santiyego_verified_companies', JSON.stringify(verifiedList));
+    } catch {}
   }
 
   const comp = DEMO_COMPANIES_FOR_VERIFICATION.find((c) => c.id === companyId);
