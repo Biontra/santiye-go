@@ -113,7 +113,7 @@ export default function ListingActionBox({ listing }: ListingActionBoxProps) {
         {/* Kontrollü İletişim & Güvenlik Koruma Kutusu (Prompt 9A) */}
         <div className="space-y-3 pt-2 border-t border-slate-100">
           <Link
-            href={`/mesajlar?companyId=${listing.company_id || ''}&listingId=${listing.id}`}
+            href={`/mesajlar?companyId=${listing.company_id || ''}&listingId=${listing.id}&listingTitle=${encodeURIComponent(listing.title)}&companyName=${encodeURIComponent(listing.company?.name || listing.company_name || 'Firma')}`}
             className="w-full py-3 px-4 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-bold text-xs transition flex items-center justify-center gap-2 shadow-sm"
           >
             <MessageSquare className="w-4 h-4 text-orange-400" />

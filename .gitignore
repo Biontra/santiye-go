@@ -43,3 +43,6 @@ Thumbs.db
 # Worktrees / Nested clones
 santiye-go/
 
+# Runtime data
+.runtime-data/
+

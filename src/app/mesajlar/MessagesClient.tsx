@@ -133,7 +133,12 @@ export default function MessagesClient() {
     initUser();
   }, [router]);
 
-  const loadData = async (targetCompanyId?: string | null, targetListingId?: string | null) => {
+  const loadData = async (
+    targetCompanyId?: string | null,
+    targetListingId?: string | null,
+    targetListingTitle?: string | null,
+    targetCompanyName?: string | null
+  ) => {
     if (!currentUserId) return;
     setLoading(true);
 
@@ -156,7 +161,8 @@ export default function MessagesClient() {
             buyerId: currentUserId,
             companyId: targetCompanyId,
             listingId: targetListingId || undefined,
-            listingTitle: targetListingId ? 'İlgili İlan Görüşmesi' : undefined,
+            listingTitle: targetListingTitle || (targetListingId ? 'İlgili İlan Görüşmesi' : undefined),
+            companyName: targetCompanyName || undefined,
           });
 
           if (initRes.success && initRes.conversation) {
@@ -180,7 +186,9 @@ export default function MessagesClient() {
     if (currentUserId) {
       const companyId = searchParams.get('companyId');
       const listingId = searchParams.get('listingId');
-      loadData(companyId, listingId);
+      const listingTitle = searchParams.get('listingTitle');
+      const companyName = searchParams.get('companyName');
+      loadData(companyId, listingId, listingTitle, companyName);
     }
   }, [currentUserId, searchParams]);
 

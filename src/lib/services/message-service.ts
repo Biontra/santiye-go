@@ -16,11 +16,9 @@ export interface DemoConversation extends Conversation {
 const STORAGE_CONVERSATIONS_KEY = 'santiyego_conversations_store';
 const STORAGE_MESSAGES_KEY_PREFIX = 'santiyego_messages_store_';
 
-// Geriye dönük uyumluluk için boş demo koleksiyonları
 export const DEMO_CONVERSATIONS: DemoConversation[] = [];
 export const DEMO_MESSAGES: Record<string, Message[]> = {};
 
-// Node.js test ve SSR ortamı için in-memory defter
 const memConversations: DemoConversation[] = [];
 const memMessages: Record<string, Message[]> = {};
 
@@ -78,157 +76,68 @@ function saveStoredMessages(convId: string, msgs: Message[]) {
   } catch {}
 }
 
+// 1. KONUŞMALARI GETİR (Merkezi API Öncelikli)
 export async function getConversations(userId: string): Promise<DemoConversation[]> {
   if (!userId) return [];
 
-  let results: DemoConversation[] = [];
-
-  try {
-    const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-    if (isSupabaseConfigured && UUID_REGEX.test(userId)) {
-      // 1. Kullanıcının sahip olduğu şirketleri öğrenelim
-      const companyIds: string[] = [userId]; // Bazen company_id doğrudan user_id olarak kaydedilir
-      try {
-        const { data: comps } = await supabase
-          .from('companies')
-          .select('id')
-          .eq('user_id', userId);
-        if (comps && comps.length > 0) {
-          comps.forEach((c) => {
-            if (c.id && !companyIds.includes(c.id)) companyIds.push(c.id);
-          });
+  // A. Tarayıcıdaysa Merkezi API'den çek (Sunucu üzerinden iki tarafı eşleştirir)
+  if (typeof window !== 'undefined') {
+    try {
+      const res = await fetch(`/api/messages/conversations?userId=${encodeURIComponent(userId)}`, {
+        cache: 'no-store',
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.conversations)) {
+          saveStoredConversations(json.conversations);
+          return json.conversations;
         }
-      } catch (cErr) {
-        console.warn('[getConversations] Comp lookup error:', cErr);
       }
-
-      // 2. Kullanıcının ilanlarının company_id'lerini de ekleyelim
-      try {
-        const { data: listings } = await supabase
-          .from('listings')
-          .select('company_id')
-          .limit(50);
-        // Eğer kullanıcı ilanın sahibiyse (veya company_id eşleşmesi varsa)
-      } catch {}
-
-      // 3. Konuşmaları çek: Kullanıcı alıcı (buyer_id) VEYA firma (company_id) olabilir
-      const filterConditions = [
-        `buyer_id.eq.${userId}`,
-        ...companyIds.map((cId) => `company_id.eq.${cId}`),
-      ].join(',');
-
-      const { data, error } = await supabase
-        .from('conversations')
-        .select(`
-          *,
-          buyer:profiles(full_name),
-          company:companies(name),
-          listing:listings(title),
-          messages:messages(content, created_at, is_read, sender_id)
-        `)
-        .or(filterConditions)
-        .order('updated_at', { ascending: false });
-
-      if (error) {
-        console.error('[getConversations] Supabase query error:', error.message);
-      }
-
-      if (!error && data && data.length > 0) {
-        results = data.map((d: any) => {
-          const isUserBuyer = d.buyer_id === userId;
-          const otherName = isUserBuyer
-            ? d.company?.name || d.company_name || 'Firma Yetkilisi'
-            : d.buyer?.full_name || d.buyer_name || 'Alıcı Müşteri';
-
-          const msgs = d.messages || [];
-          const sortedMsgs = [...msgs].sort(
-            (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-          );
-          const lastMsg = sortedMsgs[sortedMsgs.length - 1];
-
-          return {
-            ...d,
-            other_user_name: otherName,
-            other_user_role: isUserBuyer ? 'company' : 'buyer',
-            listing_title: d.listing?.title || d.listing_title,
-            unread_count: msgs.filter((m: any) => !m.is_read && m.sender_id !== userId).length,
-            last_message: lastMsg?.content || lastMsg?.body,
-            last_message_at: lastMsg?.created_at || d.updated_at,
-          };
-        });
-      }
+    } catch (apiErr) {
+      console.warn('[getConversations] API fetch warning, fallback to direct:', apiErr);
     }
-  } catch (err) {
-    console.error('[getConversations] Unexpected fetch error:', err);
   }
 
-  // Yerel saklama alanındaki konuşmalar ile birleştir (kullanıcının kendi konuşmaları)
+  // B. Fallback: Supabase veya Local Storage
   const stored = getStoredConversations().filter(
     (c) => c.buyer_id === userId || c.company_id === userId
   );
 
-  for (const s of stored) {
-    if (!results.some((r) => r.id === s.id)) {
-      results.push(s);
-    }
-  }
-
-  return results.sort(
+  return stored.sort(
     (a, b) => new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime()
   );
 }
 
+// 2. MESAJLARI GETİR (Merkezi API Öncelikli)
 export async function getMessages(conversationId: string): Promise<Message[]> {
   if (!conversationId) return [];
 
-  let results: Message[] = [];
-
-  try {
-    const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-    if (isSupabaseConfigured && UUID_REGEX.test(conversationId)) {
-      const { data, error } = await supabase
-        .from('messages')
-        .select('*')
-        .eq('conversation_id', conversationId)
-        .order('created_at', { ascending: true });
-
-      if (!error && data && data.length > 0) {
-        results = data.map((d: any) => ({
-          ...d,
-          body: d.content || d.body,
-          content: d.content || d.body,
-        })) as Message[];
-      }
-    }
-  } catch (err) {
-    console.warn('[getMessages] Supabase error:', err);
-  }
-
-  // Yerel mesajlar ile birleştir (duplicate önleyerek)
-  const stored = getStoredMessages(conversationId);
-  for (const s of stored) {
-    if (!results.some((r) => r.id === s.id)) {
-      results.push({
-        ...s,
-        body: s.content || s.body,
-        content: s.content || s.body,
+  // A. Tarayıcıdaysa Merkezi API'den çek
+  if (typeof window !== 'undefined') {
+    try {
+      const res = await fetch(`/api/messages/list?conversationId=${encodeURIComponent(conversationId)}`, {
+        cache: 'no-store',
       });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.messages)) {
+          saveStoredMessages(conversationId, json.messages);
+          return json.messages;
+        }
+      }
+    } catch (apiErr) {
+      console.warn('[getMessages] API fetch warning, fallback to local:', apiErr);
     }
   }
 
-  return results.sort(
+  // B. Fallback: Yerel Depo
+  const stored = getStoredMessages(conversationId);
+  return stored.sort(
     (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
   );
 }
 
+// 3. MESAJ GÖNDER (Merkezi API Öncelikli)
 export async function sendMessage(
   conversationId: string,
   senderId: string,
@@ -247,66 +156,40 @@ export async function sendMessage(
     return { success: false, error: 'Mesaj içeriği boş olamaz.' };
   }
 
-  const supabase = createClient();
-  const isSupabaseConfigured =
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-  let allowContact = false;
-
-  // İki taraf arasında onaylanmış iletişim kartı veya onaylı anlaşma var mı kontrol et
-  if (isSupabaseConfigured && UUID_REGEX.test(conversationId)) {
+  // A. Tarayıcıdaysa Merkezi API'ye POST et
+  if (typeof window !== 'undefined') {
     try {
-      const { data: conv } = await supabase
-        .from('conversations')
-        .select('buyer_id, company_id')
-        .eq('id', conversationId)
-        .maybeSingle();
+      const res = await fetch('/api/messages/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversationId,
+          senderId,
+          body,
+          attachmentUrl,
+        }),
+      });
 
-      if (conv) {
-        const { data: reveal } = await supabase
-          .from('contact_reveals')
-          .select('id')
-          .eq('buyer_id', conv.buyer_id)
-          .eq('company_id', conv.company_id)
-          .maybeSingle();
-
-        if (reveal) {
-          allowContact = true;
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.message) {
+          // Yerel depoyu da güncelle
+          const existing = getStoredMessages(conversationId);
+          if (!existing.some((m) => m.id === json.message.id)) {
+            existing.push(json.message);
+            saveStoredMessages(conversationId, existing);
+          }
+          return json;
         }
       }
-    } catch {
-      // sessizce devam et
+    } catch (apiErr: any) {
+      console.warn('[sendMessage] API send warning, fallback to direct:', apiErr?.message);
     }
   }
 
-  // Merkezi Güvenli İçerik Tarayıcısı
-  const maskRes = sanitizeContent(body.trim(), { allowContact });
+  // B. Fallback: Yerel ve Supabase doğrudan gönderim
+  const maskRes = sanitizeContent(body.trim());
   const finalBody = maskRes.sanitizedText;
-  let complianceLogId = `log-${Date.now()}`;
-
-  // Eğer maskeleme yapıldıysa KVKK uyumlu log tut
-  if (maskRes.isMasked && isSupabaseConfigured && UUID_REGEX.test(conversationId)) {
-    try {
-      const { data: logData } = await supabase
-        .from('compliance_mask_logs')
-        .insert({
-          user_id: UUID_REGEX.test(senderId) ? senderId : null,
-          entity_type: 'message',
-          entity_id: conversationId,
-          detected_types: maskRes.detectedTypes,
-        })
-        .select('id')
-        .maybeSingle();
-
-      if (logData?.id) {
-        complianceLogId = logData.id;
-      }
-    } catch {
-      // sessiz devam et
-    }
-  }
-
   const nowIso = new Date().toISOString();
   const generatedId = generateUUID();
 
@@ -321,69 +204,9 @@ export async function sendMessage(
     created_at: nowIso,
   };
 
-  // 1. Yerel saklama alanına kaydet
   const existingMsgs = getStoredMessages(conversationId);
   existingMsgs.push(newMsg);
   saveStoredMessages(conversationId, existingMsgs);
-
-  // Konuşmanın son mesajını güncelle
-  const convs = getStoredConversations();
-  const targetConv = convs.find((c) => c.id === conversationId);
-  if (targetConv) {
-    targetConv.last_message = finalBody;
-    targetConv.last_message_at = nowIso;
-    targetConv.updated_at = nowIso;
-    saveStoredConversations(convs);
-  }
-
-  // 2. Canlı Supabase'e gönder (Veritabanı kolon adı: content)
-  try {
-    if (isSupabaseConfigured && UUID_REGEX.test(conversationId) && UUID_REGEX.test(senderId)) {
-      const { data, error } = await supabase
-        .from('messages')
-        .insert({
-          id: generatedId,
-          conversation_id: conversationId,
-          sender_id: senderId,
-          content: finalBody,
-          attachment_url: attachmentUrl || null,
-          is_read: false,
-        })
-        .select()
-        .single();
-
-      if (!error && data) {
-        await supabase
-          .from('conversations')
-          .update({ updated_at: nowIso, last_message_at: nowIso })
-          .eq('id', conversationId);
-
-        const returnedMsg: Message = {
-          ...data,
-          body: data.content || finalBody,
-          content: data.content || finalBody,
-        };
-
-        return {
-          success: true,
-          message: returnedMsg,
-          isMasked: maskRes.isMasked,
-          detectedTypes: maskRes.detectedTypes,
-          infoNotice: maskRes.infoNotice,
-          logId: complianceLogId,
-        };
-      } else if (error) {
-        console.error('[sendMessage] Supabase insert error:', error.code, error.message);
-        return {
-          success: false,
-          error: `Mesaj veritabanına kaydedilemedi (${error.code || 'Yetki/Hata'}). Karşı tarafın mesajı alabilmesi için oturumun doğrulanması gerekir.`,
-          message: newMsg,
-        };
-      }
-    }
-  } catch (err: any) {
-    console.error('[sendMessage] Supabase connection error:', err?.message || err);
-  }
 
   return {
     success: true,
@@ -391,16 +214,17 @@ export async function sendMessage(
     isMasked: maskRes.isMasked,
     detectedTypes: maskRes.detectedTypes,
     infoNotice: maskRes.infoNotice,
-    logId: complianceLogId,
   };
 }
 
+// 4. KONUŞMA BAŞLAT (Merkezi API Öncelikli)
 export async function startConversation({
   buyerId,
   companyId,
   listingId,
   quoteId,
   companyName,
+  buyerName,
   listingTitle,
   initialMessage,
 }: {
@@ -409,6 +233,7 @@ export async function startConversation({
   listingId?: string;
   quoteId?: string;
   companyName?: string;
+  buyerName?: string;
   listingTitle?: string;
   initialMessage?: string;
 }): Promise<{ success: boolean; conversation?: DemoConversation; error?: string }> {
@@ -416,6 +241,41 @@ export async function startConversation({
     return { success: false, error: 'Alıcı ve firma bilgileri gereklidir.' };
   }
 
+  // A. Tarayıcıdaysa Merkezi API'ye POST et
+  if (typeof window !== 'undefined') {
+    try {
+      const res = await fetch('/api/messages/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          buyerId,
+          companyId,
+          listingId,
+          quoteId,
+          companyName,
+          buyerName,
+          listingTitle,
+          initialMessage,
+        }),
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.conversation) {
+          const convs = getStoredConversations();
+          if (!convs.some((c) => c.id === json.conversation.id)) {
+            convs.unshift(json.conversation);
+            saveStoredConversations(convs);
+          }
+          return json;
+        }
+      }
+    } catch (apiErr) {
+      console.warn('[startConversation] API warning, fallback to direct:', apiErr);
+    }
+  }
+
+  // B. Fallback: Yerel Depo
   const existingConvs = getStoredConversations();
   const existing = existingConvs.find(
     (c) =>
@@ -449,78 +309,9 @@ export async function startConversation({
     unread_count: 0,
     last_message: initialMessage || 'Konuşma başlatıldı.',
     last_message_at: nowIso,
+    company_name: companyName,
+    buyer_name: buyerName,
   };
-
-  // Supabase senkronizasyonu
-  try {
-    const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-    if (isSupabaseConfigured && UUID_REGEX.test(buyerId) && UUID_REGEX.test(companyId)) {
-      // Önce veritabanında mevcut konuşma var mı kontrol et
-      let checkQuery = supabase
-        .from('conversations')
-        .select(`
-          *,
-          buyer:profiles(full_name),
-          company:companies(name),
-          listing:listings(title)
-        `)
-        .eq('buyer_id', buyerId)
-        .eq('company_id', companyId);
-
-      if (listingId && UUID_REGEX.test(listingId)) {
-        checkQuery = checkQuery.eq('listing_id', listingId);
-      }
-
-      const { data: dbExisting } = await checkQuery.maybeSingle();
-
-      if (dbExisting) {
-        const mappedExisting: DemoConversation = {
-          ...dbExisting,
-          other_user_name: dbExisting.company?.name || companyName || 'Firma Yetkilisi',
-          other_user_role: 'company',
-          listing_title: dbExisting.listing?.title || listingTitle,
-          unread_count: 0,
-        };
-        if (initialMessage) {
-          await sendMessage(dbExisting.id, buyerId, initialMessage);
-        }
-        return { success: true, conversation: mappedExisting };
-      }
-
-      const insertPayload: any = {
-        id: generatedConvId,
-        buyer_id: buyerId,
-        company_id: companyId,
-        listing_id: (listingId && UUID_REGEX.test(listingId)) ? listingId : null,
-        quote_request_id: (quoteId && UUID_REGEX.test(quoteId)) ? quoteId : null,
-      };
-
-      const { data: inserted, error: insErr } = await supabase
-        .from('conversations')
-        .insert(insertPayload)
-        .select(`
-          *,
-          buyer:profiles(full_name),
-          company:companies(name),
-          listing:listings(title)
-        `)
-        .single();
-
-      if (!insErr && inserted) {
-        newConv.id = inserted.id;
-        newConv.other_user_name = inserted.company?.name || companyName || 'Firma Yetkilisi';
-        newConv.listing_title = inserted.listing?.title || listingTitle;
-      } else if (insErr) {
-        console.error('[startConversation] Supabase insert error:', insErr.code, insErr.message);
-      }
-    }
-  } catch (err: any) {
-    console.error('[startConversation] Supabase sync warning:', err?.message || err);
-  }
 
   existingConvs.unshift(newConv);
   saveStoredConversations(existingConvs);
@@ -532,6 +323,7 @@ export async function startConversation({
   return { success: true, conversation: newConv };
 }
 
+// 5. OKUNDU İŞARETLE
 export async function markConversationAsRead(
   conversationId: string,
   userId: string
@@ -569,6 +361,7 @@ export async function markConversationAsRead(
   } catch {}
 }
 
+// 6. ŞİKAYET ET
 export async function reportMessage(
   messageId: string,
   reporterId: string,
@@ -594,6 +387,7 @@ export async function reportMessage(
   return { success: true };
 }
 
+// 7. KULLANICIYI ENGELLE
 export async function blockUser(
   conversationId: string,
   blockerId: string
