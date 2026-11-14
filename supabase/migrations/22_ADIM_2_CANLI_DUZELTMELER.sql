@@ -499,6 +499,8 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- 7. LISTINGS RLS POLİTİKALARI
 DROP POLICY IF EXISTS "Active listings viewable by everyone" ON public.listings;
 DROP POLICY IF EXISTS "Company owners can delete their listings" ON public.listings;
+DROP POLICY IF EXISTS "Company owners can update their listings" ON public.listings;
+DROP POLICY IF EXISTS "Physical delete restricted to service role" ON public.listings;
 
 CREATE POLICY "Active listings viewable by everyone" ON public.listings
     FOR SELECT
