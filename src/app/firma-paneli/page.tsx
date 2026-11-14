@@ -92,13 +92,7 @@ export default function CompanyDashboardPage() {
         }
 
         if (comp) {
-          let verified = !!comp.is_verified || comp.verification_status === 'approved';
-          try {
-            const verifiedList = JSON.parse(localStorage.getItem('santiyego_verified_companies') || '[]');
-            if (verifiedList.includes(comp.id) || verifiedList.includes(user.id)) {
-              verified = true;
-            }
-          } catch {}
+          const verified = !!comp.is_verified || comp.verification_status === 'approved';
 
           const compData = {
             id: comp.id,
@@ -111,7 +105,7 @@ export default function CompanyDashboardPage() {
           };
           setCompany(compData);
 
-          // 2. Firmanın Gerçek İlanlarını Getir
+          // 2. Firmanın Gerçek İlanlarını Getir (Silinmişler hariç)
           const { data: dbListings } = await supabase
             .from('listings')
             .select(`
@@ -121,6 +115,7 @@ export default function CompanyDashboardPage() {
               district:districts(name)
             `)
             .eq('company_id', comp.id)
+            .neq('status', 'deleted')
             .order('created_at', { ascending: false });
 
           let combinedListings: Listing[] = [];
@@ -183,13 +178,13 @@ export default function CompanyDashboardPage() {
     }
   };
 
-  // İlanı Sil (Supabase Canlı Silme)
+  // İlanı Sil (Güvenli Soft Delete)
   const handleDeleteListing = async (id: string) => {
-    if (!confirm('Bu ilanı kalıcı olarak silmek istediğinize emin misiniz?')) return;
+    if (!confirm('Bu ilanı yayından kaldırmak ve silmek istediğinize emin misiniz?')) return;
 
     setListings((prev) => prev.filter((l) => l.id !== id));
     try {
-      await supabase.from('listings').delete().eq('id', id);
+      await supabase.from('listings').update({ status: 'deleted' }).eq('id', id);
     } catch (err) {
       console.error('İlan silinemedi:', err);
     }
@@ -438,16 +433,17 @@ export default function CompanyDashboardPage() {
                     {/* Photo & Title */}
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-3">
-                        <div className="relative w-14 h-11 rounded-lg overflow-hidden bg-slate-100 shrink-0">
-                          <Image
-                            src={
-                              l.images?.[0] ||
-                              'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=200&q=80'
-                            }
-                            alt={l.title}
-                            fill
-                            className="object-cover"
-                          />
+                        <div className="relative w-14 h-11 rounded-lg overflow-hidden bg-slate-100 shrink-0 flex items-center justify-center">
+                          {l.images?.[0] ? (
+                            <Image
+                              src={l.images[0]}
+                              alt={l.title}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <span className="text-[9px] font-bold text-slate-400 text-center px-1">Foto Yok</span>
+                          )}
                         </div>
                         <div className="max-w-xs">
                           <Link
@@ -490,20 +486,32 @@ export default function CompanyDashboardPage() {
                       </div>
                     </td>
 
-                    {/* Status Toggle */}
+                    {/* Status Toggle & Badge */}
                     <td className="py-3 px-4">
-                      <button
-                        onClick={() => handleToggleStatus(l.id, l.status)}
-                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold transition ${
-                          l.status === 'active'
-                            ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
-                            : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
-                        }`}
-                        title="Durumu Değiştir"
-                      >
-                        <Power className="w-3 h-3" />
-                        {l.status === 'active' ? 'Yayında' : 'Yayından Kaldırıldı'}
-                      </button>
+                      {l.status === 'pending_approval' ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-amber-100 text-amber-800">
+                          <Clock className="w-3 h-3" />
+                          Onay Bekliyor
+                        </span>
+                      ) : l.status === 'rejected' ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-rose-100 text-rose-800">
+                          <AlertCircle className="w-3 h-3" />
+                          Reddedildi
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => handleToggleStatus(l.id, l.status)}
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold transition ${
+                            l.status === 'active'
+                              ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+                              : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                          }`}
+                          title="Durumu Değiştir"
+                        >
+                          <Power className="w-3 h-3" />
+                          {l.status === 'active' ? 'Yayında' : 'Yayından Kaldırıldı'}
+                        </button>
+                      )}
                     </td>
 
                     {/* Actions */}

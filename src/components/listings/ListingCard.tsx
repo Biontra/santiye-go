@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-import { MapPin, Heart, ShieldCheck, CheckCircle2, Scale, Sparkles } from 'lucide-react';
+import { MapPin, Heart, ShieldCheck, CheckCircle2, Scale, Sparkles, CameraOff } from 'lucide-react';
 import { Listing } from '@/types/database';
 import { recordAdClick } from '@/lib/services/ad-service';
 
@@ -115,10 +115,8 @@ export default function ListingCard({
     return <div className="text-xs font-bold text-slate-500">Fiyat Sorunuz</div>;
   };
 
-  const imageSrc =
-    listing.images && listing.images.length > 0
-      ? listing.images[0]
-      : 'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80';
+  const hasImage = !!(listing.images && listing.images.length > 0 && listing.images[0]);
+  const imageSrc = hasImage ? listing.images![0] : '';
 
   const rawTitle = listing.title.replace(/^\[DEMO\]\s*/i, '');
   const displayTitle = listing.is_demo
@@ -138,14 +136,21 @@ export default function ListingCard({
     >
       <div>
         {/* Card Image Banner */}
-        <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">
-          <Image
-            src={imageSrc}
-            alt={displayTitle}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          />
+        <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden flex items-center justify-center">
+          {hasImage ? (
+            <Image
+              src={imageSrc}
+              alt={displayTitle}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center bg-slate-100 text-slate-400">
+              <CameraOff className="w-8 h-8 opacity-40 mb-1" />
+              <span className="text-[10px] font-bold text-slate-400">Fotoğraf Yok</span>
+            </div>
+          )}
 
           {/* Badges on Image */}
           <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5 z-10">

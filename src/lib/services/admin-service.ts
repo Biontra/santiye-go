@@ -198,30 +198,44 @@ export async function getAdminDashboardMetrics() {
     ]);
 
     return {
-      totalUsers: totalUsers ?? 6,
-      totalCompanies: totalCompanies ?? 5,
-      activeListings: activeListings ?? 1,
+      totalUsers: totalUsers ?? 0,
+      totalCompanies: totalCompanies ?? 0,
+      activeListings: activeListings ?? 0,
       monthBookings: 0,
       totalVolumeCents: 0,
       totalCommissionCents: 0,
-      pendingVerifications: pendingVerifications ?? 5,
+      pendingVerifications: pendingVerifications ?? 0,
       pendingReports: 0,
     };
   } catch (err) {
     console.warn('[admin-service] getAdminDashboardMetrics error:', err);
   }
 
+  const allowDemo = process.env.NEXT_PUBLIC_SHOW_DEMO_DATA === 'true';
+  if (allowDemo) {
+    return {
+      totalUsers: 6,
+      totalCompanies: DEMO_COMPANIES_FOR_VERIFICATION.length,
+      activeListings: DEMO_LISTINGS.filter((l) => l.status === 'active').length,
+      monthBookings: 28,
+      totalVolumeCents: 184500000,
+      totalCommissionCents: 14760000,
+      pendingVerifications: DEMO_COMPANIES_FOR_VERIFICATION.filter(
+        (c) => c.verification_status === 'pending'
+      ).length,
+      pendingReports: DEMO_REPORTS.filter((r) => r.status === 'pending').length,
+    };
+  }
+
   return {
-    totalUsers: 6,
-    totalCompanies: DEMO_COMPANIES_FOR_VERIFICATION.length,
-    activeListings: DEMO_LISTINGS.filter((l) => l.status === 'active').length,
-    monthBookings: 28,
-    totalVolumeCents: 184500000,
-    totalCommissionCents: 14760000,
-    pendingVerifications: DEMO_COMPANIES_FOR_VERIFICATION.filter(
-      (c) => c.verification_status === 'pending'
-    ).length,
-    pendingReports: DEMO_REPORTS.filter((r) => r.status === 'pending').length,
+    totalUsers: 0,
+    totalCompanies: 0,
+    activeListings: 0,
+    monthBookings: 0,
+    totalVolumeCents: 0,
+    totalCommissionCents: 0,
+    pendingVerifications: 0,
+    pendingReports: 0,
   };
 }
 
@@ -286,24 +300,13 @@ export async function getCompaniesForVerification(): Promise<Company[]> {
     console.warn('[admin-service] getCompanies error:', err);
   }
 
-  // 3. Yerel doğrulanmış firma hafızası ile durumları eşleştir
-  if (typeof window !== 'undefined') {
-    try {
-      const verifiedList = JSON.parse(localStorage.getItem('santiyego_verified_companies') || '[]');
-      resultList.forEach((c) => {
-        if (verifiedList.includes(c.id) || verifiedList.includes(c.user_id)) {
-          c.is_verified = true;
-          c.verification_status = 'approved';
-        }
-      });
-    } catch {}
-  }
-
+  // 3. Gerçek veritabanı sonuçlarını dön (Production'da sahte/demo veri sızıntısını engelle)
+  const allowDemo = process.env.NEXT_PUBLIC_SHOW_DEMO_DATA === 'true';
   if (resultList.length > 0) {
     return resultList;
   }
 
-  return DEMO_COMPANIES_FOR_VERIFICATION;
+  return allowDemo ? DEMO_COMPANIES_FOR_VERIFICATION : [];
 }
 
 export async function verifyCompany(
@@ -314,12 +317,17 @@ export async function verifyCompany(
 ): Promise<{ success: boolean }> {
   try {
     const supabase = createClient();
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser();
+    const effectiveAdminId = authUser?.id || adminId;
+
     const updatePayload: Record<string, any> = {
       is_verified: status === 'approved',
       verification_status: status,
       verification_notes: notes || null,
       verified_at: new Date().toISOString(),
-      verified_by: adminId,
+      verified_by: effectiveAdminId,
     };
     if (status === 'approved') {
       updatePayload.sub_merchant_status = 'approved';
@@ -350,7 +358,7 @@ export async function verifyCompany(
           verification_status: status,
           verification_notes: notes || null,
           verified_at: new Date().toISOString(),
-          verified_by: adminId,
+          verified_by: effectiveAdminId,
           is_demo: false,
         });
       }
@@ -359,42 +367,17 @@ export async function verifyCompany(
     if (error) {
       console.warn('[admin-service] verifyCompany update error:', error);
     }
+
+    await logAdminAction(
+      effectiveAdminId,
+      status === 'approved' ? 'VERIFY_COMPANY_APPROVED' : 'VERIFY_COMPANY_REJECTED',
+      'company',
+      companyId,
+      { status, notes }
+    );
   } catch (err) {
     console.warn('[admin-service] verifyCompany error:', err);
   }
-
-  // 3. Ortak yerel saklama hafızasını güncelle (Kullanıcı kendi tarayıcısında da anında onaylı görsün)
-  if (typeof window !== 'undefined') {
-    try {
-      const verifiedList: string[] = JSON.parse(
-        localStorage.getItem('santiyego_verified_companies') || '[]'
-      );
-      if (status === 'approved') {
-        if (!verifiedList.includes(companyId)) verifiedList.push(companyId);
-      } else {
-        const idx = verifiedList.indexOf(companyId);
-        if (idx !== -1) verifiedList.splice(idx, 1);
-      }
-      localStorage.setItem('santiyego_verified_companies', JSON.stringify(verifiedList));
-    } catch {}
-  }
-
-  const comp = DEMO_COMPANIES_FOR_VERIFICATION.find((c) => c.id === companyId);
-  if (comp) {
-    comp.verification_status = status;
-    comp.is_verified = status === 'approved';
-    comp.verification_notes = notes || null;
-    comp.verified_at = new Date().toISOString();
-    comp.verified_by = adminId;
-  }
-
-  await logAdminAction(
-    adminId,
-    status === 'approved' ? 'VERIFY_COMPANY_APPROVED' : 'VERIFY_COMPANY_REJECTED',
-    'company',
-    companyId,
-    { status, notes }
-  );
 
   return { success: true };
 }
@@ -432,8 +415,13 @@ export async function getAdminListings(statusFilter = 'all'): Promise<Listing[]>
     console.warn('[admin-service] getAdminListings error:', err);
   }
 
-  if (statusFilter === 'all') return DEMO_LISTINGS;
-  return DEMO_LISTINGS.filter((l) => l.status === statusFilter);
+  const allowDemo = process.env.NEXT_PUBLIC_SHOW_DEMO_DATA === 'true';
+  if (allowDemo) {
+    if (statusFilter === 'all') return DEMO_LISTINGS;
+    return DEMO_LISTINGS.filter((l) => l.status === statusFilter);
+  }
+
+  return [];
 }
 
 export async function moderateListing(
@@ -443,6 +431,12 @@ export async function moderateListing(
   adminId: string
 ): Promise<{ success: boolean }> {
   try {
+    const supabase = createClient();
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser();
+    const effectiveAdminId = authUser?.id || adminId;
+
     // 1. Önce sunucu moderasyon API'sini çağır
     if (typeof window !== 'undefined') {
       await fetch('/api/admin/listings/moderate', {
@@ -452,24 +446,17 @@ export async function moderateListing(
       }).catch(() => {});
     }
 
-    // 2. Doğrudan istemci supabase client güncellemesi
-    const supabase = createClient();
-    const newStatus = action === 'approve' ? 'active' : 'inactive';
+    // 2. Doğrudan supabase veritabanında durumu güncelle
+    const newStatus = action === 'approve' ? 'active' : action === 'reject' ? 'rejected' : 'inactive';
     await supabase.from('listings').update({ status: newStatus }).eq('id', listingId);
+
+    await logAdminAction(effectiveAdminId, `LISTING_${action.toUpperCase()}`, 'listing', listingId, {
+      action,
+      reason,
+    });
   } catch (err) {
     console.warn('[admin-service] moderateListing error:', err);
   }
-
-  const listing = DEMO_LISTINGS.find((l) => l.id === listingId);
-  if (listing) {
-    if (action === 'approve') listing.status = 'active';
-    else if (action === 'reject' || action === 'remove') listing.status = 'inactive';
-  }
-
-  await logAdminAction(adminId, `LISTING_${action.toUpperCase()}`, 'listing', listingId, {
-    action,
-    reason,
-  });
 
   return { success: true };
 }

@@ -45,7 +45,8 @@ export default function AdminCompaniesPage() {
   }, []);
 
   const handleApprove = async (companyId: string) => {
-    await verifyCompany(companyId, 'approved', '', 'admin-super-001');
+    const { data: { user } } = await supabase.auth.getUser();
+    await verifyCompany(companyId, 'approved', '', user?.id || 'admin-super-001');
     setActionSuccess('Firma başarıyla onaylandı ve Doğrulanmış Firma rozeti verildi!');
     setActiveCompany(null);
     loadData();
@@ -57,7 +58,8 @@ export default function AdminCompaniesPage() {
       alert('Lütfen red sebebini yazınız.');
       return;
     }
-    await verifyCompany(companyId, 'rejected', rejectReason, 'admin-super-001');
+    const { data: { user } } = await supabase.auth.getUser();
+    await verifyCompany(companyId, 'rejected', rejectReason, user?.id || 'admin-super-001');
     setActionSuccess('Firma başvurusu reddedildi ve firmaya bildirildi.');
     setActiveCompany(null);
     setRejectReason('');

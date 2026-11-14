@@ -98,6 +98,25 @@ function saveStoredUsers(users: LocalAuthUser[]) {
 }
 
 /**
+ * Tekil ve Güvenli Rol Çözümleyici (Single Source of Truth for Roles)
+ */
+export function resolveUserRole(
+  profile?: { role?: string } | null,
+  metadata?: { role?: string } | null
+): UserRole {
+  if (profile?.role === 'super_admin' || profile?.role === 'admin') {
+    return profile.role as UserRole;
+  }
+  if (profile?.role === 'company' || profile?.role === 'buyer') {
+    return profile.role as UserRole;
+  }
+  if (metadata?.role === 'company' || metadata?.role === 'buyer') {
+    return metadata.role as UserRole;
+  }
+  return 'buyer';
+}
+
+/**
  * 1. KULLANICI KAYDI (REGISTER)
  */
 export async function registerUser({
@@ -132,6 +151,17 @@ export async function registerUser({
   // A. Canlı Supabase Varsa
   if (isSupabaseConfigured) {
     try {
+      // 0. Kurumsal VKN Validasyonu (10 haneli VKN zorunlu; 11 haneli TCKN kabul edilmez)
+      if (role === 'company' && taxNumber) {
+        const cleanVkn = taxNumber.replace(/\D/g, '');
+        if (cleanVkn.length !== 10) {
+          return {
+            success: false,
+            error: 'Kurumsal üyelik için Vergi Kimlik Numarası (VKN) tam 10 haneli olmalıdır. Şahıs TCKN kabul edilmemektedir.',
+          };
+        }
+      }
+
       // 1. Telefon mükerrerlik kontrolü (Aynı telefonla ikinci hesap açılamaz)
       if (phone) {
         const { data: existingPhone } = await supabase
@@ -343,9 +373,9 @@ export async function loginUser(
           if (updatedProf) profile = updatedProf as Profile;
         }
 
-        const effectiveRole: UserRole = (profile?.role || metaRole) as UserRole;
+        const effectiveRole: UserRole = resolveUserRole(profile, meta);
 
-        // 2. Eğer rol 'company' ise ve companies tablosunda kayıt yoksa oluştur
+        // 2. Eğer rol kesin olarak 'company' ise (ve admin/buyer DEĞİLSE) ve companies tablosunda kayıt yoksa oluştur
         if (effectiveRole === 'company') {
           const { data: existingCompany } = await supabase
             .from('companies')

@@ -63,12 +63,17 @@ export async function updateSession(request: NextRequest) {
     request.cookies.getAll().some((c) => c.name.includes('sb-') && c.name.includes('-auth-token'));
 
   const isAuthenticated = !!user || hasAuthCookie;
+  const userRole = request.cookies.get('santiyego_role')?.value || user?.user_metadata?.role;
 
   // Protect admin routes
   if (path.startsWith('/admin')) {
     if (!isAuthenticated) {
       url.pathname = '/giris';
       url.searchParams.set('redirect', path);
+      return NextResponse.redirect(url);
+    }
+    if (userRole && userRole !== 'super_admin' && userRole !== 'admin') {
+      url.pathname = '/yetkisiz';
       return NextResponse.redirect(url);
     }
   }
@@ -80,13 +85,21 @@ export async function updateSession(request: NextRequest) {
       url.searchParams.set('redirect', path);
       return NextResponse.redirect(url);
     }
+    if (userRole === 'buyer') {
+      url.pathname = '/alici-paneli';
+      return NextResponse.redirect(url);
+    }
   }
 
   // Protect buyer / profile routes
-  if (path.startsWith('/alici-paneli') || path.startsWith('/favorilerim')) {
+  if (path.startsWith('/alici-paneli')) {
     if (!isAuthenticated) {
       url.pathname = '/giris';
       url.searchParams.set('redirect', path);
+      return NextResponse.redirect(url);
+    }
+    if (userRole === 'company') {
+      url.pathname = '/firma-paneli';
       return NextResponse.redirect(url);
     }
   }

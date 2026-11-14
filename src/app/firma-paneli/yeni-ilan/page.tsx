@@ -71,8 +71,8 @@ export default function NewListingPage() {
   const [isFuelIncluded, setIsFuelIncluded] = useState(false);
   const [isTransportIncluded, setIsTransportIncluded] = useState(false);
 
-  // Status
-  const [status, setStatus] = useState<ListingStatus>('active');
+  // Status (Varsayılan olarak moderasyon kuyruğuna 'pending_approval' ile gider)
+  const [status, setStatus] = useState<ListingStatus>('pending_approval');
 
   // Location
   const [cityId, setCityId] = useState('34'); // Default Istanbul

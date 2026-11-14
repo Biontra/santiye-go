@@ -12,7 +12,7 @@ export default function MobileNav() {
     { label: 'İlanlar', href: '/ilanlar', icon: Search },
     { label: 'İlan Ver', href: '/firma-paneli/yeni-ilan', icon: PlusCircle, isHighlight: true },
     { label: 'Favoriler', href: '/favorilerim', icon: Heart },
-    { label: 'Hesabım', href: '/giris', icon: User },
+    { label: 'Hesabım', href: '/hesabim', icon: User },
   ];
 
   return (

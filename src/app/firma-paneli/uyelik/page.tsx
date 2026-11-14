@@ -29,6 +29,7 @@ export default function CompanyMembershipPage() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
 
   const [upgrading, setUpgrading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState('');
 
   const supabase = createClient();
@@ -44,6 +45,7 @@ export default function CompanyMembershipPage() {
     setSubscription(s);
     setCurrentPlan(p);
     setLimits(l);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -62,8 +64,8 @@ export default function CompanyMembershipPage() {
           return;
         }
       }
-      // Demo veya bulunamayan durum
-      loadData('default-company');
+      // Firma kaydı yoksa veya oturum açılmamışsa
+      setLoading(false);
     }
     initUserCompany();
   }, []);

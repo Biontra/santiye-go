@@ -102,7 +102,7 @@ export async function searchListings(params: SearchParams): Promise<SearchResult
 
   // Supabase PostGIS RPC Integration
   try {
-    const supabase = createClient();
+    const supabase = createServerSafeClient();
     const isSupabaseConfigured =
       process.env.NEXT_PUBLIC_SUPABASE_URL &&
       !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
@@ -390,14 +390,28 @@ export async function getListingBySlugOrId(idOrSlug: string): Promise<Listing | 
       // Server-safe client kullan (createBrowserClient değil)
       const supabase = createServerSafeClient();
 
-      // UUID format kontrolü - Eğer UUID değilse id.eq sorgusu Postgres'te type error (22P02) verir
+      // 1. Önce güvenli ve PostGIS optimize RPC fonksiyonunu dene
+      try {
+        const { data: rpcListing, error: rpcErr } = await supabase.rpc(
+          'get_public_listing_by_id_or_slug',
+          { p_id_or_slug: decoded }
+        );
+        if (!rpcErr && rpcListing && rpcListing.id) {
+          console.log('[getListingBySlugOrId] RPC Result: FOUND:', rpcListing.title);
+          return rpcListing as Listing;
+        }
+      } catch (rpcErr) {
+        console.warn('[getListingBySlugOrId] RPC error, falling back to direct query:', rpcErr);
+      }
+
+      // 2. Doğrudan sorgu fallback
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decoded);
 
       let query = supabase
         .from('listings')
         .select(`
           *,
-          company:companies(name, logo_url, phone),
+          company:public_companies(name, logo_url),
           category:categories(name, slug),
           city:cities(name),
           district:districts(name)
@@ -450,10 +464,15 @@ export async function getListingBySlugOrId(idOrSlug: string): Promise<Listing | 
     console.error('[getListingBySlugOrId] Unexpected error:', err);
   }
 
-  // Veritabanında bulunamazsa veya hata olursa, DEMO_LISTINGS listesinde eşleşen ilanı dön (404 hatasını önlemek için)
-  const found = DEMO_LISTINGS.find(
-    (l) => l.id === decoded || l.slug === decoded || l.id === idOrSlug || l.slug === idOrSlug
-  );
-  console.log('[getListingBySlugOrId] Demo fallback:', found ? `FOUND: ${found.title}` : 'NOT FOUND anywhere → 404');
-  return found || null;
+  // Production'da sahte/mock veri sızıntısını engelle
+  const allowDemo = process.env.NEXT_PUBLIC_SHOW_DEMO_DATA === 'true';
+  if (allowDemo) {
+    const found = DEMO_LISTINGS.find(
+      (l) => l.id === decoded || l.slug === decoded || l.id === idOrSlug || l.slug === idOrSlug
+    );
+    console.log('[getListingBySlugOrId] Demo fallback:', found ? `FOUND: ${found.title}` : 'NOT FOUND anywhere → 404');
+    return found || null;
+  }
+
+  return null;
 }
