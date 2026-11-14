@@ -76,6 +76,8 @@ CREATE POLICY "companies_owner_or_admin_select" ON public.companies
 -- Güvenlik Notu: security_invoker = false ve postgres sahibi ile çalışır.
 -- Yalnızca güvenli alanlar (ad, logo, il, ilçe, doğrulandı mı) sunulur.
 -- Telefon, vergi no, bakiye, evrak URL'leri ASLA dışarı sızamaz.
+DROP VIEW IF EXISTS public.public_companies CASCADE;
+
 CREATE OR REPLACE VIEW public.public_companies
 WITH (security_invoker = false)
 AS

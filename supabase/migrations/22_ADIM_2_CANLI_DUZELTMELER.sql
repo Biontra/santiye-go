@@ -50,6 +50,8 @@ CREATE POLICY "companies_owner_or_admin_select" ON public.companies
         OR auth.role() = 'service_role'
     );
 
+DROP VIEW IF EXISTS public.public_companies CASCADE;
+
 CREATE OR REPLACE VIEW public.public_companies
 WITH (security_invoker = false)
 AS
