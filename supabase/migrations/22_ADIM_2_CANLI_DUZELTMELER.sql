@@ -59,7 +59,6 @@ SELECT
     c.id,
     c.user_id,
     c.name,
-    c.slug,
     c.logo_url,
     c.city_id,
     c.district_id,
