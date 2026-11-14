@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   MessageSquare,
   Search,
@@ -27,6 +27,7 @@ import {
   getConversations,
   getMessages,
   sendMessage,
+  startConversation,
   markConversationAsRead,
   reportMessage,
   blockUser,
@@ -45,6 +46,8 @@ import { getActiveProfile } from '@/lib/services/auth-service';
 
 export default function MessagesClient() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [conversations, setConversations] = useState<DemoConversation[]>([]);
   const [selectedConvId, setSelectedConvId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -52,6 +55,9 @@ export default function MessagesClient() {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
+
+  // Platform Güvenlik & Harici Ödeme Uyarısı Modalı (2. Sorun)
+  const [showPaymentWarningModal, setShowPaymentWarningModal] = useState(false);
 
   // Controlled Reveal State
   const [revealedDetails, setRevealedDetails] = useState<RevealedContactDetails | null>(null);
@@ -77,6 +83,23 @@ export default function MessagesClient() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  // Güvenlik uyarısı modal durumunu kontrol et
+  useEffect(() => {
+    try {
+      const accepted = localStorage.getItem('santiyego_payment_warning_accepted');
+      if (!accepted) {
+        setShowPaymentWarningModal(true);
+      }
+    } catch {}
+  }, []);
+
+  const handleAcceptPaymentWarning = () => {
+    try {
+      localStorage.setItem('santiyego_payment_warning_accepted', 'true');
+    } catch {}
+    setShowPaymentWarningModal(false);
+  };
 
   // Authenticate user: Giriş yapmamış kullanıcıyı koru ve yönlendir
   useEffect(() => {
@@ -110,22 +133,56 @@ export default function MessagesClient() {
     initUser();
   }, [router]);
 
-  const loadData = async () => {
+  const loadData = async (targetCompanyId?: string | null, targetListingId?: string | null) => {
     if (!currentUserId) return;
     setLoading(true);
-    const convs = await getConversations(currentUserId);
-    setConversations(convs);
-    if (convs.length > 0 && !selectedConvId) {
-      setSelectedConvId(convs[0].id);
+
+    try {
+      let convs = await getConversations(currentUserId);
+
+      // Eğer URL'den companyId ve/veya listingId ile gelinmişse otomatik konuşma oluştur veya seç
+      if (targetCompanyId) {
+        const matched = convs.find(
+          (c) =>
+            (c.company_id === targetCompanyId || c.buyer_id === targetCompanyId) &&
+            (!targetListingId || c.listing_id === targetListingId)
+        );
+
+        if (matched) {
+          setSelectedConvId(matched.id);
+        } else {
+          // Yeni konuşma başlat
+          const initRes = await startConversation({
+            buyerId: currentUserId,
+            companyId: targetCompanyId,
+            listingId: targetListingId || undefined,
+            listingTitle: targetListingId ? 'İlgili İlan Görüşmesi' : undefined,
+          });
+
+          if (initRes.success && initRes.conversation) {
+            convs = [initRes.conversation, ...convs];
+            setSelectedConvId(initRes.conversation.id);
+          }
+        }
+      } else if (convs.length > 0 && !selectedConvId) {
+        setSelectedConvId(convs[0].id);
+      }
+
+      setConversations(convs);
+    } catch (err) {
+      console.error('[MessagesClient] loadData error:', err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
     if (currentUserId) {
-      loadData();
+      const companyId = searchParams.get('companyId');
+      const listingId = searchParams.get('listingId');
+      loadData(companyId, listingId);
     }
-  }, [currentUserId]);
+  }, [currentUserId, searchParams]);
 
   const activeConv = conversations.find((c) => c.id === selectedConvId);
 
@@ -153,6 +210,25 @@ export default function MessagesClient() {
     }
   }, [selectedConvId, activeConv, currentUserId]);
 
+  // Canlı polling: 4 saniyede bir yeni mesajları arka planda senkronize et
+  useEffect(() => {
+    if (!selectedConvId) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const updatedMsgs = await getMessages(selectedConvId);
+        setMessages((prev) => {
+          if (updatedMsgs.length !== prev.length) {
+            return updatedMsgs;
+          }
+          return prev;
+        });
+      } catch {}
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [selectedConvId]);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -161,17 +237,33 @@ export default function MessagesClient() {
     e.preventDefault();
     if ((!inputText.trim() && !attachmentPreview) || !selectedConvId || !currentUserId) return;
 
+    const currentText = inputText;
+    const currentAttach = attachmentPreview;
+    setInputText('');
+    setAttachmentPreview(null);
+
     const res = await sendMessage(
       selectedConvId,
       currentUserId,
-      inputText,
-      attachmentPreview
+      currentText,
+      currentAttach
     );
 
     if (res.success && res.message) {
       setMessages((prev) => [...prev, res.message!]);
-      setInputText('');
-      setAttachmentPreview(null);
+
+      // Sol listedeki son mesajı güncelle
+      setConversations((prev) =>
+        prev.map((c) =>
+          c.id === selectedConvId
+            ? {
+                ...c,
+                last_message: res.message!.body || res.message!.content,
+                last_message_at: res.message!.created_at,
+              }
+            : c
+        )
+      );
 
       // If message contained unapproved contact details and was masked
       if (res.isMasked) {
@@ -181,6 +273,9 @@ export default function MessagesClient() {
         );
         setTimeout(() => setActionNotice(''), 5000);
       }
+    } else {
+      setActionNotice(res.error || 'Mesaj gönderilemedi. Lütfen tekrar deneyin.');
+      setTimeout(() => setActionNotice(''), 4000);
     }
   };
 
@@ -300,6 +395,25 @@ export default function MessagesClient() {
           </div>
         )}
 
+        {/* Daimi Güvenlik ve Ödeme Uyarı Şeridi */}
+        <div className="mb-3 p-3 bg-white border border-amber-300 rounded-xl shadow-sm flex items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5 text-amber-900">
+            <div className="p-1.5 bg-amber-100 rounded-lg text-amber-700 shrink-0">
+              <ShieldAlert className="w-4 h-4" />
+            </div>
+            <div className="text-[11px] leading-tight font-medium">
+              <strong className="font-bold text-navy-900">Şantiye GO Güvence Sistemi:</strong> Komisyon kaçağını önlemek ve dolandırıcılık mağduriyeti yaşamamak için tüm ödemeler platform üzerinden Havuz (Escrow) sistemiyle yapılmalıdır. Dışarıdan veya elden ödeme yapmayınız.
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowPaymentWarningModal(true)}
+            className="text-[11px] text-orange-600 hover:text-orange-700 font-bold underline shrink-0 whitespace-nowrap"
+          >
+            Detayları Gör
+          </button>
+        </div>
+
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden h-[750px] flex">
           {/* Left Column: Conversation List */}
           <div
@@ -335,9 +449,9 @@ export default function MessagesClient() {
             {/* Conversation List */}
             <div className="overflow-y-auto flex-1 divide-y divide-slate-100">
               {loading ? (
-                <div className="p-8 text-center text-xs text-slate-400">Yükleniyor...</div>
+                <div className="p-8 text-center text-xs text-slate-400">Konuşmalar yükleniyor...</div>
               ) : filteredConversations.length === 0 ? (
-                <div className="p-8 text-center text-xs text-slate-400">Konuşma bulunamadı.</div>
+                <div className="p-8 text-center text-xs text-slate-400">Henüz bir konuşma bulunmuyor.</div>
               ) : (
                 filteredConversations.map((conv) => {
                   const isSelected = conv.id === selectedConvId;
@@ -484,7 +598,8 @@ export default function MessagesClient() {
                   ) : (
                     messages.map((m) => {
                       const isMe = m.sender_id === currentUserId;
-                      const isMaskedMessage = (m.body || '').includes('[iletişim bilgisi gizlendi]');
+                      const msgText = m.body || m.content || '';
+                      const isMaskedMessage = msgText.includes('[iletişim bilgisi gizlendi]');
 
                       return (
                         <div
@@ -508,7 +623,7 @@ export default function MessagesClient() {
                               </div>
                             )}
 
-                            <p className="leading-relaxed whitespace-pre-wrap">{m.body}</p>
+                            <p className="leading-relaxed whitespace-pre-wrap">{msgText}</p>
 
                             {/* Masked Content Notice & False Positive Dispute Button */}
                             {isMaskedMessage && (
@@ -640,6 +755,62 @@ export default function MessagesClient() {
             )}
           </div>
         </div>
+
+        {/* 2. SORUN ÇÖZÜMÜ: Platform Güvenliği ve Harici Ödeme Önleme Uyarısı Modalı */}
+        {showPaymentWarningModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/80 backdrop-blur-sm animate-fade-in">
+            <div className="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-slate-200 space-y-5">
+              <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+                <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                  <ShieldAlert className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-black text-navy-900 text-base sm:text-lg leading-tight">
+                    Güvenli Mesajlaşma & Ödeme Uyarısı
+                  </h3>
+                  <p className="text-xs text-amber-700 font-semibold mt-0.5">
+                    Platform Dışı Ödeme ve Komisyon Kaçağı Önleme Kuralı
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3 text-xs sm:text-[13px] text-slate-600 leading-relaxed">
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-900 font-semibold space-y-1">
+                  <div className="flex items-center gap-1.5 font-black text-red-800">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+                    <span>Dışarıdan Ödeme Kesinlikle Yasaktır!</span>
+                  </div>
+                  <p className="text-xs font-normal">
+                    Şahsi IBAN&apos;a havale/EFT, elden nakit ödeme veya harici kaparo gönderilmesi platform kurallarımıza aykırıdır.
+                  </p>
+                </div>
+
+                <ul className="space-y-2 list-disc list-inside text-slate-700">
+                  <li>
+                    <strong className="text-navy-900">Havuz Güvencesi:</strong> Ödemeleriniz Şantiye GO Havuz (Escrow) hesabında tutulur, iş veya teslimat onaylanana kadar firmaya aktarılmaz.
+                  </li>
+                  <li>
+                    <strong className="text-navy-900">Mağduriyet Sorumluluğu:</strong> Platform dışından yapılan ödemeler güvence kapsamı dışındadır ve doğabilecek dolandırıcılık veya anlaşmazlıklardan Şantiye GO sorumlu tutulamaz.
+                  </li>
+                  <li>
+                    <strong className="text-navy-900">Hesap Kapatma Cezası:</strong> Komisyon kaçağı ve sistem dışı işlem teklifinde bulunan kullanıcı ve firmaların hesapları süresiz askıya alınır.
+                  </li>
+                </ul>
+              </div>
+
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={handleAcceptPaymentWarning}
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs sm:text-sm tracking-wide transition shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2"
+                >
+                  <Check className="w-4 h-4" />
+                  <span>KURALLARI OKUDUM VE KABUL EDİYORUM</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Report Modal */}
         {reportModalOpen && (

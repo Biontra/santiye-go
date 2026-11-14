@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import MessagesClient from './MessagesClient';
@@ -17,5 +18,15 @@ export default async function MessagesPage() {
     redirect('/giris?redirect=/mesajlar');
   }
 
-  return <MessagesClient />;
+  return (
+    <Suspense
+      fallback={
+        <div className="bg-slate-100 min-h-[calc(100vh-80px)] flex items-center justify-center p-8 text-xs text-slate-400">
+          Mesajlaşma arayüzü yükleniyor...
+        </div>
+      }
+    >
+      <MessagesClient />
+    </Suspense>
+  );
 }

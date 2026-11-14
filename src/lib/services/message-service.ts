@@ -9,6 +9,8 @@ export interface DemoConversation extends Conversation {
   unread_count: number;
   last_message?: string;
   last_message_at?: string;
+  company_name?: string;
+  buyer_name?: string;
 }
 
 const STORAGE_CONVERSATIONS_KEY = 'santiyego_conversations_store';
@@ -21,6 +23,19 @@ export const DEMO_MESSAGES: Record<string, Message[]> = {};
 // Node.js test ve SSR ortamı için in-memory defter
 const memConversations: DemoConversation[] = [];
 const memMessages: Record<string, Message[]> = {};
+
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function generateUUID(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
 
 function getStoredConversations(): DemoConversation[] {
   if (typeof window === 'undefined') return [...memConversations];
@@ -75,30 +90,65 @@ export async function getConversations(userId: string): Promise<DemoConversation
       !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
 
     if (isSupabaseConfigured) {
-      const { data, error } = await supabase
+      // 1. Kullanıcının sahip olduğu şirket varsa ID'sini öğrenelim
+      let companyId: string | null = null;
+      if (UUID_REGEX.test(userId)) {
+        const { data: comp } = await supabase
+          .from('companies')
+          .select('id')
+          .eq('user_id', userId)
+          .maybeSingle();
+        if (comp?.id) {
+          companyId = comp.id;
+        }
+      }
+
+      // 2. Konuşmaları çek
+      let query = supabase
         .from('conversations')
         .select(`
           *,
+          buyer:profiles(full_name),
+          company:companies(name),
           listing:listings(title),
-          messages:messages(body, created_at, is_read, sender_id)
-        `)
-        .or(`buyer_id.eq.${userId},company_id.eq.${userId}`)
-        .order('updated_at', { ascending: false });
+          messages:messages(content, created_at, is_read, sender_id)
+        `);
+
+      if (companyId) {
+        query = query.or(`buyer_id.eq.${userId},company_id.eq.${companyId}`);
+      } else if (UUID_REGEX.test(userId)) {
+        query = query.or(`buyer_id.eq.${userId},company_id.eq.${userId}`);
+      }
+
+      const { data, error } = await query.order('updated_at', { ascending: false });
 
       if (!error && data && data.length > 0) {
-        results = data.map((d: any) => ({
-          ...d,
-          other_user_name: d.buyer_id === userId ? (d.company_name || 'Firma') : (d.buyer_name || 'Alıcı'),
-          other_user_role: d.buyer_id === userId ? 'company' : 'buyer',
-          listing_title: d.listing?.title,
-          unread_count: (d.messages || []).filter((m: any) => !m.is_read && m.sender_id !== userId).length,
-          last_message: d.messages?.[d.messages.length - 1]?.body,
-          last_message_at: d.messages?.[d.messages.length - 1]?.created_at,
-        }));
+        results = data.map((d: any) => {
+          const isUserBuyer = d.buyer_id === userId;
+          const otherName = isUserBuyer
+            ? d.company?.name || d.company_name || 'Firma Yetkilisi'
+            : d.buyer?.full_name || d.buyer_name || 'Alıcı Müşteri';
+
+          const msgs = d.messages || [];
+          const sortedMsgs = [...msgs].sort(
+            (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          );
+          const lastMsg = sortedMsgs[sortedMsgs.length - 1];
+
+          return {
+            ...d,
+            other_user_name: otherName,
+            other_user_role: isUserBuyer ? 'company' : 'buyer',
+            listing_title: d.listing?.title || d.listing_title,
+            unread_count: msgs.filter((m: any) => !m.is_read && m.sender_id !== userId).length,
+            last_message: lastMsg?.content || lastMsg?.body,
+            last_message_at: lastMsg?.created_at || d.updated_at,
+          };
+        });
       }
     }
-  } catch {
-    // fallback
+  } catch (err) {
+    console.warn('[getConversations] Supabase fetch error, fallback to local store:', err);
   }
 
   // Yerel saklama alanındaki konuşmalar ile birleştir (kullanıcının kendi konuşmaları)
@@ -128,7 +178,7 @@ export async function getMessages(conversationId: string): Promise<Message[]> {
       process.env.NEXT_PUBLIC_SUPABASE_URL &&
       !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
 
-    if (isSupabaseConfigured) {
+    if (isSupabaseConfigured && UUID_REGEX.test(conversationId)) {
       const { data, error } = await supabase
         .from('messages')
         .select('*')
@@ -136,18 +186,26 @@ export async function getMessages(conversationId: string): Promise<Message[]> {
         .order('created_at', { ascending: true });
 
       if (!error && data && data.length > 0) {
-        results = data as Message[];
+        results = data.map((d: any) => ({
+          ...d,
+          body: d.content || d.body,
+          content: d.content || d.body,
+        })) as Message[];
       }
     }
-  } catch {
-    // fallback
+  } catch (err) {
+    console.warn('[getMessages] Supabase error:', err);
   }
 
-  // Yerel mesajlar ile birleştir
+  // Yerel mesajlar ile birleştir (duplicate önleyerek)
   const stored = getStoredMessages(conversationId);
   for (const s of stored) {
     if (!results.some((r) => r.id === s.id)) {
-      results.push(s);
+      results.push({
+        ...s,
+        body: s.content || s.body,
+        content: s.content || s.body,
+      });
     }
   }
 
@@ -182,7 +240,7 @@ export async function sendMessage(
   let allowContact = false;
 
   // İki taraf arasında onaylanmış iletişim kartı veya onaylı anlaşma var mı kontrol et
-  if (isSupabaseConfigured) {
+  if (isSupabaseConfigured && UUID_REGEX.test(conversationId)) {
     try {
       const { data: conv } = await supabase
         .from('conversations')
@@ -213,12 +271,12 @@ export async function sendMessage(
   let complianceLogId = `log-${Date.now()}`;
 
   // Eğer maskeleme yapıldıysa KVKK uyumlu log tut
-  if (maskRes.isMasked && isSupabaseConfigured) {
+  if (maskRes.isMasked && isSupabaseConfigured && UUID_REGEX.test(conversationId)) {
     try {
       const { data: logData } = await supabase
         .from('compliance_mask_logs')
         .insert({
-          user_id: senderId.includes('demo') ? null : senderId,
+          user_id: UUID_REGEX.test(senderId) ? senderId : null,
           entity_type: 'message',
           entity_id: conversationId,
           detected_types: maskRes.detectedTypes,
@@ -235,11 +293,14 @@ export async function sendMessage(
   }
 
   const nowIso = new Date().toISOString();
+  const generatedId = generateUUID();
+
   const newMsg: Message = {
-    id: `msg-${Date.now()}`,
+    id: generatedId,
     conversation_id: conversationId,
     sender_id: senderId,
     body: finalBody,
+    content: finalBody,
     attachment_url: attachmentUrl || null,
     is_read: false,
     created_at: nowIso,
@@ -260,28 +321,48 @@ export async function sendMessage(
     saveStoredConversations(convs);
   }
 
-  // 2. Canlı Supabase'e gönder
+  // 2. Canlı Supabase'e gönder (Veritabanı kolon adı: content)
   try {
-    if (isSupabaseConfigured) {
-      const { data, error } = await supabase.from('messages').insert(newMsg).select().single();
+    if (isSupabaseConfigured && UUID_REGEX.test(conversationId) && UUID_REGEX.test(senderId)) {
+      const { data, error } = await supabase
+        .from('messages')
+        .insert({
+          id: generatedId,
+          conversation_id: conversationId,
+          sender_id: senderId,
+          content: finalBody,
+          attachment_url: attachmentUrl || null,
+          is_read: false,
+        })
+        .select()
+        .single();
+
       if (!error && data) {
         await supabase
           .from('conversations')
-          .update({ updated_at: nowIso })
+          .update({ updated_at: nowIso, last_message_at: nowIso })
           .eq('id', conversationId);
+
+        const returnedMsg: Message = {
+          ...data,
+          body: data.content || finalBody,
+          content: data.content || finalBody,
+        };
 
         return {
           success: true,
-          message: data as Message,
+          message: returnedMsg,
           isMasked: maskRes.isMasked,
           detectedTypes: maskRes.detectedTypes,
           infoNotice: maskRes.infoNotice,
           logId: complianceLogId,
         };
+      } else if (error) {
+        console.warn('[sendMessage] Supabase insert warning:', error.message);
       }
     }
-  } catch {
-    // fallback
+  } catch (err) {
+    console.warn('[sendMessage] Supabase connection error:', err);
   }
 
   return {
@@ -311,6 +392,10 @@ export async function startConversation({
   listingTitle?: string;
   initialMessage?: string;
 }): Promise<{ success: boolean; conversation?: DemoConversation; error?: string }> {
+  if (!buyerId || !companyId) {
+    return { success: false, error: 'Alıcı ve firma bilgileri gereklidir.' };
+  }
+
   const existingConvs = getStoredConversations();
   const existing = existingConvs.find(
     (c) =>
@@ -327,8 +412,10 @@ export async function startConversation({
   }
 
   const nowIso = new Date().toISOString();
+  const generatedConvId = generateUUID();
+
   const newConv: DemoConversation = {
-    id: `conv-${Date.now()}`,
+    id: generatedConvId,
     buyer_id: buyerId,
     company_id: companyId,
     listing_id: listingId || null,
@@ -344,13 +431,6 @@ export async function startConversation({
     last_message_at: nowIso,
   };
 
-  existingConvs.unshift(newConv);
-  saveStoredConversations(existingConvs);
-
-  if (initialMessage) {
-    await sendMessage(newConv.id, buyerId, initialMessage);
-  }
-
   // Supabase senkronizasyonu
   try {
     const supabase = createClient();
@@ -358,16 +438,74 @@ export async function startConversation({
       process.env.NEXT_PUBLIC_SUPABASE_URL &&
       !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
 
-    if (isSupabaseConfigured) {
-      await supabase.from('conversations').insert({
-        id: newConv.id,
+    if (isSupabaseConfigured && UUID_REGEX.test(buyerId) && UUID_REGEX.test(companyId)) {
+      // Önce veritabanında mevcut konuşma var mı kontrol et
+      let checkQuery = supabase
+        .from('conversations')
+        .select(`
+          *,
+          buyer:profiles(full_name),
+          company:companies(name),
+          listing:listings(title)
+        `)
+        .eq('buyer_id', buyerId)
+        .eq('company_id', companyId);
+
+      if (listingId && UUID_REGEX.test(listingId)) {
+        checkQuery = checkQuery.eq('listing_id', listingId);
+      }
+
+      const { data: dbExisting } = await checkQuery.maybeSingle();
+
+      if (dbExisting) {
+        const mappedExisting: DemoConversation = {
+          ...dbExisting,
+          other_user_name: dbExisting.company?.name || companyName || 'Firma Yetkilisi',
+          other_user_role: 'company',
+          listing_title: dbExisting.listing?.title || listingTitle,
+          unread_count: 0,
+        };
+        if (initialMessage) {
+          await sendMessage(dbExisting.id, buyerId, initialMessage);
+        }
+        return { success: true, conversation: mappedExisting };
+      }
+
+      const insertPayload: any = {
+        id: generatedConvId,
         buyer_id: buyerId,
         company_id: companyId,
-        listing_id: listingId || null,
-        quote_id: quoteId || null,
-      });
+        listing_id: (listingId && UUID_REGEX.test(listingId)) ? listingId : null,
+        quote_request_id: (quoteId && UUID_REGEX.test(quoteId)) ? quoteId : null,
+      };
+
+      const { data: inserted, error: insErr } = await supabase
+        .from('conversations')
+        .insert(insertPayload)
+        .select(`
+          *,
+          buyer:profiles(full_name),
+          company:companies(name),
+          listing:listings(title)
+        `)
+        .single();
+
+      if (!insErr && inserted) {
+        newConv.id = inserted.id;
+        newConv.other_user_name = inserted.company?.name || companyName || 'Firma Yetkilisi';
+        newConv.listing_title = inserted.listing?.title || listingTitle;
+      }
     }
-  } catch {}
+  } catch (err) {
+    console.warn('[startConversation] Supabase sync warning:', err);
+  }
+
+  existingConvs.unshift(newConv);
+  saveStoredConversations(existingConvs);
+
+  if (initialMessage) {
+    await sendMessage(newConv.id, buyerId, initialMessage);
+  }
 
   return { success: true, conversation: newConv };
 }
@@ -399,10 +537,10 @@ export async function markConversationAsRead(
       process.env.NEXT_PUBLIC_SUPABASE_URL &&
       !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
 
-    if (isSupabaseConfigured) {
+    if (isSupabaseConfigured && UUID_REGEX.test(conversationId) && UUID_REGEX.test(userId)) {
       await supabase
         .from('messages')
-        .update({ is_read: true })
+        .update({ is_read: true, read_at: new Date().toISOString() })
         .eq('conversation_id', conversationId)
         .neq('sender_id', userId);
     }
@@ -422,7 +560,7 @@ export async function reportMessage(
 
     if (isSupabaseConfigured) {
       await supabase.from('compliance_reports').insert({
-        reporter_id: reporterId,
+        reporter_id: UUID_REGEX.test(reporterId) ? reporterId : null,
         entity_id: messageId,
         entity_type: 'message',
         reason,
@@ -451,7 +589,7 @@ export async function blockUser(
       process.env.NEXT_PUBLIC_SUPABASE_URL &&
       !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
 
-    if (isSupabaseConfigured) {
+    if (isSupabaseConfigured && UUID_REGEX.test(conversationId)) {
       await supabase
         .from('conversations')
         .update({ is_blocked: true })
