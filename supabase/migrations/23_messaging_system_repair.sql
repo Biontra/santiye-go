@@ -1040,3 +1040,9 @@ CREATE POLICY "chat_attachments_delete_participant" ON storage.objects
         bucket_id = 'chat-attachments'
         AND (owner = auth.uid() OR public.can_access_chat_attachment(name, auth.uid()))
     );
+
+-- ------------------------------------------------------------------------------
+-- 11. POSTGREST ŞEMA ÖNBELLEĞİNİ YENİLE (SCHEMA CACHE RELOAD)
+-- ------------------------------------------------------------------------------
+NOTIFY pgrst, 'reload schema';
+

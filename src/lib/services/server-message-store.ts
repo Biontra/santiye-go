@@ -34,42 +34,70 @@ export async function serverGetConversations(userId?: string): Promise<ServerCon
 
   const currentUserId = user.id;
 
-  // RLS sayesinde kullanıcı yalnızca tarafı olduğu konuşmaları okuyabilir
-  const { data: convRows, error: convError } = await supabase
+  // 1. Önce conversations tablosundaki konuşmaları ilişkisiz (düz select) olarak çek.
+  // PostgREST schema cache uyuşmazlıklarını ve yabancı anahtar kısıt hatalarını %100 önler.
+  let convRows: any[] = [];
+
+  const queryWithSeller = await supabase
     .from('conversations')
-    .select(`
-      id,
-      buyer_id,
-      seller_id,
-      company_id,
-      listing_id,
-      quote_request_id,
-      last_message_at,
-      created_at,
-      updated_at,
-      buyer:profiles!conversations_buyer_id_fkey(id, full_name, role),
-      seller:profiles!conversations_seller_id_fkey(id, full_name, role),
-      company:companies!conversations_company_id_fkey(id, name, logo_url, user_id),
-      listing:listings!conversations_listing_id_fkey(id, title)
-    `)
+    .select('id, buyer_id, seller_id, company_id, listing_id, quote_request_id, last_message_at, created_at, updated_at')
     .or(`buyer_id.eq.${currentUserId},seller_id.eq.${currentUserId}`)
     .order('last_message_at', { ascending: false });
 
-  if (convError) {
-    console.error('[serverGetConversations] Supabase query error:', convError);
-    throw new Error(`Konuşmalar yüklenirken veritabanı hatası oluştu: ${convError.message}`);
+  if (queryWithSeller.error) {
+    // Eğer seller_id henüz canlı DB'de eklenmemişse veya hata verirse yedek sorgu:
+    console.warn('[serverGetConversations] seller_id ile sorgu başarısız, temel kolonlarla deneniyor:', queryWithSeller.error.message);
+    const fallbackQuery = await supabase
+      .from('conversations')
+      .select('id, buyer_id, company_id, listing_id, quote_request_id, last_message_at, created_at, updated_at')
+      .eq('buyer_id', currentUserId)
+      .order('created_at', { ascending: false });
+
+    if (fallbackQuery.error) {
+      console.error('[serverGetConversations] Fallback query error:', fallbackQuery.error);
+      throw new Error(`Konuşmalar yüklenirken veritabanı hatası oluştu: ${fallbackQuery.error.message}`);
+    }
+    convRows = fallbackQuery.data || [];
+  } else {
+    convRows = queryWithSeller.data || [];
   }
 
   if (!convRows || convRows.length === 0) {
     return [];
   }
 
+  // 2. İlgili profilleri, firmaları ve ilanları toplu (batch in(...)) olarak çek
+  const userIds = Array.from(new Set(convRows.flatMap((c) => [c.buyer_id, c.seller_id]).filter(Boolean))) as string[];
+  const companyIds = Array.from(new Set(convRows.map((c) => c.company_id).filter(Boolean))) as string[];
+  const listingIds = Array.from(new Set(convRows.map((c) => c.listing_id).filter(Boolean))) as string[];
+
+  const [profilesRes, companiesRes, listingsRes] = await Promise.all([
+    userIds.length > 0
+      ? supabase.from('profiles').select('id, full_name, role').in('id', userIds)
+      : Promise.resolve({ data: [] }),
+    companyIds.length > 0
+      ? supabase.from('companies').select('id, name, logo_url, user_id').in('id', companyIds)
+      : Promise.resolve({ data: [] }),
+    listingIds.length > 0
+      ? supabase.from('listings').select('id, title').in('id', listingIds)
+      : Promise.resolve({ data: [] }),
+  ]);
+
+  const profilesMap = new Map<string, any>((profilesRes.data || []).map((p: any) => [p.id, p]));
+  const companiesMap = new Map<string, any>((companiesRes.data || []).map((co: any) => [co.id, co]));
+  const listingsMap = new Map<string, any>((listingsRes.data || []).map((l: any) => [l.id, l]));
+
   const enriched: ServerConversation[] = [];
 
-  for (const c of convRows as any[]) {
+  for (const c of convRows) {
     const isUserBuyer = c.buyer_id === currentUserId;
-    const otherUser = isUserBuyer ? c.seller : c.buyer;
-    const otherCompanyName = c.company?.name;
+    const buyerProfile = profilesMap.get(c.buyer_id);
+    const sellerProfile = c.seller_id ? profilesMap.get(c.seller_id) : null;
+    const company = c.company_id ? companiesMap.get(c.company_id) : null;
+    const listing = c.listing_id ? listingsMap.get(c.listing_id) : null;
+
+    const otherUser = isUserBuyer ? sellerProfile : buyerProfile;
+    const otherCompanyName = company?.name;
 
     // Son mesajı çek
     const { data: lastMsg } = await supabase
@@ -93,7 +121,7 @@ export async function serverGetConversations(userId?: string): Promise<ServerCon
       : otherUser?.full_name || 'Alıcı Müşteri';
 
     const otherRole = isUserBuyer ? 'company' : 'buyer';
-    const otherId = isUserBuyer ? (c.seller_id || c.company?.user_id) : c.buyer_id;
+    const otherId = isUserBuyer ? (c.seller_id || company?.user_id) : c.buyer_id;
 
     enriched.push({
       id: c.id,
@@ -108,8 +136,8 @@ export async function serverGetConversations(userId?: string): Promise<ServerCon
       other_user_role: otherRole,
       other_user_id: otherId,
       company_name: otherCompanyName,
-      buyer_name: c.buyer?.full_name,
-      listing_title: c.listing?.title,
+      buyer_name: buyerProfile?.full_name,
+      listing_title: listing?.title,
       unread_count: unreadCount || 0,
       last_message: lastMsg?.content || 'Konuşma başlatıldı.',
       last_message_at: lastMsg?.created_at || c.last_message_at || c.created_at,

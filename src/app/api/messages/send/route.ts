@@ -35,12 +35,7 @@ export async function POST(request: NextRequest) {
       const supabase = await createClient();
       const { data: convData } = await supabase
         .from('conversations')
-        .select(`
-          buyer_id,
-          seller_id,
-          buyer:profiles!conversations_buyer_id_fkey(id, full_name),
-          seller:profiles!conversations_seller_id_fkey(id, full_name)
-        `)
+        .select('buyer_id, seller_id, company_id')
         .eq('id', conversationId)
         .maybeSingle();
 
@@ -48,9 +43,6 @@ export async function POST(request: NextRequest) {
       if (convData && user) {
         const isBuyerSender = user.id === convData.buyer_id;
         const recipientUserId = isBuyerSender ? convData.seller_id : convData.buyer_id;
-        const recipientName = isBuyerSender
-          ? (convData.seller as any)?.full_name
-          : (convData.buyer as any)?.full_name;
 
         // Alıcının e-posta adresini profiles / auth tablosundan çek
         if (recipientUserId) {
@@ -59,6 +51,8 @@ export async function POST(request: NextRequest) {
             .select('id, full_name, is_email_verified')
             .eq('id', recipientUserId)
             .maybeSingle();
+
+          const recipientName = recProfile?.full_name || 'Kullanıcımız';
 
           // Eğer auth'tan e-posta varsa gönder
           const { data: authUser } = await supabase.auth.admin.getUserById(recipientUserId).catch(() => ({ data: { user: null } }));
