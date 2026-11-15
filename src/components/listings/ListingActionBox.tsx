@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   MessageSquare,
@@ -18,6 +18,7 @@ import { Listing } from '@/types/database';
 import QuoteRequestModal from '@/components/quotes/QuoteRequestModal';
 import BookingModal from '@/components/booking/BookingModal';
 import ReviewModal from '@/components/reviews/ReviewModal';
+import { createClient } from '@/lib/supabase/client';
 
 interface ListingActionBoxProps {
   listing: Listing;
@@ -31,6 +32,23 @@ export default function ListingActionBox({ listing }: ListingActionBoxProps) {
   const [reportReason, setReportReason] = useState('fotografta_iletisim');
   const [reportNotes, setReportNotes] = useState('');
   const [reportSuccess, setReportSuccess] = useState(false);
+  const [reportSubmitting, setReportSubmitting] = useState(false);
+  const [reportError, setReportError] = useState('');
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const supabase = createClient();
+      supabase.auth.getUser().then(({ data }) => {
+        if (data?.user) setCurrentUserId(data.user.id);
+      });
+    } catch {}
+  }, []);
+
+  const isOwner = !!(
+    currentUserId &&
+    ((listing.company as any)?.user_id === currentUserId || listing.company_id === currentUserId)
+  );
 
   const companyPhone = listing.company?.phone || '+905320000000';
   const whatsappNumber = (listing.company?.whatsapp || companyPhone).replace(/[^0-9]/g, '');
@@ -112,13 +130,20 @@ export default function ListingActionBox({ listing }: ListingActionBoxProps) {
 
         {/* Kontrollü İletişim & Güvenlik Koruma Kutusu (Prompt 9A) */}
         <div className="space-y-3 pt-2 border-t border-slate-100">
-          <Link
-            href={`/mesajlar?companyId=${listing.company_id || ''}&listingId=${listing.id}&listingTitle=${encodeURIComponent(listing.title)}&companyName=${encodeURIComponent(listing.company?.name || listing.company_name || 'Firma')}`}
-            className="w-full py-3 px-4 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-bold text-xs transition flex items-center justify-center gap-2 shadow-sm"
-          >
-            <MessageSquare className="w-4 h-4 text-orange-400" />
-            <span>Firmaya Mesaj Gönder</span>
-          </Link>
+          {isOwner ? (
+            <div className="w-full py-3 px-4 rounded-xl bg-slate-100 text-slate-500 font-bold text-xs flex items-center justify-center gap-2 border border-slate-200 cursor-not-allowed">
+              <Lock className="w-4 h-4 text-slate-400" />
+              <span>Bu İlan Size Ait (Kendi İlanınıza Mesaj Gönderilemez)</span>
+            </div>
+          ) : (
+            <Link
+              href={`/mesajlar?companyId=${listing.company_id || ''}&listingId=${listing.id}&listingTitle=${encodeURIComponent(listing.title)}&companyName=${encodeURIComponent(listing.company?.name || (listing as any).company_name || 'Firma')}`}
+              className="w-full py-3 px-4 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-bold text-xs transition flex items-center justify-center gap-2 shadow-sm"
+            >
+              <MessageSquare className="w-4 h-4 text-orange-400" />
+              <span>Firmaya Mesaj Gönder</span>
+            </Link>
+          )}
 
           <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-left space-y-1.5">
             <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
@@ -178,16 +203,46 @@ export default function ListingActionBox({ listing }: ListingActionBoxProps) {
               </div>
             ) : (
               <form
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                   e.preventDefault();
-                  setReportSuccess(true);
-                  setTimeout(() => {
-                    setReportSuccess(false);
-                    setReportModalOpen(false);
-                  }, 2000);
+                  setReportSubmitting(true);
+                  setReportError('');
+
+                  try {
+                    const res = await fetch('/api/messages/report', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        listingId: listing.id,
+                        reason: reportReason,
+                        details: reportNotes,
+                      }),
+                    });
+
+                    const json = await res.json().catch(() => ({}));
+                    if (res.ok && json.success) {
+                      setReportSuccess(true);
+                      setTimeout(() => {
+                        setReportSuccess(false);
+                        setReportModalOpen(false);
+                        setReportNotes('');
+                      }, 2500);
+                    } else {
+                      setReportError(json.error || 'Şikayet iletilemedi. Lütfen giriş yapınız.');
+                    }
+                  } catch (err) {
+                    setReportError('Bağlantı hatası oluştu.');
+                  } finally {
+                    setReportSubmitting(false);
+                  }
                 }}
                 className="space-y-4"
               >
+                {reportError && (
+                  <div className="p-2.5 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl font-medium">
+                    {reportError}
+                  </div>
+                )}
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
                     Şikayet Nedeni (Prompt 9A):

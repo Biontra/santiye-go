@@ -4,19 +4,22 @@ import { serverMarkAsRead } from '@/lib/services/server-message-store';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { conversationId, userId } = body;
+    const { conversationId } = body;
 
-    if (!conversationId || !userId) {
+    if (!conversationId) {
       return NextResponse.json(
-        { success: false, error: 'conversationId ve userId zorunludur' },
+        { success: false, error: 'conversationId zorunludur' },
         { status: 400 }
       );
     }
 
-    const success = await serverMarkAsRead(conversationId, userId);
+    const success = await serverMarkAsRead(conversationId);
     return NextResponse.json({ success });
   } catch (err: any) {
     console.error('[API messages/read] error:', err);
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: err.message || 'Okundu bilgisi güncellenemedi.' },
+      { status: 400 }
+    );
   }
 }

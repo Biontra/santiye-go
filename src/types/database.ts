@@ -12,7 +12,7 @@ export type PaymentStatus =
   | 'cancelled'
   | 'disputed';
 export type ListingType = 'rental' | 'sale' | 'service';
-export type ListingStatus = 'active' | 'inactive' | 'reserved' | 'maintenance' | 'draft';
+export type ListingStatus = 'active' | 'inactive' | 'reserved' | 'maintenance' | 'draft' | 'pending_approval' | 'rejected';
 
 export type QuoteRequestType = 'single_listing' | 'multi_vendor';
 export type QuoteRequestStatus = 'draft' | 'sent' | 'quotes_received' | 'accepted' | 'rejected' | 'expired';

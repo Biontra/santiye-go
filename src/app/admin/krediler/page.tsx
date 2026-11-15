@@ -543,7 +543,7 @@ export default function AdminCreditsPage() {
                 className="rounded text-orange-600 w-4 h-4"
               />
               <span className="font-bold text-slate-800">
-                Tek Bir Firmanın İlanına Doğrudan Gelen "Teklif İste" Talepleri Daima Ücretsiz Kalsın
+                Tek Bir Firmanın İlanına Doğrudan Gelen &quot;Teklif İste&quot; Talepleri Daima Ücretsiz Kalsın
               </span>
             </label>
           </div>

@@ -66,6 +66,21 @@ export default function Header() {
     checkAuth();
   }, []);
 
+  // Periyodik okunmamış mesaj ve bildirim sayacı senkronizasyonu (30 sn)
+  useEffect(() => {
+    if (!profile?.id) return;
+    const interval = setInterval(async () => {
+      try {
+        const convs = await getConversations(profile.id);
+        const totalUnread = convs.reduce((acc, c) => acc + (c.unread_count || 0), 0);
+        setUnreadMessagesCount(totalUnread);
+        const notifs = await getUserNotifications(profile.id);
+        setNotifications(notifs);
+      } catch {}
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [profile?.id]);
+
   const unreadNotifsCount = profile ? notifications.filter((n) => !n.is_read).length : 0;
 
   const handleNotifClick = () => {

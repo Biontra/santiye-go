@@ -55,6 +55,8 @@ export default function MessagesClient() {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
+  const [isSending, setIsSending] = useState(false);
+  const [realtimeStatus, setRealtimeStatus] = useState<'connected' | 'connecting' | 'disconnected'>('connecting');
 
   // Platform Güvenlik & Harici Ödeme Uyarısı Modalı (2. Sorun)
   const [showPaymentWarningModal, setShowPaymentWarningModal] = useState(false);
@@ -150,36 +152,31 @@ export default function MessagesClient() {
     try {
       let convs = await getConversations(currentUserId);
 
-      // Eğer URL'den firma veya alıcı hedefi ile gelinmişse otomatik konuşma oluştur veya seç
-      if (targetCompanyId || targetBuyerId) {
+      // Eğer URL'den firma, ilan veya alıcı hedefi ile gelinmişse otomatik konuşma bul veya oluştur
+      if (targetListingId || targetCompanyId || targetBuyerId) {
         const otherId = targetCompanyId || targetBuyerId;
         const matched = convs.find(
           (c) =>
-            (c.company_id === otherId || c.buyer_id === otherId) &&
-            (!targetListingId || c.listing_id === targetListingId)
+            (targetListingId && c.listing_id === targetListingId) ||
+            (otherId && (c.company_id === otherId || c.buyer_id === otherId || c.seller_id === otherId || c.other_user_id === otherId))
         );
 
         if (matched) {
           setSelectedConvId(matched.id);
         } else {
-          // Yeni konuşma başlat
-          const finalBuyerId = targetBuyerId ? targetBuyerId : currentUserId;
-          const finalCompanyId = targetCompanyId ? targetCompanyId : currentUserId;
-          const finalBuyerName = targetBuyerId ? (targetBuyerName || 'Alıcı Müşteri') : currentUserName;
-          const finalCompanyName = targetCompanyId ? (targetCompanyName || 'Firma Yetkilisi') : currentUserName;
-
+          // Yeni konuşma başlat veya veritabanından çek (sunucu RPC)
           const initRes = await startConversation({
-            buyerId: finalBuyerId,
-            companyId: finalCompanyId,
             listingId: targetListingId || undefined,
-            listingTitle: targetListingTitle || (targetListingId ? 'İlgili İlan Görüşmesi' : undefined),
-            companyName: finalCompanyName,
-            buyerName: finalBuyerName,
+            companyId: targetCompanyId || undefined,
+            listingTitle: targetListingTitle || undefined,
+            companyName: targetCompanyName || undefined,
           });
 
-          if (initRes.success && initRes.conversation) {
-            convs = [initRes.conversation, ...convs];
-            setSelectedConvId(initRes.conversation.id);
+          if (initRes.success && initRes.conversationId) {
+            convs = await getConversations(currentUserId);
+            setSelectedConvId(initRes.conversationId);
+          } else if (initRes.error) {
+            setActionNotice(initRes.error);
           }
         }
       } else if (convs.length > 0 && !selectedConvId) {
@@ -187,8 +184,9 @@ export default function MessagesClient() {
       }
 
       setConversations(convs);
-    } catch (err) {
+    } catch (err: any) {
       console.error('[MessagesClient] loadData error:', err);
+      setActionNotice(err?.message || 'Konuşmalar yüklenirken bir hata oluştu.');
     } finally {
       setLoading(false);
     }
@@ -232,14 +230,14 @@ export default function MessagesClient() {
     }
   }, [selectedConvId, activeConv, currentUserId]);
 
-  // Canlı polling ve Realtime: Yeni mesajları ve konuşmaları arka planda anlık senkronize et
+  // Canlı Realtime ve bağlantı durumu izleme
   useEffect(() => {
     if (!currentUserId) return;
 
     // 1. Supabase Realtime aboneliği
     const supabase = createClient();
     const channel = supabase
-      .channel('public:messages')
+      .channel(`user_messages_${currentUserId}`)
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
@@ -257,14 +255,27 @@ export default function MessagesClient() {
                 },
               ];
             });
+
+            // Gelen mesaj alıcıya aitse okundu işaretle
+            if (selectedConvId && newMsg.sender_id !== currentUserId) {
+              markConversationAsRead(selectedConvId, currentUserId);
+            }
           }
-          // Konuşma listesini de güncelle
-          getConversations(currentUserId).then((c) => setConversations(c));
+          // Konuşma listesini de anında güncelle
+          getConversations(currentUserId)
+            .then((c) => setConversations(c))
+            .catch(() => {});
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          setRealtimeStatus('connected');
+        } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          setRealtimeStatus('disconnected');
+        }
+      });
 
-    // 2. Canlı Polling: 3 saniyede bir mesajları, 6 saniyede bir konuşmaları yenile
+    // 2. Yedek Polling (Realtime bağlantısı gecikir veya düşerse çalışır)
     const msgInterval = setInterval(async () => {
       if (selectedConvId) {
         try {
@@ -283,14 +294,14 @@ export default function MessagesClient() {
           });
         } catch {}
       }
-    }, 3000);
+    }, 4000);
 
     const convInterval = setInterval(async () => {
       try {
         const updatedConvs = await getConversations(currentUserId);
         setConversations(updatedConvs);
       } catch {}
-    }, 6000);
+    }, 8000);
 
     return () => {
       supabase.removeChannel(channel);
@@ -305,50 +316,60 @@ export default function MessagesClient() {
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if ((!inputText.trim() && !attachmentPreview) || !selectedConvId || !currentUserId) return;
+    if (isSending || (!inputText.trim() && !attachmentPreview) || !selectedConvId || !currentUserId) return;
 
     const currentText = inputText;
     const currentAttach = attachmentPreview;
+    setIsSending(true);
     setInputText('');
     setAttachmentPreview(null);
 
-    const res = await sendMessage(
-      selectedConvId,
-      currentUserId,
-      currentText,
-      currentAttach
-    );
-
-    if (res.success && res.message) {
-      setMessages((prev) => [...prev, res.message!]);
-
-      // Sol listedeki son mesajı güncelle
-      setConversations((prev) =>
-        prev.map((c) =>
-          c.id === selectedConvId
-            ? {
-                ...c,
-                last_message: res.message!.body || res.message!.content,
-                last_message_at: res.message!.created_at,
-              }
-            : c
-        )
+    try {
+      const res = await sendMessage(
+        selectedConvId,
+        currentUserId,
+        currentText,
+        currentAttach
       );
 
-      // If message contained unapproved contact details and was masked
-      if (res.isMasked) {
-        setActionNotice(
-          res.infoNotice ||
-            'İletişim bilgisi tespit edildi ve maskelendi. Teklif onaylandıktan sonra bilgiler her iki tarafa otomatik açılacaktır.'
+      if (res.success && res.message) {
+        setMessages((prev) => [...prev, res.message!]);
+
+        // Sol listedeki son mesajı güncelle
+        setConversations((prev) =>
+          prev.map((c) =>
+            c.id === selectedConvId
+              ? {
+                  ...c,
+                  last_message: res.message!.body || res.message!.content,
+                  last_message_at: res.message!.created_at,
+                }
+              : c
+          )
         );
-        setTimeout(() => setActionNotice(''), 5000);
+
+        // If message contained unapproved contact details and was masked
+        if (res.isMasked) {
+          setActionNotice(
+            res.infoNotice ||
+              'İletişim bilgisi tespit edildi ve maskelendi. Teklif onaylandıktan sonra bilgiler her iki tarafa otomatik açılacaktır.'
+          );
+          setTimeout(() => setActionNotice(''), 6000);
+        }
+      } else {
+        // Hata durumunda mesaj metnini geri yükle ve kullanıcıyı net bilgilendir
+        setInputText(currentText);
+        setAttachmentPreview(currentAttach);
+        setActionNotice(res.error || 'Mesaj iletilemedi. Lütfen tekrar deneyiniz.');
+        setTimeout(() => setActionNotice(''), 6000);
       }
-    } else {
-      // Hata durumunda mesaj metnini geri yükle ve kullanıcıyı net bilgilendir
+    } catch (sendErr: any) {
       setInputText(currentText);
       setAttachmentPreview(currentAttach);
-      setActionNotice(res.error || 'Mesaj iletilemedi. Lütfen tekrar deneyiniz.');
+      setActionNotice(sendErr?.message || 'Mesaj iletilemedi. Ağ bağlantınızı kontrol ediniz.');
       setTimeout(() => setActionNotice(''), 6000);
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -398,26 +419,38 @@ export default function MessagesClient() {
   };
 
   const handleBlockUser = async () => {
-    if (!selectedConvId || !currentUserId) return;
-    if (confirm('Bu kullanıcıyı engellemek istediğinize emin misiniz?')) {
-      await blockUser(selectedConvId, currentUserId);
-      setConversations((prev) =>
-        prev.map((c) => (c.id === selectedConvId ? { ...c, is_blocked: true } : c))
-      );
-      setActionNotice('Kullanıcı engellendi.');
+    if (!activeConv || !currentUserId) return;
+    const targetUserId = activeConv.other_user_id || (activeConv.buyer_id === currentUserId ? activeConv.seller_id : activeConv.buyer_id);
+    if (!targetUserId) {
+      alert('Engellenecek kullanıcı kimliği tespit edilemedi.');
+      return;
+    }
+    if (confirm('Bu kullanıcıyı engellemek istediğinize emin misiniz? Karşılıklı mesajlaşma engellenecektir.')) {
+      const res = await blockUser(targetUserId);
+      if (res.success) {
+        setConversations((prev) =>
+          prev.map((c) => (c.id === selectedConvId ? { ...c, is_blocked: true } : c))
+        );
+        setActionNotice('Kullanıcı başarıyla engellendi.');
+      } else {
+        setActionNotice(res.error || 'Engelleme işlemi başarısız oldu.');
+      }
       setMenuOpen(false);
-      setTimeout(() => setActionNotice(''), 3000);
+      setTimeout(() => setActionNotice(''), 3500);
     }
   };
 
   const handleReportSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!targetMsgId || !currentUserId) return;
-    const fullReason = `${reportReason}: ${reportDetails || 'Açıklama belirtilmedi'}`;
-    await reportMessage(targetMsgId, currentUserId, fullReason);
+    const res = await reportMessage(targetMsgId, currentUserId, reportReason, reportDetails);
     setReportModalOpen(false);
     setReportDetails('');
-    setActionNotice('Şikayetiniz inceleme ekibimize başarıyla iletildi.');
+    if (res.success) {
+      setActionNotice('Şikayetiniz moderatör ekibimize iletildi.');
+    } else {
+      setActionNotice(res.error || 'Şikayet iletilemedi.');
+    }
     setTimeout(() => setActionNotice(''), 3500);
   };
 
@@ -625,9 +658,22 @@ export default function MessagesClient() {
                       <ArrowLeft className="w-5 h-5" />
                     </button>
                     <div>
-                      <h2 className="font-extrabold text-navy-900 text-sm sm:text-base leading-tight">
-                        {activeConv.other_user_name}
-                      </h2>
+                      <div className="flex items-center gap-2">
+                        <h2 className="font-extrabold text-navy-900 text-sm sm:text-base leading-tight">
+                          {activeConv.other_user_name}
+                        </h2>
+                        {realtimeStatus === 'connected' ? (
+                          <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-1.5 py-0.5 rounded-md">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            Canlı
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-[10px] text-amber-600 font-semibold bg-amber-50 px-1.5 py-0.5 rounded-md">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                            Yenileniyor
+                          </span>
+                        )}
+                      </div>
                       <div className="text-[11px] text-slate-500 flex items-center gap-2">
                         {activeConv.listing_title && (
                           <span className="font-semibold text-orange-600 line-clamp-1">
@@ -675,6 +721,26 @@ export default function MessagesClient() {
                     )}
                   </div>
                 </div>
+
+                {/* Realtime Disconnected Indicator */}
+                {realtimeStatus === 'disconnected' && (
+                  <div className="bg-amber-100/90 border-b border-amber-300 px-4 py-2 text-xs text-amber-900 flex items-center justify-between gap-3 font-semibold">
+                    <div className="flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 text-amber-700 shrink-0 animate-pulse" />
+                      <span>Canlı bağlantı koptu, yeniden bağlanılıyor... (Yedek yenileme devrede)</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (selectedConvId) getMessages(selectedConvId).then(setMessages);
+                        if (currentUserId) getConversations(currentUserId).then(setConversations);
+                      }}
+                      className="underline text-amber-950 hover:text-black font-bold"
+                    >
+                      Şimdi Yenile
+                    </button>
+                  </div>
+                )}
 
                 {/* Top Safety Banner / Revealed Contact Card */}
                 {activeConv.is_blocked ? (
@@ -863,11 +929,11 @@ export default function MessagesClient() {
 
                   <button
                     type="submit"
-                    disabled={activeConv.is_blocked || (!inputText.trim() && !attachmentPreview)}
+                    disabled={isSending || activeConv.is_blocked || (!inputText.trim() && !attachmentPreview)}
                     className="p-2.5 sm:px-5 sm:py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs sm:text-sm transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm"
                   >
                     <Send className="w-4 h-4" />
-                    <span className="hidden sm:inline">GÖNDER</span>
+                    <span className="hidden sm:inline">{isSending ? 'GÖNDERİLİYOR...' : 'GÖNDER'}</span>
                   </button>
                 </form>
               </>

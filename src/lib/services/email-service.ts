@@ -267,3 +267,35 @@ export async function sendEmailOtp(
     html,
   });
 }
+
+/**
+ * 5. YENİ MESAJ BİLDİRİM E-POSTASI (PROMPT 9A / AŞAMA 2 GİZLİLİK)
+ * İçinde iletişim bilgisi veya mesaj içeriği olmadan sadece 'Yeni mesajınız var' uyarısı.
+ */
+export async function sendMessageNotificationEmail(
+  to: string,
+  name?: string
+): Promise<EmailSendResult> {
+  const title = 'Yeni Bir Mesajınız Var';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://santiyego.com';
+  const body = `
+    <p>Merhaba <strong>${name || 'Kullanıcımız'}</strong>,</p>
+    <p>Şantiye GO üzerindeki görüşmenizle ilgili yeni bir mesaj aldınız.</p>
+    <p>Mesajınızı okumak ve yanıtlamak için lütfen Şantiye GO gelen kutunuza giriş yapınız.</p>
+    <p style="font-size: 12px; color: #64748b; margin-top: 16px;">
+      Güvenliğiniz için teklif veya rezervasyon karşılıklı onaylanana kadar harici iletişim bilgisi paylaşmayınız.
+    </p>
+  `;
+
+  const html = renderBaseTemplate(title, body, {
+    text: 'Gelen Kutusuna Git',
+    url: `${siteUrl}/mesajlar`,
+  });
+
+  return sendEmail({
+    to,
+    subject: 'Şantiye GO – Yeni Mesajınız Var',
+    html,
+  });
+}
+

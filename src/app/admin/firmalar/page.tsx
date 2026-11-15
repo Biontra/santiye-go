@@ -21,8 +21,10 @@ import {
   verifyCompany,
 } from '@/lib/services/admin-service';
 import { Company } from '@/types/database';
+import { createClient } from '@/lib/supabase/client';
 
 export default function AdminCompaniesPage() {
+  const supabase = createClient();
   const [companies, setCompanies] = useState<Company[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');

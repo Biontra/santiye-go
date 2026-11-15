@@ -104,11 +104,12 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
-  // Protect messages route
+  // Protect messages route (preserving full URL query parameters)
   if (path.startsWith('/mesajlar')) {
     if (!isAuthenticated) {
       url.pathname = '/giris';
-      url.searchParams.set('redirect', path);
+      const fullPath = request.nextUrl.pathname + request.nextUrl.search;
+      url.searchParams.set('redirect', fullPath);
       return NextResponse.redirect(url);
     }
   }

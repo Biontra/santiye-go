@@ -284,7 +284,7 @@ export default function BuyerBookingsPage() {
                         )}
 
                         <Link
-                          href={`/mesajlar?companyId=${b.company_id || b.listing?.company_id || ''}&listingId=${b.listing_id || ''}&listingTitle=${encodeURIComponent(b.listing?.title || 'Rezervasyon')}&companyName=${encodeURIComponent(b.company_name || b.listing?.company_name || 'Firma')}`}
+                          href={`/mesajlar?companyId=${b.company_id || b.listing?.company_id || ''}&listingId=${b.listing_id || ''}&listingTitle=${encodeURIComponent(b.listing?.title || 'Rezervasyon')}&companyName=${encodeURIComponent(b.company_name || (b.listing as any)?.company_name || 'Firma')}`}
                           className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 font-bold text-xs transition flex items-center gap-1"
                         >
                           <MessageSquare className="w-3.5 h-3.5" />
