@@ -129,16 +129,16 @@ export default function CompanyQuoteRequestsPage() {
     <div className="bg-slate-50 min-h-screen py-8 sm:py-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
         {/* Top Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-black uppercase">
+              <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-bold uppercase">
                 Firma Paneli
               </span>
               <span className="text-slate-400">•</span>
               <span className="text-xs text-slate-500 font-semibold">Tedarikçi Talepleri</span>
             </div>
-            <h1 className="text-2xl font-black text-navy-900 mt-1">
+            <h1 className="text-2xl font-bold text-navy-900 mt-1">
               Gelen Teklif Talepleri & İş Fırsatları
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
@@ -198,11 +198,11 @@ export default function CompanyQuoteRequestsPage() {
 
         {/* Requests List */}
         {loading ? (
-          <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 text-slate-400">
+          <div className="p-12 text-center bg-white rounded-xl border border-slate-200 text-slate-400">
             Talepler yükleniyor...
           </div>
         ) : filteredRequests.length === 0 ? (
-          <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 space-y-3">
+          <div className="p-12 text-center bg-white rounded-xl border border-slate-200 space-y-3">
             <FileText className="w-12 h-12 text-slate-300 mx-auto" />
             <h3 className="font-bold text-navy-900 text-base">Bu kategoride talep bulunamadı</h3>
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
@@ -218,13 +218,13 @@ export default function CompanyQuoteRequestsPage() {
               return (
                 <div
                   key={req.id}
-                  className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm hover:border-slate-300 transition space-y-4"
+                  className="bg-white rounded-xl border border-slate-200 p-5 sm:p-6 shadow-sm hover:border-slate-300 transition space-y-4"
                 >
                   {/* Top Bar of Request */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
                     <div className="flex items-center gap-2">
                       <span
-                        className={`px-2.5 py-0.5 rounded text-[11px] font-black uppercase ${
+                        className={`px-2.5 py-0.5 rounded text-[11px] font-bold uppercase ${
                           req.request_type === 'single_listing'
                             ? 'bg-blue-100 text-blue-800'
                             : 'bg-purple-100 text-purple-800'
@@ -263,7 +263,7 @@ export default function CompanyQuoteRequestsPage() {
                   {/* Body */}
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
                     <div className="lg:col-span-8 space-y-2">
-                      <h3 className="text-base sm:text-lg font-black text-navy-900 leading-snug">
+                      <h3 className="text-base sm:text-lg font-bold text-navy-900 leading-snug">
                         {req.title}
                       </h3>
                       <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed">
@@ -327,13 +327,13 @@ export default function CompanyQuoteRequestsPage() {
                     <div className="lg:col-span-4 flex flex-col justify-center gap-2.5 lg:border-l lg:border-slate-100 lg:pl-5">
                       {myQuote ? (
                         <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
-                          <div className="font-extrabold text-navy-900">
+                          <div className="font-semibold text-navy-900">
                             Verilen Teklif: {myQuote.price_total.toLocaleString('tr-TR')} ₺
                           </div>
                           <div className="text-[11px] text-slate-500">
                             {myQuote.notes || 'Açıklama belirtilmedi.'}
                           </div>
-                          <div className="text-[10px] text-emerald-600 font-bold">
+                          <div className="text-[11px] text-emerald-600 font-bold">
                             Durum: {myQuote.status === 'accepted' ? 'KABUL EDİLDİ' : 'Alıcı Değerlendiriyor'}
                           </div>
                         </div>
@@ -341,10 +341,10 @@ export default function CompanyQuoteRequestsPage() {
                         <button
                           type="button"
                           onClick={() => openQuoteModal(req)}
-                          className="w-full py-2.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md shadow-orange-500/20 transition flex items-center justify-center gap-2"
+                          className="w-full py-2.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2"
                         >
                           <Send className="w-4 h-4" />
-                          TEKLİF VER
+                          Teklif ver
                         </button>
                       )}
 
@@ -366,13 +366,13 @@ export default function CompanyQuoteRequestsPage() {
         {/* Quote Modal */}
         {activeRequest && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+            <div className="bg-white rounded-xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-lg border border-slate-200 overflow-hidden">
               <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
                 <div>
-                  <span className="text-[10px] font-bold uppercase text-orange-600 tracking-wider">
+                  <span className="text-[11px] font-bold text-orange-600">
                     Teklif Formu
                   </span>
-                  <h3 className="font-black text-navy-900 text-base line-clamp-1">
+                  <h3 className="font-bold text-navy-900 text-base line-clamp-1">
                     {activeRequest.title}
                   </h3>
                 </div>
@@ -389,7 +389,7 @@ export default function CompanyQuoteRequestsPage() {
                 {submitSuccess && (
                   <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl flex items-center gap-2">
                     <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-                    <span>Teklifiniz alıcıya başarıyla iletildi!</span>
+                    <span>Teklifiniz alıcıya iletildi.</span>
                   </div>
                 )}
 
@@ -489,7 +489,7 @@ export default function CompanyQuoteRequestsPage() {
                   <button
                     type="submit"
                     disabled={submitting || submitSuccess}
-                    className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md transition disabled:opacity-50"
+                    className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md transition disabled:opacity-50"
                   >
                     {submitting ? 'Gönderiliyor...' : 'Teklifi İlet'}
                   </button>

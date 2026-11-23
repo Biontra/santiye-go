@@ -58,15 +58,15 @@ export default function ListingActionBox({ listing }: ListingActionBoxProps) {
 
   return (
     <>
-      <div className="bg-white rounded-2xl border-2 border-orange-500/30 p-6 shadow-xl space-y-5">
+      <div className="bg-white rounded-xl border-2 border-orange-500/30 p-6 shadow-md space-y-5">
         {/* Pricing Info */}
         <div>
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+          <span className="text-xs font-bold text-slate-400">
             Fiyat Tarifesi
           </span>
           {listing.listing_type === 'sale' ? (
             <div className="mt-1">
-              <div className="text-3xl font-black text-navy-900 tracking-tight">
+              <div className="text-3xl font-bold text-navy-900 tracking-tight">
                 {listing.price_sale
                   ? `${Number(listing.price_sale).toLocaleString('tr-TR')} ₺`
                   : 'Teklif Alınız'}
@@ -80,7 +80,7 @@ export default function ListingActionBox({ listing }: ListingActionBoxProps) {
               {listing.price_daily && (
                 <div className="flex items-baseline justify-between py-1 border-b border-slate-100">
                   <span className="text-xs font-bold text-slate-600">Günlük Kiralama</span>
-                  <span className="text-2xl font-black text-orange-600">
+                  <span className="text-2xl font-bold text-orange-600">
                     {Number(listing.price_daily).toLocaleString('tr-TR')} ₺
                   </span>
                 </div>
@@ -111,20 +111,20 @@ export default function ListingActionBox({ listing }: ListingActionBoxProps) {
             <button
               type="button"
               onClick={() => setBookingModalOpen(true)}
-              className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm shadow-lg shadow-orange-500/30 active:scale-[0.98] transition flex items-center justify-center gap-2"
+              className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-lg transition flex items-center justify-center gap-2"
             >
               <Calendar className="w-5 h-5" />
-              <span>TARİH SEÇ & REZERVASYON YAP</span>
+              <span>Tarih seç ve rezervasyon yap</span>
             </button>
           )}
 
           <button
             type="button"
             onClick={() => setQuoteModalOpen(true)}
-            className="w-full py-3 px-4 rounded-xl border-2 border-navy-900 hover:bg-navy-900 hover:text-white text-navy-900 font-extrabold text-sm transition flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 rounded-xl border-2 border-navy-900 hover:bg-navy-900 hover:text-white text-navy-900 font-semibold text-sm transition flex items-center justify-center gap-2"
           >
             <Send className="w-4 h-4 text-orange-500" />
-            <span>DOĞRUDAN TEKLİF İSTE</span>
+            <span>Teklif iste</span>
           </button>
         </div>
 
@@ -181,9 +181,9 @@ export default function ListingActionBox({ listing }: ListingActionBoxProps) {
       {/* Report Modal */}
       {reportModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg border border-slate-200 space-y-4">
             <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="font-extrabold text-navy-900 text-sm flex items-center gap-2">
+              <h3 className="font-semibold text-navy-900 text-sm flex items-center gap-2">
                 <ShieldAlert className="w-4 h-4 text-red-600" />
                 İlanı Şikayet Et
               </h3>
@@ -245,7 +245,7 @@ export default function ListingActionBox({ listing }: ListingActionBoxProps) {
                 )}
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Şikayet Nedeni (Prompt 9A):
+                    Şikayet nedeni:
                   </label>
                   <select
                     value={reportReason}

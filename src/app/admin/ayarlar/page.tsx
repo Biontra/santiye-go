@@ -95,7 +95,7 @@ export default function AdminSettingsPage() {
             <span className="text-slate-400">/</span>
             <span className="text-xs text-orange-600 font-bold">Sistem Ayarları</span>
           </div>
-          <h1 className="text-2xl font-black text-navy-900 mt-1">Platform Parametreleri</h1>
+          <h1 className="text-2xl font-bold text-navy-900 mt-1">Platform Parametreleri</h1>
           <p className="text-xs text-slate-500 mt-0.5">
             Komisyon oranları, ödeme modları, zaman aşımları ve güvenlik yapılandırmaları. (Kodda hardcoded değer bulunmaz).
           </p>
@@ -112,8 +112,8 @@ export default function AdminSettingsPage() {
       <form onSubmit={handleSave} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* 1. Komisyon ve Ödeme Modu Ayarları */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
-            <h2 className="text-base font-extrabold text-navy-900 flex items-center gap-2 border-b pb-3">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
+            <h2 className="text-base font-semibold text-navy-900 flex items-center gap-2 border-b pb-3">
               <Percent className="w-5 h-5 text-orange-500" />
               Komisyon ve Ödeme Modu Ayarları
             </h2>
@@ -174,8 +174,8 @@ export default function AdminSettingsPage() {
           </div>
 
           {/* 2. Zaman Aşımı ve Rezervasyon Kuralları */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
-            <h2 className="text-base font-extrabold text-navy-900 flex items-center gap-2 border-b pb-3">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
+            <h2 className="text-base font-semibold text-navy-900 flex items-center gap-2 border-b pb-3">
               <Clock className="w-5 h-5 text-blue-600" />
               Süre ve İptal Parametreleri
             </h2>
@@ -216,8 +216,8 @@ export default function AdminSettingsPage() {
           </div>
 
           {/* 3. Güvenlik ve 2FA */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4 md:col-span-2">
-            <h2 className="text-base font-extrabold text-navy-900 flex items-center gap-2 border-b pb-3">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4 md:col-span-2">
+            <h2 className="text-base font-semibold text-navy-900 flex items-center gap-2 border-b pb-3">
               <Lock className="w-5 h-5 text-emerald-600" />
               Yönetici Güvenlik & İki Adımlı Doğrulama (2FA)
             </h2>
@@ -244,8 +244,8 @@ export default function AdminSettingsPage() {
           </div>
 
           {/* 4. Soft Launch & Kademeli Açılış Modu */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4 md:col-span-2">
-            <h2 className="text-base font-extrabold text-navy-900 flex items-center gap-2 border-b pb-3">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4 md:col-span-2">
+            <h2 className="text-base font-semibold text-navy-900 flex items-center gap-2 border-b pb-3">
               <Layers className="w-5 h-5 text-purple-600" />
               Kademeli Açılış (Soft Launch) Modu
             </h2>
@@ -255,7 +255,7 @@ export default function AdminSettingsPage() {
                 <div className="font-bold text-purple-950 text-sm flex items-center gap-2">
                   <span>Soft Launch Kısıtlamasını Aktif Et</span>
                   {softLaunchActive && (
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-600 text-white">
+                    <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-600 text-white">
                       Aktif
                     </span>
                   )}
@@ -296,7 +296,7 @@ export default function AdminSettingsPage() {
           <button
             type="submit"
             disabled={saving}
-            className="px-8 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md transition disabled:opacity-50 flex items-center gap-2"
+            className="px-8 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md transition disabled:opacity-50 flex items-center gap-2"
           >
             <Save className="w-4 h-4" />
             {saving ? 'Kaydediliyor...' : 'TÜM AYARLARI GÜNCELLE'}

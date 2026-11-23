@@ -100,17 +100,16 @@ export default function TokenDeliveryConfirmPage() {
         </Link>
 
         {/* Hero Header */}
-        <div className="bg-navy-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-          <div className="absolute right-0 top-0 translate-x-10 -translate-y-10 w-64 h-64 bg-orange-500/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="bg-navy-900 rounded-xl p-6 sm:p-8 text-white shadow-md relative overflow-hidden">
           <div className="relative z-10 flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center font-black">
+            <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center font-bold">
               <FileCheck2 className="w-5 h-5 text-white" />
             </div>
             <div>
-              <span className="px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 text-[10px] font-black uppercase tracking-wider border border-orange-500/30">
+              <span className="px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 text-[11px] font-bold border border-orange-500/30">
                 QR Doğrulama Bağlantısı
               </span>
-              <h1 className="text-xl sm:text-2xl font-black tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
                 Şantiye Malzeme Teslimat Onayı
               </h1>
             </div>
@@ -123,13 +122,13 @@ export default function TokenDeliveryConfirmPage() {
 
         {/* Başarılı Onay Kartı */}
         {completedWaybill ? (
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
-            <div className="p-6 bg-emerald-50 border-2 border-emerald-500 rounded-3xl text-center space-y-3">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-500 text-white flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/30">
+          <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
+            <div className="p-6 bg-emerald-50 border-2 border-emerald-500 rounded-xl text-center space-y-3">
+              <div className="w-16 h-16 rounded-xl bg-emerald-500 text-white flex items-center justify-center mx-auto shadow-lg">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <div>
-                <h2 className="text-xl font-black text-emerald-950">
+                <h2 className="text-xl font-bold text-emerald-950">
                   Dijital İrsaliye Onaylandı!
                 </h2>
                 <p className="text-xs text-emerald-700 font-semibold mt-1">
@@ -138,14 +137,14 @@ export default function TokenDeliveryConfirmPage() {
               </div>
             </div>
 
-            <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200 text-xs space-y-3">
+            <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 text-xs space-y-3">
               <div className="flex justify-between border-b pb-2">
                 <span className="text-slate-500 font-bold">Malzeme / İş:</span>
-                <span className="font-black text-navy-900">{completedWaybill.listing_title}</span>
+                <span className="font-bold text-navy-900">{completedWaybill.listing_title}</span>
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span className="text-slate-500 font-bold">Miktar:</span>
-                <span className="font-black text-navy-900">
+                <span className="font-bold text-navy-900">
                   {completedWaybill.quantity} {completedWaybill.unit}
                 </span>
               </div>
@@ -155,7 +154,7 @@ export default function TokenDeliveryConfirmPage() {
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span className="text-slate-500 font-bold">Serbest Bırakılan Tutar:</span>
-                <span className="font-black text-orange-600 text-sm">
+                <span className="font-bold text-orange-600 text-sm">
                   {completedWaybill.total_price.toLocaleString('tr-TR')} ₺
                 </span>
               </div>
@@ -176,14 +175,14 @@ export default function TokenDeliveryConfirmPage() {
 
             <Link
               href="/alici-paneli/rezervasyonlar"
-              className="block w-full py-3.5 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-black text-xs text-center transition shadow-md"
+              className="block w-full py-3.5 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-bold text-xs text-center transition shadow-md"
             >
               Siparişlerime Dön
             </Link>
           </div>
         ) : waybill ? (
           /* İrsaliye Onay Formu */
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
+          <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
             {errorMessage && (
               <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2 text-xs text-red-700">
                 <AlertCircle className="w-4 h-4 shrink-0" />
@@ -191,17 +190,17 @@ export default function TokenDeliveryConfirmPage() {
               </div>
             )}
 
-            <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3">
+            <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 space-y-3">
               <div className="flex items-start justify-between">
                 <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase">
+                  <span className="text-[11px] font-bold text-slate-400 uppercase">
                     Teslim Alınacak Kalem
                   </span>
-                  <h3 className="text-base font-black text-navy-900">
+                  <h3 className="text-base font-bold text-navy-900">
                     {waybill.listing_title}
                   </h3>
                 </div>
-                <span className="text-xs font-black px-2.5 py-1 rounded-lg bg-orange-100 text-orange-800">
+                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-orange-100 text-orange-800">
                   {waybill.quantity} {waybill.unit}
                 </span>
               </div>
@@ -251,7 +250,7 @@ export default function TokenDeliveryConfirmPage() {
             </div>
 
             {/* Escrow Bilgilendirmesi */}
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-3.5 flex items-start gap-2.5 text-xs text-emerald-900">
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 flex items-start gap-2.5 text-xs text-emerald-900">
               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
               <p className="text-[11px] leading-relaxed">
                 <strong>Emanet Ödeme Serbest Bırakma:</strong> Bu buton onaylandığında havuzda bloke edilmiş olan{' '}
@@ -263,7 +262,7 @@ export default function TokenDeliveryConfirmPage() {
               type="button"
               disabled={loading}
               onClick={handleConfirm}
-              className="w-full py-4 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm tracking-wide shadow-lg shadow-orange-500/30 transition active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm tracking-wide shadow-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <Lock className="w-4 h-4" />
               {loading
@@ -272,7 +271,7 @@ export default function TokenDeliveryConfirmPage() {
             </button>
           </div>
         ) : actorId === null ? (
-          <div className="bg-white rounded-3xl border border-slate-200 p-8 text-center space-y-4">
+          <div className="bg-white rounded-xl border border-slate-200 p-8 text-center space-y-4">
             <Lock className="w-12 h-12 text-slate-400 mx-auto" />
             <h3 className="text-base font-bold text-navy-900">Alıcı Girişi Gerekli</h3>
             <p className="text-xs text-slate-500">
@@ -286,11 +285,11 @@ export default function TokenDeliveryConfirmPage() {
             </Link>
           </div>
         ) : actorId === undefined ? (
-          <div className="bg-white rounded-3xl border border-slate-200 p-8 text-center text-xs text-slate-500">
+          <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-xs text-slate-500">
             Oturum doğrulanıyor...
           </div>
         ) : (
-          <div className="bg-white rounded-3xl border border-slate-200 p-8 text-center space-y-4">
+          <div className="bg-white rounded-xl border border-slate-200 p-8 text-center space-y-4">
             <AlertCircle className="w-12 h-12 text-slate-400 mx-auto" />
             <h3 className="text-base font-bold text-navy-900">İrsaliye Bulunamadı</h3>
             <p className="text-xs text-slate-500">

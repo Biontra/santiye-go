@@ -58,12 +58,12 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50">
-      <div className="max-w-md w-full bg-white p-8 rounded-3xl border border-slate-200 shadow-xl space-y-6">
+      <div className="max-w-md w-full bg-white p-8 rounded-xl border border-slate-200 shadow-md space-y-6">
         <div className="text-center space-y-2">
-          <div className="inline-flex w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 items-center justify-center border border-orange-100">
+          <div className="inline-flex w-12 h-12 rounded-xl bg-orange-50 text-orange-600 items-center justify-center border border-orange-100">
             <Lock className="w-6 h-6" />
           </div>
-          <h2 className="text-2xl font-black text-navy-900 tracking-tight">
+          <h2 className="text-2xl font-bold text-navy-900 tracking-tight">
             Şifre Sıfırlama
           </h2>
           <p className="text-xs text-slate-500">
@@ -79,9 +79,9 @@ export default function ForgotPasswordPage() {
         )}
 
         {submitted ? (
-          <div className="p-6 bg-emerald-50 border border-emerald-200 rounded-2xl text-center space-y-3">
+          <div className="p-6 bg-emerald-50 border border-emerald-200 rounded-xl text-center space-y-3">
             <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
-            <h3 className="text-sm font-black text-emerald-900">Talep Alındı</h3>
+            <h3 className="text-sm font-bold text-emerald-900">Talep Alındı</h3>
             <p className="text-xs text-emerald-800 leading-relaxed">
               Eğer sistemimizde <strong className="font-bold">{email}</strong> adresiyle kayıtlı bir hesap varsa, şifre sıfırlama bağlantısı e-posta adresinize gönderilmiştir.
             </p>
@@ -117,7 +117,7 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm shadow-lg shadow-orange-500/25 active:scale-[0.98] transition flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {loading ? 'Bağlantı Gönderiliyor...' : 'Sıfırlama Bağlantısı Gönder'}
             </button>

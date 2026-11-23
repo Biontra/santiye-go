@@ -16,9 +16,9 @@ export default function OperatorPool(){
   const results=rows.filter(o=>(!machine || o.machine_types.includes(machine)) && fold(o.city).includes(fold(city))
     && fold(o.district).includes(fold(district)) && (!available || o.is_available) && (!verified || o.verified));
   return <main className="mx-auto max-w-7xl space-y-5 px-4 py-8 text-navy-900">
-    <header className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-navy-900 p-6 text-white">
-      <h1 className="text-3xl font-black">Operatör Havuzu</h1><Link className={action} href="/operator-paneli">Operatör Olarak Kayıt Ol / Panelim</Link></header>
-    <section aria-label="Operatör filtreleri" className="grid gap-3 rounded-2xl border bg-white p-5 sm:grid-cols-3">
+    <header className="flex flex-wrap items-center justify-between gap-4 rounded-xl bg-navy-900 p-6 text-white">
+      <h1 className="text-3xl font-bold">Operatör Havuzu</h1><Link className={action} href="/operator-paneli">Operatör Olarak Kayıt Ol / Panelim</Link></header>
+    <section aria-label="Operatör filtreleri" className="grid gap-3 rounded-xl border bg-white p-5 sm:grid-cols-3">
       <label>Makine tipi<select className={input} value={machine} onChange={e=>setMachine(e.target.value)}><option value="">Tümü</option>{machines.map(m=><option key={m}>{m}</option>)}</select></label>
       <label>Şehir<input className={input} value={city} onChange={e=>setCity(e.target.value)}/></label>
       <label>İlçe<input className={input} value={district} onChange={e=>setDistrict(e.target.value)}/></label>
@@ -26,9 +26,9 @@ export default function OperatorPool(){
       <label><input type="checkbox" checked={verified} onChange={e=>setVerified(e.target.checked)}/> Belge onaylı</label></section>
     {message && <p role="status">{message}</p>}
     {!message && !results.length && <p>Bu filtrelerle eşleşen operatör bulunamadı.</p>}
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{results.map(o=><article key={o.id} className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{results.map(o=><article key={o.id} className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex flex-wrap justify-between gap-1"><strong className={o.is_available?'text-green-700':'text-orange-700'}>{o.is_available?'Şu An Müsait':'Şantiyede'}</strong>{o.id.startsWith('demo-') && <small>Örnek profil</small>}</div>
-      <h2 className="text-xl font-black">{o.full_name}</h2><p>{o.city} / {o.district} · {o.experience_years} yıl deneyim</p>
+      <h2 className="text-xl font-bold">{o.full_name}</h2><p>{o.city} / {o.district} · {o.experience_years} yıl deneyim</p>
       <div className="flex flex-wrap gap-1">{[...o.machine_types,...o.license_classes].map(s=><span className="rounded-md bg-slate-100 px-2 py-1 text-xs font-bold" key={s}>{s}</span>)}</div>
       <p>{o.verified && '✓ Belge onaylı '}{o.rating!==null && '★ '+o.rating}</p><p>{o.reference_projects}</p>
       <strong className="mt-auto">{o.daily_rate.toLocaleString('tr-TR')} ₺ / gün</strong>
@@ -41,8 +41,8 @@ function RequestDialog({operator,close}:{operator:OperatorCard;close:()=>void}){
   const dialog=useRef<HTMLDialogElement>(null),[busy,setBusy]=useState(false),[message,setMessage]=useState(''),[done,setDone]=useState(false);
   useEffect(()=>{dialog.current?.showModal();},[]);
   const demo=operator.id.startsWith('demo-');
-  return <dialog ref={dialog} onClose={close} aria-labelledby="request-title" className="w-full max-w-md rounded-2xl p-6 backdrop:bg-navy-900/60">
-    <h2 id="request-title" className="mb-4 text-xl font-black">{operator.full_name} · Teklif iste</h2>
+  return <dialog ref={dialog} onClose={close} aria-labelledby="request-title" className="w-full max-w-md rounded-xl p-6 backdrop:bg-navy-900/60">
+    <h2 id="request-title" className="mb-4 text-xl font-bold">{operator.full_name} · Teklif iste</h2>
     {demo && <p>Örnek profil · Deneme talebi</p>}
     {!done && <form className="grid gap-3" onSubmit={async e=>{
       e.preventDefault();if(busy)return;const f=new FormData(e.currentTarget);setBusy(true);

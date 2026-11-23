@@ -29,10 +29,10 @@ export default function MobileNav() {
                 href={item.href}
                 className="flex flex-col items-center -mt-5"
               >
-                <div className="w-12 h-12 rounded-full bg-orange-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/40 border-4 border-navy-900 active:scale-95 transition-transform">
+                <div className="w-12 h-12 rounded-full bg-orange-500 text-white flex items-center justify-center shadow-lg border-4 border-navy-900 transition-transform">
                   <Icon className="w-6 h-6" />
                 </div>
-                <span className="text-[10px] font-bold text-orange-400 mt-0.5">
+                <span className="text-[11px] font-bold text-orange-400 mt-0.5">
                   {item.label}
                 </span>
               </Link>
@@ -48,7 +48,7 @@ export default function MobileNav() {
               }`}
             >
               <Icon className="w-5 h-5 mb-0.5" />
-              <span className="text-[10px]">{item.label}</span>
+              <span className="text-[11px]">{item.label}</span>
             </Link>
           );
         })}

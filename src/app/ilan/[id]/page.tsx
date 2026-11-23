@@ -84,7 +84,7 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
               </span>
             )}
             <span
-              className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wide text-white ${
+              className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide text-white ${
                 listing.listing_type === 'rental' ? 'bg-navy-900' : 'bg-emerald-700'
               }`}
             >
@@ -94,7 +94,7 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
         </div>
 
         {/* Title & Location Header */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-3">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-3">
           <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 font-semibold">
             <span className="px-2.5 py-1 rounded-md bg-orange-50 text-orange-700 font-bold">
               {listing.category?.name || 'Genel'}
@@ -107,7 +107,7 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-navy-900 leading-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-navy-900 leading-tight">
             {displayTitle}
           </h1>
         </div>
@@ -117,7 +117,7 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
           {/* Left Column (8 cols) */}
           <div className="lg:col-span-8 space-y-6">
             {/* Main Photo Gallery */}
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
               <div className="relative aspect-[16/10] sm:aspect-[16/9] bg-slate-100">
                 <Image
                   src={
@@ -151,8 +151,8 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
             </div>
 
             {/* Inclusions Strip */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <h2 className="text-xs font-black text-slate-500 uppercase tracking-wider mb-3">
+            <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+              <h2 className="text-xs font-bold text-slate-500 mb-3">
                 Hizmet & Fiyat Kapsamı
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -219,8 +219,8 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
             </div>
 
             {/* Description */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-3">
-              <h2 className="text-base font-extrabold text-navy-900 border-b border-slate-100 pb-2">
+            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-3">
+              <h2 className="text-base font-semibold text-navy-900 border-b border-slate-100 pb-2">
                 İlan Açıklaması
               </h2>
               <div className="text-sm sm:text-base text-slate-700 leading-relaxed whitespace-pre-line">
@@ -230,8 +230,8 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
 
             {/* Technical Specs Table */}
             {listing.technical_specs && Object.keys(listing.technical_specs).length > 0 && (
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
-                <h2 className="text-base font-extrabold text-navy-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+              <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
+                <h2 className="text-base font-semibold text-navy-900 border-b border-slate-100 pb-2 flex items-center gap-2">
                   <Layers className="w-5 h-5 text-orange-500" />
                   Teknik Özellikler
                 </h2>
@@ -252,9 +252,9 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
             )}
 
             {/* Map Location */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-3">
+            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-3">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                <h2 className="text-base font-extrabold text-navy-900 flex items-center gap-2">
+                <h2 className="text-base font-semibold text-navy-900 flex items-center gap-2">
                   <MapPin className="w-5 h-5 text-orange-500" />
                   Şantiye / Makine Konumu
                 </h2>
@@ -282,13 +282,13 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
             <ListingActionBox listing={listing} />
 
             {/* Company Profile Card */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-navy-900 text-orange-500 flex items-center justify-center font-black text-xl">
+                <div className="w-12 h-12 rounded-xl bg-navy-900 text-orange-500 flex items-center justify-center font-bold text-xl">
                   {displayCompanyName[0] || 'Ş'}
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-navy-900 text-sm sm:text-base leading-snug">
+                  <h3 className="font-semibold text-navy-900 text-sm sm:text-base leading-snug">
                     {displayCompanyName}
                   </h3>
                   <div className="flex items-center gap-1 text-xs text-emerald-600 font-bold mt-0.5">

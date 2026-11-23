@@ -4,18 +4,18 @@ import { HardHat, Search, Home, ArrowRight } from 'lucide-react';
 export default function NotFound() {
   return (
     <div className="min-h-[75vh] flex items-center justify-center p-4 bg-slate-50">
-      <div className="max-w-lg w-full bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-xl text-center space-y-6">
+      <div className="max-w-lg w-full bg-white p-8 sm:p-10 rounded-xl border border-slate-200 shadow-md text-center space-y-6">
         <div className="relative inline-block">
-          <div className="w-20 h-20 rounded-2xl bg-navy-900 text-orange-500 flex items-center justify-center mx-auto shadow-lg">
+          <div className="w-20 h-20 rounded-xl bg-navy-900 text-orange-500 flex items-center justify-center mx-auto shadow-lg">
             <HardHat className="w-10 h-10" />
           </div>
-          <span className="absolute -bottom-2 -right-2 px-2.5 py-0.5 rounded-full bg-orange-500 text-white font-black text-xs shadow">
+          <span className="absolute -bottom-2 -right-2 px-2.5 py-0.5 rounded-full bg-orange-500 text-white font-bold text-xs shadow">
             404
           </span>
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-2xl sm:text-3xl font-black text-navy-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 tracking-tight">
             Aradığınız Sayfa Bulunamadı
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
@@ -27,7 +27,7 @@ export default function NotFound() {
         <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
           <Link
             href="/ilanlar"
-            className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs shadow-md transition flex items-center justify-center gap-2"
+            className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs shadow-md transition flex items-center justify-center gap-2"
           >
             <Search className="w-4 h-4" />
             <span>Tüm İlanlarda Ara</span>

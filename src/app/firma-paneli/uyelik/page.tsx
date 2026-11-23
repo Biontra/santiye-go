@@ -104,10 +104,10 @@ export default function CompanyMembershipPage() {
         </div>
 
         {/* Current Plan Overview Header */}
-        <div className="bg-navy-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div className="bg-navy-900 rounded-xl p-6 sm:p-8 text-white shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full bg-orange-500 text-white text-[11px] font-black uppercase tracking-wider">
+              <span className="px-3 py-1 rounded-full bg-orange-500 text-white text-[11px] font-bold">
                 Mevcut Üyeliğiniz
               </span>
               <span className="text-slate-400">•</span>
@@ -115,7 +115,7 @@ export default function CompanyMembershipPage() {
                 Yenilenme: {subscription ? new Date(subscription.current_period_end).toLocaleDateString('tr-TR') : '-'}
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-2">
               <span>{currentPlan.name}</span>
               {currentPlan.has_premium_badge && (
                 <ShieldCheck className="w-6 h-6 text-orange-400" />
@@ -128,7 +128,7 @@ export default function CompanyMembershipPage() {
 
           {/* Quota Progress Meter */}
           {limits && (
-            <div className="bg-navy-950/80 p-5 rounded-2xl border border-navy-800 text-xs w-full md:w-72 space-y-3 shrink-0">
+            <div className="bg-navy-950/80 p-5 rounded-xl border border-navy-800 text-xs w-full md:w-72 space-y-3 shrink-0">
               <div className="flex items-center justify-between font-bold">
                 <span className="text-slate-300">Aktif İlan Kullanımı:</span>
                 <span className="text-orange-400">
@@ -151,7 +151,7 @@ export default function CompanyMembershipPage() {
         </div>
 
         {notice && (
-          <div className="p-4 bg-emerald-50 border-2 border-emerald-500 text-emerald-900 rounded-2xl flex items-center gap-3 text-xs sm:text-sm shadow-md">
+          <div className="p-4 bg-emerald-50 border-2 border-emerald-500 text-emerald-900 rounded-xl flex items-center gap-3 text-xs sm:text-sm shadow-md">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
             <span className="font-bold">{notice}</span>
           </div>
@@ -181,7 +181,7 @@ export default function CompanyMembershipPage() {
             }`}
           >
             <span>Yıllık Ödeme</span>
-            <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black">
+            <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
               2 Ay Bedava!
             </span>
           </span>
@@ -197,7 +197,7 @@ export default function CompanyMembershipPage() {
             return (
               <div
                 key={plan.id}
-                className={`bg-white rounded-2xl border p-6 shadow-sm flex flex-col justify-between transition-all ${
+                className={`bg-white rounded-xl border p-6 shadow-sm flex flex-col justify-between transition-all ${
                   isCurrent
                     ? 'border-2 border-orange-500 ring-2 ring-orange-100'
                     : 'border-slate-200 hover:border-slate-300'
@@ -205,20 +205,20 @@ export default function CompanyMembershipPage() {
               >
                 <div className="space-y-5">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs uppercase tracking-wider text-slate-400">
+                    <span className="font-bold text-xs text-slate-400">
                       {plan.id === 'premium' ? 'Tavsiye Edilen' : 'Plan'}
                     </span>
                     {isCurrent && (
-                      <span className="px-2 py-0.5 rounded bg-orange-100 text-orange-800 text-[10px] font-black">
-                        AKTİF PAKETİNİZ
+                      <span className="px-2 py-0.5 rounded bg-orange-100 text-orange-800 text-[11px] font-bold">
+                        Aktif paketiniz
                       </span>
                     )}
                   </div>
 
                   <div>
-                    <h3 className="text-xl font-black text-navy-900">{plan.name}</h3>
+                    <h3 className="text-xl font-bold text-navy-900">{plan.name}</h3>
                     <div className="mt-2 flex items-baseline gap-1">
-                      <span className="text-3xl font-black text-navy-900">
+                      <span className="text-3xl font-bold text-navy-900">
                         {formatPrice(price)}
                       </span>
                       <span className="text-xs text-slate-500 font-semibold">
@@ -282,7 +282,7 @@ export default function CompanyMembershipPage() {
                       type="button"
                       disabled={upgrading}
                       onClick={() => handleUpgrade(plan.id as 'pro' | 'premium')}
-                      className="w-full py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md shadow-orange-500/20 transition flex items-center justify-center gap-1.5"
+                      className="w-full py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-1.5"
                     >
                       <Sparkles className="w-4 h-4" />
                       <span>{upgrading ? 'İşleniyor...' : 'Bu Pakete Yükselt'}</span>
@@ -295,7 +295,7 @@ export default function CompanyMembershipPage() {
         </div>
 
         {/* Graceful Downgrade Assurance Banner */}
-        <div className="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm text-xs text-slate-600 flex items-start gap-3">
+        <div className="p-5 bg-white rounded-xl border border-slate-200 shadow-sm text-xs text-slate-600 flex items-start gap-3">
           <HelpCircle className="w-5 h-5 text-slate-400 shrink-0 mt-0.5" />
           <div className="space-y-1">
             <div className="font-bold text-navy-900">

@@ -55,10 +55,10 @@ export default function OperatorPanel(){
     try{await task();}catch(err){setMessage((err as Error).message);}finally{setBusy(false);}
   }
   return <main className="mx-auto max-w-3xl space-y-4 px-4 py-8 text-navy-900">
-    <header className="rounded-2xl bg-navy-900 p-6 text-white"><Link href="/operatorler" className="text-orange-400">← Operatör Havuzu</Link><h1 className="mt-2 text-3xl font-black">Operatör paneli</h1></header>
+    <header className="rounded-xl bg-navy-900 p-6 text-white"><Link href="/operatorler" className="text-orange-400">← Operatör Havuzu</Link><h1 className="mt-2 text-3xl font-bold">Operatör paneli</h1></header>
     <p role="status">{message || (!ready?'Yükleniyor…':'')}</p>
     {ready && !logged && <Link href="/giris?redirect=/operator-paneli" className="font-bold text-orange-700">Profil oluşturmak için giriş yap</Link>}
-    {ready && logged && <form className="space-y-4 rounded-2xl border bg-white p-5 shadow-sm" onSubmit={e=>{e.preventDefault();const form=e.currentTarget;void run(()=>save(form));}}>
+    {ready && logged && <form className="space-y-4 rounded-xl border bg-white p-5 shadow-sm" onSubmit={e=>{e.preventDefault();const form=e.currentTarget;void run(()=>save(form));}}>
       <fieldset disabled={busy} className="grid gap-4 sm:grid-cols-2">
         {fields.map(([key,label,type])=><label key={key}>{label}<input className={input} name={key} type={type} required={key!=='lat' && key!=='lng'}
           min={key==='lat'?-90:key==='lng'?-180:0} max={key==='lat'?90:key==='lng'?180:key==='experience_years'?80:undefined}
@@ -72,7 +72,7 @@ export default function OperatorPanel(){
         })}:{defaultChecked:true})}/> Müsaitim / İş arıyorum</label>
         <button className="rounded-lg bg-orange-500 px-4 py-3 font-bold">Profili kaydet</button>
       </fieldset></form>}
-    {profile && <section className="space-y-3 rounded-2xl border bg-white p-5"><h2 className="text-xl font-black">Gelen talepler</h2>
+    {profile && <section className="space-y-3 rounded-xl border bg-white p-5"><h2 className="text-xl font-bold">Gelen talepler</h2>
       {!requests.length && <p>Henüz talep yok.</p>}{requests.map(r=><article key={r.id} className="border-t pt-3"><strong>{r.site}</strong><p>{r.start_date} · {r.days} gün</p><p>{r.note}</p></article>)}</section>}
   </main>;
 }

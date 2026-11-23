@@ -14,7 +14,7 @@ export default function MembershipAgreementPage() {
         </Link>
 
         {/* Legal Disclaimer Box */}
-        <div className="p-4 bg-amber-50 border border-amber-300 rounded-2xl text-xs text-amber-950 flex items-start gap-3 shadow-sm">
+        <div className="p-4 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-950 flex items-start gap-3 shadow-sm">
           <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
           <div>
             <strong>Yasal Uyarı & Taslak Bildirimi:</strong>
@@ -24,9 +24,9 @@ export default function MembershipAgreementPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-6 text-xs sm:text-sm text-slate-700 leading-relaxed">
+        <div className="bg-white rounded-xl border border-slate-200 p-8 shadow-sm space-y-6 text-xs sm:text-sm text-slate-700 leading-relaxed">
           <div className="border-b pb-4">
-            <h1 className="text-2xl font-black text-navy-900">
+            <h1 className="text-2xl font-bold text-navy-900">
               Pazaryeri Satıcı & Tedarikçi Üyelik Sözleşmesi (Taslak)
             </h1>
             <p className="text-xs text-slate-500 mt-1">
@@ -66,7 +66,7 @@ export default function MembershipAgreementPage() {
           </div>
 
           <section className="space-y-2">
-            <h2 className="text-base font-extrabold text-navy-900">MADDE 1 – TARAFLAR VE TANIMLAR</h2>
+            <h2 className="text-base font-semibold text-navy-900">MADDE 1 – TARAFLAR VE TANIMLAR</h2>
             <p>
               İşbu Sözleşme; bir tarafta dijital pazar yeri altyapısını işleten <strong>Şantiye GO Dijital Pazaryeri Platformu</strong> (&quot;PLATFORM&quot;) ile diğer tarafta platforma üye olarak iş makinesi kiralayan, inşaat malzemesi satan veya lojistik/nakliye hizmeti sunan tüzel kişi veya şahıs şirketi (&quot;ÜYE FİRMA / ALT ÜYE İŞYERİ&quot;) arasında akdedilmiştir.
             </p>
@@ -76,7 +76,7 @@ export default function MembershipAgreementPage() {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-extrabold text-navy-900">MADDE 2 – ÜYELİK VE BELGE DOĞRULAMA ZORUNLULUĞU</h2>
+            <h2 className="text-base font-semibold text-navy-900">MADDE 2 – ÜYELİK VE BELGE DOĞRULAMA ZORUNLULUĞU</h2>
             <p>
               2.1. ÜYE FİRMA, platformda ilan yayınlayabilmek ve teklif verebilmek için aşağıdaki resmi belgeleri sisteme yüklemekle yükümlüdür:
             </p>
@@ -92,7 +92,7 @@ export default function MembershipAgreementPage() {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-extrabold text-navy-900">MADDE 3 – İLAN VE HİZMET STANDARTLARI</h2>
+            <h2 className="text-base font-semibold text-navy-900">MADDE 3 – İLAN VE HİZMET STANDARTLARI</h2>
             <p>
               3.1. ÜYE FİRMA; ilan ettiği iş makinelerinin periyodik teknik muayenelerinin yapıldığını, operatörlerin G sınıfı ehliyete ve gerekli mesleki yeterlilik belgelerine sahip olduğunu taahhüt eder.
             </p>
@@ -102,7 +102,7 @@ export default function MembershipAgreementPage() {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-extrabold text-navy-900">MADDE 4 – ÖDEME, KOMİSYON VE HAKEDİŞ AKTARIMI</h2>
+            <h2 className="text-base font-semibold text-navy-900">MADDE 4 – ÖDEME, KOMİSYON VE HAKEDİŞ AKTARIMI</h2>
             <p>
               4.1. ALICI tarafından yapılan ödemeler, ödeme kuruluşu iyzico havuz hesabında bloke edilir.
             </p>
@@ -115,7 +115,7 @@ export default function MembershipAgreementPage() {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-extrabold text-navy-900">MADDE 5 – ABONELİK PLANLARI VE KULLANIM LİMİTLERİ</h2>
+            <h2 className="text-base font-semibold text-navy-900">MADDE 5 – ABONELİK PLANLARI VE KULLANIM LİMİTLERİ</h2>
             <p>
               5.1. Ücretsiz üyelik paketi sınırlı sayıda ilan ve teklif hakkı sunar. ÜYE FİRMA dilerse aylık veya yıllık abonelikle &quot;Profesyonel&quot; veya &quot;Premium&quot; paketlere geçebilir.
             </p>
@@ -125,7 +125,7 @@ export default function MembershipAgreementPage() {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-extrabold text-navy-900">MADDE 6 – SÖZLEŞMENİN FESHİ VE YASAKLI EYLEMLER</h2>
+            <h2 className="text-base font-semibold text-navy-900">MADDE 6 – SÖZLEŞMENİN FESHİ VE YASAKLI EYLEMLER</h2>
             <p>
               Platform dışına yönlendirerek hileli işlem yapma, komisyon kaçırma, tekliflerde spekülatif fiyat verme veya müşteri şikayetlerine konu olma hallerinde PLATFORM üyeliği tek taraflı feshetme ve havuzdaki bekleyen ödemeleri ihtilaf çözülene kadar bloke etme hakkına sahiptir.
             </p>

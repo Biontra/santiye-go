@@ -86,16 +86,16 @@ export default function BuyerQuoteRequestsPage() {
     <div className="bg-slate-50 min-h-screen py-8 sm:py-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded bg-blue-100 text-blue-800 text-xs font-black uppercase">
+              <span className="px-2.5 py-0.5 rounded bg-blue-100 text-blue-800 text-xs font-bold uppercase">
                 Alıcı Paneli
               </span>
               <span className="text-slate-400">•</span>
               <span className="text-xs text-slate-500 font-semibold">Teklif Karşılaştırma</span>
             </div>
-            <h1 className="text-2xl font-black text-navy-900 mt-1">
+            <h1 className="text-2xl font-bold text-navy-900 mt-1">
               Teklif Taleplerim & Gelen Teklifler
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
@@ -106,10 +106,10 @@ export default function BuyerQuoteRequestsPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/teklif-iste"
-              className="px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md shadow-orange-500/20 transition flex items-center gap-1.5"
+              className="px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
-              YENİ TEKLİF TALEBİ AÇ
+              Yeni teklif talebi aç
             </Link>
           </div>
         </div>
@@ -123,11 +123,11 @@ export default function BuyerQuoteRequestsPage() {
 
         {/* Requests List with nested Quote Comparison Tables */}
         {loading ? (
-          <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 text-slate-400">
+          <div className="p-12 text-center bg-white rounded-xl border border-slate-200 text-slate-400">
             Talepler yükleniyor...
           </div>
         ) : requests.length === 0 ? (
-          <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 space-y-3">
+          <div className="p-12 text-center bg-white rounded-xl border border-slate-200 space-y-3">
             <FileText className="w-12 h-12 text-slate-300 mx-auto" />
             <h3 className="font-bold text-navy-900 text-base">Henüz bir teklif talebiniz yok</h3>
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
@@ -152,7 +152,7 @@ export default function BuyerQuoteRequestsPage() {
               return (
                 <div
                   key={req.id}
-                  className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
+                  className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
                 >
                   {/* Request Accordion Header */}
                   <div
@@ -162,7 +162,7 @@ export default function BuyerQuoteRequestsPage() {
                     <div className="space-y-2">
                       <div className="flex flex-wrap items-center gap-2">
                         <span
-                          className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                          className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase ${
                             req.request_type === 'single_listing'
                               ? 'bg-blue-100 text-blue-800'
                               : 'bg-purple-100 text-purple-800'
@@ -192,7 +192,7 @@ export default function BuyerQuoteRequestsPage() {
                         </span>
                       </div>
 
-                      <h3 className="text-lg font-black text-navy-900">{req.title}</h3>
+                      <h3 className="text-lg font-bold text-navy-900">{req.title}</h3>
 
                       <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
                         <span className="flex items-center gap-1">
@@ -213,7 +213,7 @@ export default function BuyerQuoteRequestsPage() {
 
                     <div className="flex items-center gap-4 shrink-0">
                       <div className="text-right">
-                        <div className="text-lg font-black text-navy-900">
+                        <div className="text-lg font-bold text-navy-900">
                           {quotes.length} Teklif
                         </div>
                         <div className="text-[11px] text-slate-400 font-semibold">
@@ -240,7 +240,7 @@ export default function BuyerQuoteRequestsPage() {
                         <div className="overflow-x-auto">
                           <table className="w-full text-left border-collapse text-xs sm:text-sm">
                             <thead>
-                              <tr className="border-b border-slate-200 text-slate-500 uppercase text-[10px] tracking-wider font-extrabold bg-slate-100/70">
+                              <tr className="border-b border-slate-200 text-slate-500 text-[11px] font-semibold bg-slate-100/70">
                                 <th className="p-3">Firma Bilgisi</th>
                                 <th className="p-3">Mesafe</th>
                                 <th className="p-3">Teklif Fiyatı</th>
@@ -266,7 +266,7 @@ export default function BuyerQuoteRequestsPage() {
                                     }`}
                                   >
                                     <td className="p-3">
-                                      <div className="font-extrabold text-navy-900 text-sm">
+                                      <div className="font-semibold text-navy-900 text-sm">
                                         {q.company?.name || 'Onaylı Tedarikçi'}
                                       </div>
                                       <div className="flex items-center gap-1 text-[11px] text-amber-600 font-bold mt-0.5">
@@ -285,11 +285,11 @@ export default function BuyerQuoteRequestsPage() {
                                     </td>
 
                                     <td className="p-3">
-                                      <div className="text-base font-black text-orange-600">
+                                      <div className="text-base font-bold text-orange-600">
                                         {q.price_total.toLocaleString('tr-TR')} ₺
                                       </div>
                                       {q.price_unit && (
-                                        <div className="text-[10px] text-slate-500">
+                                        <div className="text-[11px] text-slate-500">
                                           Birim: {q.price_unit.toLocaleString('tr-TR')} ₺
                                         </div>
                                       )}
@@ -299,21 +299,21 @@ export default function BuyerQuoteRequestsPage() {
                                       <div className="flex flex-col gap-1 text-[11px] font-semibold">
                                         <span
                                           className={
-                                            q.is_operator_included ? 'text-emerald-700' : 'text-slate-400 line-through'
+                                           q.is_operator_included ? 'text-emerald-700' : 'text-slate-400 line-through'
                                           }
                                         >
                                           • Operatör {q.is_operator_included ? 'Dahil' : 'Hariç'}
                                         </span>
                                         <span
                                           className={
-                                            q.is_fuel_included ? 'text-emerald-700' : 'text-slate-400 line-through'
+                                           q.is_fuel_included ? 'text-emerald-700' : 'text-slate-400 line-through'
                                           }
                                         >
                                           • Yakıt {q.is_fuel_included ? 'Dahil' : 'Hariç'}
                                         </span>
                                         <span
                                           className={
-                                            q.is_transport_included ? 'text-emerald-700' : 'text-slate-400 line-through'
+                                           q.is_transport_included ? 'text-emerald-700' : 'text-slate-400 line-through'
                                           }
                                         >
                                           • Nakliye {q.is_transport_included ? 'Dahil' : 'Hariç'}
@@ -331,11 +331,11 @@ export default function BuyerQuoteRequestsPage() {
                                       <div className="flex items-center justify-end gap-2">
                                         {isAccepted ? (
                                           <span className="px-3 py-1 bg-emerald-600 text-white rounded-lg text-xs font-bold">
-                                            KABUL EDİLDİ
+                                            Kabul edildi
                                           </span>
                                         ) : isRejected ? (
                                           <span className="px-3 py-1 bg-slate-300 text-slate-700 rounded-lg text-xs font-bold">
-                                            REDDEDİLDİ
+                                            Reddedildi
                                           </span>
                                         ) : (
                                           <>

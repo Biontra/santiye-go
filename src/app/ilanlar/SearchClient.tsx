@@ -321,11 +321,11 @@ export default function SearchClient() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* 1. Top Search Header */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-3">
+      <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-3">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-end">
           {/* Keyword Search Input */}
           <div className="lg:col-span-4 relative">
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-bold text-slate-500 mb-1">
               Ne arıyorsunuz?
             </label>
             <div className="relative flex items-center">
@@ -354,7 +354,7 @@ export default function SearchClient() {
             <button
               type="button"
               onClick={() => applyFilters()}
-              className="flex-1 py-2.5 px-4 bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-md transition active:scale-95"
+              className="flex-1 py-2.5 px-4 bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-md transition"
             >
               Filtrele
             </button>
@@ -373,13 +373,13 @@ export default function SearchClient() {
         <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between text-xs text-slate-600 gap-2">
           <div className="flex items-center gap-1.5 font-bold text-navy-900">
             <SlidersHorizontal className="w-3.5 h-3.5 text-orange-500" />
-            <span>Mesafe Yarıçapı:</span>
+            <span>Mesafe</span>
           </div>
           <div className="flex flex-wrap items-center gap-1.5">
             {[
               { label: '5 km', val: '5' },
               { label: '10 km', val: '10' },
-              { label: '25 km (Varsayılan)', val: '25' },
+              { label: '25 km', val: '25' },
               { label: '50 km', val: '50' },
               { label: '100 km', val: '100' },
               { label: 'Tüm Türkiye', val: 'all' },
@@ -408,11 +408,11 @@ export default function SearchClient() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
         {/* Desktop Sidebar Filters */}
         <aside className="hidden lg:block space-y-5">
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-5">
+          <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-extrabold text-navy-900 text-sm flex items-center gap-2">
+              <h3 className="font-semibold text-navy-900 text-sm flex items-center gap-2">
                 <Filter className="w-4 h-4 text-orange-500" />
-                Filtre Seçenekleri
+                Filtreler
               </h3>
               <button
                 type="button"
@@ -425,7 +425,7 @@ export default function SearchClient() {
 
             {/* İlan Türü (Tümü / Kiralık / Satılık / Hizmet) */}
             <div>
-              <label className="block text-[11px] font-black text-slate-500 uppercase tracking-wider mb-2">
+              <label className="block text-[11px] font-bold text-slate-500 mb-2">
                 İlan Türü
               </label>
               <div className="grid grid-cols-4 gap-1 text-[11px] font-bold">
@@ -482,7 +482,7 @@ export default function SearchClient() {
 
             {/* Fiyat Aralığı (Min - Max) */}
             <div>
-              <label className="block text-[11px] font-black text-slate-500 uppercase tracking-wider mb-2">
+              <label className="block text-[11px] font-bold text-slate-500 mb-2">
                 Fiyat Aralığı (₺)
               </label>
               <div className="grid grid-cols-2 gap-2">
@@ -507,7 +507,7 @@ export default function SearchClient() {
 
             {/* Dahil Hizmetler Switch/Checkboxes */}
             <div className="space-y-2 pt-2 border-t border-slate-100">
-              <label className="block text-[11px] font-black text-slate-500 uppercase tracking-wider mb-1">
+              <label className="block text-[11px] font-bold text-slate-500 mb-1">
                 Dahil Olan Hizmetler
               </label>
               <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
@@ -552,14 +552,14 @@ export default function SearchClient() {
             {activeCategoryAttributes.length > 0 && (
               <div className="pt-3 border-t border-slate-100 space-y-3">
                 <div className="flex items-center justify-between">
-                  <label className="block text-[11px] font-black text-slate-500 uppercase tracking-wider">
+                  <label className="block text-[11px] font-bold text-slate-500">
                     Özellik Filtreleri
                   </label>
                   {Object.keys(dynamicFilters).length > 0 && (
                     <button
                       type="button"
                       onClick={() => setDynamicFilters({})}
-                      className="text-[10px] text-orange-600 font-bold hover:underline"
+                      className="text-[11px] text-orange-600 font-bold hover:underline"
                     >
                       Sıfırla
                     </button>
@@ -635,7 +635,7 @@ export default function SearchClient() {
 
             {/* Kategori Ağacı */}
             <div className="pt-2 border-t border-slate-100">
-              <label className="block text-[11px] font-black text-slate-500 uppercase tracking-wider mb-2">
+              <label className="block text-[11px] font-bold text-slate-500 mb-2">
                 Kategori Seçimi
               </label>
               <div className="space-y-1.5 text-xs">
@@ -702,15 +702,15 @@ export default function SearchClient() {
         {/* Results Column */}
         <div className="lg:col-span-3 space-y-4">
           {/* Controls Bar: Count, Sort, View Modes */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="bg-white rounded-xl border border-slate-200 p-3.5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="text-xs sm:text-sm font-bold text-navy-900">
-              Bulunan İlan:{' '}
-              <span className="text-orange-600 font-extrabold text-base">
+              Bulunan ilan:{' '}
+              <span className="text-orange-600 font-semibold text-base">
                 {searchResult.total}
               </span>
               {coords && (
                 <span className="text-xs text-slate-500 font-normal ml-2">
-                  (📍 {radius && radius !== 'all' ? `${radius} km çevresi` : 'Tüm TR'})
+                  ({radius && radius !== 'all' ? `${radius} km çevresi` : 'Tüm Türkiye'})
                 </span>
               )}
             </div>
@@ -794,12 +794,12 @@ export default function SearchClient() {
 
           {/* 3. Radius Expansion Suggestion (When 0 results found) */}
           {searchResult.total === 0 && !loading && (
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center space-y-3">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 text-center space-y-3">
               <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto">
                 <AlertCircle className="w-6 h-6" />
               </div>
               <div>
-                <h4 className="font-extrabold text-navy-900 text-base">
+                <h4 className="font-semibold text-navy-900 text-base">
                   Seçili {radius && radius !== 'all' ? `${radius} km` : ''} çevrede ilan bulunamadı
                 </h4>
                 <p className="text-xs text-slate-600 max-w-md mx-auto mt-1">
@@ -816,7 +816,7 @@ export default function SearchClient() {
                       setRadius('50');
                       applyFilters({ radius: '50' });
                     }}
-                    className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs rounded-xl shadow-md transition"
+                    className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs rounded-xl shadow-md transition"
                   >
                     50 km&apos;ye Genişlet ({searchResult.countsByRadius.radius50} ilan)
                   </button>
@@ -851,7 +851,7 @@ export default function SearchClient() {
 
           {/* 4. Results View Modes */}
           {loading ? (
-            <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-3">
+            <div className="bg-white rounded-xl border border-slate-200 p-12 text-center space-y-3">
               <Loader2 className="w-8 h-8 text-orange-500 animate-spin mx-auto" />
               <p className="text-sm font-semibold text-slate-600">İlanlar taranıyor...</p>
             </div>
@@ -898,9 +898,9 @@ export default function SearchClient() {
             /* Standard Grid List View */
             <div className="space-y-6">
               {pageParam === 1 && sponsoredListings.length > 0 && (
-                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-50/70 via-amber-50/40 to-white border border-amber-200/90 space-y-3 shadow-sm">
+                <div className="p-4 sm:p-5 rounded-xl bg-amber-50/50 border border-amber-200/90 space-y-3 shadow-sm">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-black text-amber-950 uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="font-bold text-amber-950 flex items-center gap-1.5">
                       <Sparkles className="w-4 h-4 text-amber-600" />
                       Sponsorlu Sonuçlar
                     </span>
@@ -936,7 +936,7 @@ export default function SearchClient() {
 
           {/* 5. Pagination Controls */}
           {searchResult.totalPages > 1 && (
-            <div className="bg-white rounded-2xl border border-slate-200 p-3 flex items-center justify-between text-xs font-bold text-slate-700">
+            <div className="bg-white rounded-xl border border-slate-200 p-3 flex items-center justify-between text-xs font-bold text-slate-700">
               <button
                 type="button"
                 disabled={searchResult.page <= 1}
@@ -977,7 +977,7 @@ export default function SearchClient() {
         <div className="fixed inset-0 z-50 flex flex-col justify-end bg-navy-950/70 backdrop-blur-sm lg:hidden">
           <div className="bg-white rounded-t-3xl p-6 max-h-[85vh] overflow-y-auto space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-extrabold text-navy-900 text-base">Filtreler</h3>
+              <h3 className="font-semibold text-navy-900 text-base">Filtreler</h3>
               <button
                 type="button"
                 onClick={() => setMobileFilterOpen(false)}
@@ -1068,14 +1068,14 @@ export default function SearchClient() {
             {activeCategoryAttributes.length > 0 && (
               <div className="pt-3 border-t border-slate-100 space-y-3">
                 <div className="flex items-center justify-between">
-                  <label className="block text-[11px] font-black text-slate-500 uppercase tracking-wider">
+                  <label className="block text-[11px] font-bold text-slate-500">
                     Özellik Filtreleri
                   </label>
                   {Object.keys(dynamicFilters).length > 0 && (
                     <button
                       type="button"
                       onClick={() => setDynamicFilters({})}
-                      className="text-[10px] text-orange-600 font-bold hover:underline"
+                      className="text-[11px] text-orange-600 font-bold hover:underline"
                     >
                       Sıfırla
                     </button>
@@ -1166,7 +1166,7 @@ export default function SearchClient() {
                   applyFilters();
                   setMobileFilterOpen(false);
                 }}
-                className="w-2/3 py-3 rounded-xl bg-orange-500 text-white font-extrabold text-sm shadow-md"
+                className="w-2/3 py-3 rounded-xl bg-orange-500 text-white font-semibold text-sm shadow-md"
               >
                 Uygula
               </button>

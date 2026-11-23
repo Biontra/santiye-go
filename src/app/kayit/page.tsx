@@ -212,14 +212,14 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-slate-50 flex items-center justify-center">
-      <div className="max-w-xl w-full bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-xl space-y-6">
+      <div className="max-w-xl w-full bg-white p-6 sm:p-10 rounded-xl border border-slate-200 shadow-md space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex w-12 h-12 rounded-2xl bg-navy-900 text-orange-500 items-center justify-center shadow-lg shadow-navy-900/10">
+          <div className="inline-flex w-12 h-12 rounded-xl bg-navy-900 text-orange-500 items-center justify-center shadow-lg shadow-navy-900/10">
             <HardHat className="w-7 h-7" />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-navy-900 tracking-tight">
-            Şantiye GO&apos;ya Katılın
+          <h2 className="text-2xl sm:text-3xl font-bold text-navy-900 tracking-tight">
+            Hesap oluştur
           </h2>
           <p className="text-xs sm:text-sm text-slate-500">
             İş makineleri, yapı malzemeleri ve şantiye hizmetleri için tek hesap
@@ -227,11 +227,11 @@ export default function RegisterPage() {
         </div>
 
         {/* Rol Seçimi */}
-        <div className="grid grid-cols-2 gap-3 p-1.5 bg-slate-100 rounded-2xl">
+        <div className="grid grid-cols-2 gap-3 p-1.5 bg-slate-100 rounded-xl">
           <button
             type="button"
             onClick={() => setRole('buyer')}
-            className={`py-3 px-4 rounded-xl text-xs font-black transition flex items-center justify-center gap-2 ${
+            className={`py-3 px-4 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 ${
               role === 'buyer'
                 ? 'bg-white text-navy-900 shadow-sm'
                 : 'text-slate-500 hover:text-navy-900'
@@ -243,7 +243,7 @@ export default function RegisterPage() {
           <button
             type="button"
             onClick={() => setRole('company')}
-            className={`py-3 px-4 rounded-xl text-xs font-black transition flex items-center justify-center gap-2 ${
+            className={`py-3 px-4 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 ${
               role === 'company'
                 ? 'bg-navy-900 text-white shadow-sm'
                 : 'text-slate-500 hover:text-navy-900'
@@ -289,7 +289,7 @@ export default function RegisterPage() {
 
           {/* Firma Özel Alanları */}
           {role === 'company' && (
-            <div className="p-4 bg-orange-50/60 rounded-2xl border border-orange-100 space-y-3">
+            <div className="p-4 bg-orange-50/60 rounded-xl border border-orange-100 space-y-3">
               <div>
                 <label className="block text-xs font-bold text-navy-900 mb-1">
                   Resmi Firma Unvanı *
@@ -394,7 +394,7 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
-                Cep Telefonu (SMS OTP için) *
+                Cep telefonu *
               </label>
               <div className="relative flex items-center">
                 <Phone className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
@@ -477,7 +477,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm shadow-lg shadow-orange-500/25 active:scale-[0.98] transition flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? (
               <span className="flex items-center gap-2">
@@ -485,7 +485,7 @@ export default function RegisterPage() {
                 Hesabınız Oluşturuluyor...
               </span>
             ) : (
-              'Hesabımı Oluştur ve Devam Et'
+              'Hesap oluştur'
             )}
           </button>
         </form>

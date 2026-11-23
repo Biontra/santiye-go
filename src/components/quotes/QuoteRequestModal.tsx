@@ -70,14 +70,14 @@ export default function QuoteRequestModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+      <div className="bg-white rounded-xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-lg border border-slate-200 overflow-hidden">
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
           <div>
-            <span className="text-[10px] font-bold uppercase text-orange-600 tracking-wider">
+            <span className="text-[11px] font-bold text-orange-600">
               Doğrudan Teklif Talebi
             </span>
-            <h3 className="font-extrabold text-navy-900 text-base sm:text-lg line-clamp-1">
+            <h3 className="font-semibold text-navy-900 text-base sm:text-lg line-clamp-1">
               {listing.title}
             </h3>
             <p className="text-xs text-slate-500">{listing.company?.name}</p>
@@ -231,7 +231,7 @@ export default function QuoteRequestModal({
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs shadow-md transition flex items-center gap-1.5 active:scale-95"
+                className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs shadow-md transition flex items-center gap-1.5"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>{loading ? 'Gönderiliyor...' : 'Teklif İsteğini İlet'}</span>

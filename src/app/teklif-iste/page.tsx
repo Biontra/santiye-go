@@ -178,15 +178,15 @@ function MultiVendorQuoteForm() {
         </div>
 
         {/* Hesaplayıcıdan Geldi Bildirimi */}
-        <Link href="/kesif-yukle" className="mb-6 block rounded-2xl border border-orange-300 bg-orange-50 p-4 text-sm font-bold text-navy-900 hover:border-orange-500">
+        <Link href="/kesif-yukle" className="mb-6 block rounded-xl border border-orange-300 bg-orange-50 p-4 text-sm font-bold text-navy-900 hover:border-orange-500">
           Elinizde 10’dan fazla kalemlik Excel veya malzeme listesi mi var? Tek tek girmeyin, Keşif Okuyucu ile toplu yükleyin. →
         </Link>
         {fromCalc && (
-          <div className="mb-6 p-4 bg-orange-50 border border-orange-300 rounded-2xl flex items-start gap-3">
+          <div className="mb-6 p-4 bg-orange-50 border border-orange-300 rounded-xl flex items-start gap-3">
             <Calculator className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-black text-navy-900">
-                ✅ Metraj Hesaplayıcı&apos;dan Otomatik Dolduruldu
+              <p className="text-sm font-bold text-navy-900">
+                Metraj hesaplayıcıdan dolduruldu
               </p>
               <p className="text-xs text-slate-600 mt-0.5">
                 Başlık, açıklama ve miktar alanları hesaplama sonucunuzdan aktarıldı.
@@ -197,14 +197,10 @@ function MultiVendorQuoteForm() {
         )}
 
         {/* Header Hero Banner */}
-        <div className="bg-navy-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl mb-8 relative overflow-hidden">
-          <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-64 h-64 bg-orange-500/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="bg-navy-900 rounded-xl p-6 sm:p-8 text-white shadow-md mb-8 relative overflow-hidden">
           <div className="relative z-10 max-w-2xl">
-            <span className="px-3 py-1 rounded-full bg-orange-500 text-white text-[11px] font-black uppercase tracking-wider inline-block mb-3">
-              Çoklu Firma Teklif Dağıtımı
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-snug">
-              İhtiyacınızı Bir Kez Yazın, Bölgenizdeki En İyi Firmalardan Teklif Alın!
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug">
+              İhtiyacınızı bir kez yazın, bölgenizdeki firmalardan teklif alın
             </h1>
             <p className="text-sm text-slate-300 mt-2 leading-relaxed">
               İş makinesi, yapı malzemesi veya nakliye ihtiyacınızı belirtin. Sistem seçtiğiniz
@@ -217,10 +213,10 @@ function MultiVendorQuoteForm() {
 
         {/* Success Alert */}
         {success && (
-          <div className="p-6 bg-emerald-50 border-2 border-emerald-500 text-emerald-900 rounded-2xl mb-8 shadow-sm flex items-start gap-3">
+          <div className="p-6 bg-emerald-50 border-2 border-emerald-500 text-emerald-900 rounded-xl mb-8 shadow-sm flex items-start gap-3">
             <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-bold text-base">Teklif Talebiniz Başarıyla Oluşturuldu!</h3>
+              <h3 className="font-bold text-base">Teklif talebiniz oluşturuldu</h3>
               <p className="text-xs text-emerald-700 mt-1">
                 Talebiniz bölgenizdeki uygun tedarikçilere iletildi. Firmaların yanıtlarını
                 karşılaştırmak üzere Tekliflerim sayfasına yönlendiriliyorsunuz...
@@ -230,7 +226,7 @@ function MultiVendorQuoteForm() {
         )}
 
         {/* Form Container */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-8">
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-8">
           {errorMessage && (
             <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl flex items-center gap-2 text-sm">
               <AlertCircle className="w-5 h-5 shrink-0" />
@@ -241,7 +237,7 @@ function MultiVendorQuoteForm() {
           {/* 1. Kategori Seçimi */}
           <div className="space-y-4">
             <div className="border-b border-slate-100 pb-3">
-              <h2 className="text-base font-extrabold text-navy-900 flex items-center gap-2">
+              <h2 className="text-base font-semibold text-navy-900 flex items-center gap-2">
                 <Layers className="w-5 h-5 text-orange-500" />
                 1. Kategori & Alt Kategori Seçimi
               </h2>
@@ -296,7 +292,7 @@ function MultiVendorQuoteForm() {
           {/* 2. Talep Detayları */}
           <div className="space-y-4">
             <div className="border-b border-slate-100 pb-3">
-              <h2 className="text-base font-extrabold text-navy-900 flex items-center gap-2">
+              <h2 className="text-base font-semibold text-navy-900 flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-orange-500" />
                 2. İhtiyaç ve Şantiye Detayları
               </h2>
@@ -381,12 +377,12 @@ function MultiVendorQuoteForm() {
           {/* 3. Konum ve Dağıtım Yarıçapı */}
           <div className="space-y-4">
             <div className="border-b border-slate-100 pb-3">
-              <h2 className="text-base font-extrabold text-navy-900 flex items-center gap-2">
+              <h2 className="text-base font-semibold text-navy-900 flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-orange-500" />
                 3. Şantiye Konumu ve Firma Dağıtım Yarıçapı
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                PostGIS mesafe motorumuz belirlediğiniz yarıçaptaki en yakın onaylı tedarikçileri filtreler.
+                Belirlediğiniz yarıçaptaki en yakın onaylı tedarikçileri filtreler.
               </p>
             </div>
 
@@ -457,7 +453,7 @@ function MultiVendorQuoteForm() {
           {/* 4. Fiyata Dahil Edilmesi İstenen Hizmetler */}
           <div className="space-y-4">
             <div className="border-b border-slate-100 pb-3">
-              <h2 className="text-base font-extrabold text-navy-900 flex items-center gap-2">
+              <h2 className="text-base font-semibold text-navy-900 flex items-center gap-2">
                 <Wrench className="w-5 h-5 text-orange-500" />
                 4. Teklif Kapsamına Dahil Olacak Hizmetler
               </h2>
@@ -511,7 +507,7 @@ function MultiVendorQuoteForm() {
             <button
               type="submit"
               disabled={loading || success}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm tracking-wide shadow-lg shadow-orange-500/30 transition disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm tracking-wide shadow-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <Send className="w-4 h-4" />
               {loading ? 'Teklif Talebi Dağıtılıyor...' : 'TEKLİF TALEBİNİ GÖNDER'}

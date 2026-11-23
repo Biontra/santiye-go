@@ -94,7 +94,7 @@ export default function AdminListingsPage() {
             <span className="text-slate-400">/</span>
             <span className="text-xs text-orange-600 font-bold">İlan Moderasyonu</span>
           </div>
-          <h1 className="text-2xl font-black text-navy-900 mt-1">İlan İnceleme & Moderasyon</h1>
+          <h1 className="text-2xl font-bold text-navy-900 mt-1">İlan İnceleme & Moderasyon</h1>
           <p className="text-xs text-slate-500 mt-0.5">
             Platformdaki ilanları denetleyin, şüpheli ilanları yayından kaldırın.
           </p>
@@ -119,7 +119,7 @@ export default function AdminListingsPage() {
       )}
 
       {/* Filters & Search */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           {['all', 'active', 'inactive'].map((st) => (
             <button
@@ -149,10 +149,10 @@ export default function AdminListingsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-extrabold uppercase tracking-wider border-b border-slate-200 text-[10px]">
+            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200 text-[11px]">
               <tr>
                 <th className="py-3 px-4 w-10">
                   <input
@@ -204,10 +204,10 @@ export default function AdminListingsPage() {
                           />
                         </div>
                         <div>
-                          <div className="font-extrabold text-navy-900 text-sm line-clamp-1">
+                          <div className="font-semibold text-navy-900 text-sm line-clamp-1">
                             {l.title}
                           </div>
-                          <div className="text-[10px] text-slate-400 font-mono">
+                          <div className="text-[11px] text-slate-400 font-mono">
                             #{l.id.slice(0, 8)}
                           </div>
                         </div>
@@ -222,7 +222,7 @@ export default function AdminListingsPage() {
                           ? `${Number(l.price_sale).toLocaleString('tr-TR')} ₺`
                           : 'Teklif Usulü'}
                       </div>
-                      <div className="text-[10px] text-slate-400 capitalize">
+                      <div className="text-[11px] text-slate-400 capitalize">
                         {l.listing_type === 'rental' ? 'Kiralık' : 'Satılık'}
                       </div>
                     </td>
@@ -234,11 +234,11 @@ export default function AdminListingsPage() {
 
                     <td className="py-3 px-4">
                       {l.status === 'active' ? (
-                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
                           Yayında
                         </span>
                       ) : (
-                        <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold">
+                        <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold">
                           Pasif / Gizli
                         </span>
                       )}
@@ -288,9 +288,9 @@ export default function AdminListingsPage() {
       {/* Moderation Rejection Modal */}
       {rejectModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg border border-slate-200 space-y-4">
             <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="font-extrabold text-navy-900 text-sm flex items-center gap-2">
+              <h3 className="font-semibold text-navy-900 text-sm flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-red-600" />
                 İlanı Yayından Kaldır / Reddet
               </h3>
@@ -305,7 +305,7 @@ export default function AdminListingsPage() {
 
             <div className="space-y-3">
               <label className="block text-xs font-bold text-slate-700">
-                Kaldırma / Red Gerekçesi (Prompt 9A):
+                Kaldırma / red gerekçesi:
               </label>
               <select
                 value={rejectReason}

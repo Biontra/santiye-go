@@ -93,17 +93,17 @@ export default function ComparisonTable({
 
   if (listings.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-500 text-sm">
+      <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-500 text-sm">
         Karşılaştırılacak ilan bulunamadı.
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/70">
         <div>
-          <h3 className="font-extrabold text-navy-900 text-base flex items-center gap-2">
+          <h3 className="font-semibold text-navy-900 text-base flex items-center gap-2">
             <Zap className="w-4 h-4 text-orange-500" />
             Fiyat & Hizmet Karşılaştırma Tablosu
           </h3>
@@ -126,7 +126,7 @@ export default function ComparisonTable({
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs border-collapse">
           <thead>
-            <tr className="bg-navy-900 text-white font-bold uppercase tracking-wider text-[11px]">
+            <tr className="bg-navy-900 text-white font-bold text-[11px]">
               <th className="py-3 px-3 text-center w-12">Seç</th>
               <th
                 onClick={() => handleHeaderClick('title')}
@@ -193,12 +193,12 @@ export default function ComparisonTable({
                   <td className="py-3 px-4 max-w-xs">
                     <div className="flex items-center gap-1.5 mb-0.5">
                       {isCheapestDaily && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-600 text-white shadow-sm">
+                        <span className="px-1.5 py-0.5 rounded text-[11px] font-bold uppercase bg-emerald-600 text-white shadow-sm">
                           EN UCUZ
                         </span>
                       )}
                       {isClosest && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase bg-orange-500 text-white shadow-sm">
+                        <span className="px-1.5 py-0.5 rounded text-[11px] font-bold uppercase bg-orange-500 text-white shadow-sm">
                           EN YAKIN
                         </span>
                       )}
@@ -237,7 +237,7 @@ export default function ComparisonTable({
                         Teklife Göre
                       </span>
                     ) : l.price_daily ? (
-                      <span className="font-black text-navy-900 text-sm">
+                      <span className="font-bold text-navy-900 text-sm">
                         {Number(l.price_daily).toLocaleString('tr-TR')} ₺
                       </span>
                     ) : (
@@ -258,7 +258,7 @@ export default function ComparisonTable({
                   {/* Sale Price */}
                   <td className="py-3 px-4 whitespace-nowrap">
                     {l.price_sale ? (
-                      <span className="font-black text-navy-900 text-sm">
+                      <span className="font-bold text-navy-900 text-sm">
                         {Number(l.price_sale).toLocaleString('tr-TR')} ₺
                       </span>
                     ) : (
@@ -307,7 +307,7 @@ export default function ComparisonTable({
 
                   {/* Status / Availability */}
                   <td className="py-3 px-3 text-center whitespace-nowrap">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                    <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
                       l.status === 'active'
                         ? 'bg-emerald-100 text-emerald-800'
                         : 'bg-amber-100 text-amber-800'

@@ -491,11 +491,11 @@ export default function MessagesClient() {
   if (isAuthenticating || !currentUserId) {
     return (
       <div className="bg-slate-100 min-h-[calc(100vh-80px)] flex items-center justify-center py-12 px-4">
-        <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm max-w-md w-full text-center space-y-4">
+        <div className="bg-white p-8 rounded-xl border border-slate-200 shadow-sm max-w-md w-full text-center space-y-4">
           <div className="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mx-auto">
             <Lock className="w-6 h-6" />
           </div>
-          <h2 className="text-lg font-black text-navy-900">Giriş Yapılması Gerekiyor</h2>
+          <h2 className="text-lg font-bold text-navy-900">Giriş Yapılması Gerekiyor</h2>
           <p className="text-xs text-slate-500 leading-relaxed">
             Mesajlarınızı ve görüşmelerinizi görüntülemek için lütfen hesabınıza giriş yapın veya ücretsiz kayıt olun.
           </p>
@@ -556,7 +556,7 @@ export default function MessagesClient() {
           </button>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden h-[750px] flex">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden h-[750px] flex">
           {/* Left Column: Conversation List */}
           <div
             className={`w-full md:w-80 lg:w-96 border-r border-slate-200 flex flex-col shrink-0 ${
@@ -566,7 +566,7 @@ export default function MessagesClient() {
             {/* List Header */}
             <div className="p-4 border-b border-slate-100 space-y-3 bg-slate-50">
               <div className="flex items-center justify-between">
-                <h1 className="font-black text-navy-900 text-lg flex items-center gap-2">
+                <h1 className="font-bold text-navy-900 text-lg flex items-center gap-2">
                   <MessageSquare className="w-5 h-5 text-orange-500" />
                   Mesajlarım
                 </h1>
@@ -610,7 +610,7 @@ export default function MessagesClient() {
                           {conv.other_user_name}
                         </div>
                         {conv.last_message_at && (
-                          <span className="text-[10px] text-slate-400 shrink-0">
+                          <span className="text-[11px] text-slate-400 shrink-0">
                             {new Date(conv.last_message_at).toLocaleTimeString('tr-TR', {
                               hour: '2-digit',
                               minute: '2-digit',
@@ -630,7 +630,7 @@ export default function MessagesClient() {
                           {conv.last_message || 'Yeni konuşma'}
                         </p>
                         {conv.unread_count > 0 && (
-                          <span className="w-5 h-5 rounded-full bg-orange-500 text-white text-[10px] font-black flex items-center justify-center shrink-0">
+                          <span className="w-5 h-5 rounded-full bg-orange-500 text-white text-[11px] font-bold flex items-center justify-center shrink-0">
                             {conv.unread_count}
                           </span>
                         )}
@@ -662,16 +662,16 @@ export default function MessagesClient() {
                     </button>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h2 className="font-extrabold text-navy-900 text-sm sm:text-base leading-tight">
+                        <h2 className="font-semibold text-navy-900 text-sm sm:text-base leading-tight">
                           {activeConv.other_user_name}
                         </h2>
                         {realtimeStatus === 'connected' ? (
-                          <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-1.5 py-0.5 rounded-md">
+                          <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 font-semibold bg-emerald-50 px-1.5 py-0.5 rounded-md">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                             Canlı
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-[10px] text-amber-600 font-semibold bg-amber-50 px-1.5 py-0.5 rounded-md">
+                          <span className="inline-flex items-center gap-1 text-[11px] text-amber-600 font-semibold bg-amber-50 px-1.5 py-0.5 rounded-md">
                             <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
                             Yenileniyor
                           </span>
@@ -711,7 +711,7 @@ export default function MessagesClient() {
                     </button>
 
                     {menuOpen && (
-                      <div className="absolute right-0 top-10 w-48 bg-white rounded-xl shadow-xl border border-slate-200 p-1.5 z-20 text-xs">
+                      <div className="absolute right-0 top-10 w-48 bg-white rounded-xl shadow-md border border-slate-200 p-1.5 z-20 text-xs">
                         <button
                           type="button"
                           onClick={handleBlockUser}
@@ -765,7 +765,7 @@ export default function MessagesClient() {
                         <strong>İletişim Bilgileri Korumalı:</strong> Telefon ve açık adres, teklif veya rezervasyon kabul edildikten sonra otomatik açılır.
                       </span>
                     </div>
-                    <span className="text-[10px] text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full font-bold shrink-0">
+                    <span className="text-[11px] text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full font-bold shrink-0">
                       Güvenli Mesajlaşma
                     </span>
                   </div>
@@ -789,7 +789,7 @@ export default function MessagesClient() {
                           className={`flex flex-col group ${isMe ? 'items-end' : 'items-start'}`}
                         >
                           <div
-                            className={`max-w-[85%] sm:max-w-md rounded-2xl px-4 py-2.5 shadow-sm text-xs sm:text-sm ${
+                            className={`max-w-[85%] sm:max-w-md rounded-xl px-4 py-2.5 shadow-sm text-xs sm:text-sm ${
                               isMe
                                 ? 'bg-navy-900 text-white rounded-tr-none'
                                 : 'bg-white text-navy-900 border border-slate-200 rounded-tl-none'
@@ -809,7 +809,7 @@ export default function MessagesClient() {
 
                             {/* Masked Content Notice & False Positive Dispute Button */}
                             {isMaskedMessage && (
-                              <div className="mt-2 pt-2 border-t border-slate-200/40 text-[10px] flex flex-wrap items-center justify-between gap-2">
+                              <div className="mt-2 pt-2 border-t border-slate-200/40 text-[11px] flex flex-wrap items-center justify-between gap-2">
                                 <span className={`${isMe ? 'text-amber-300' : 'text-amber-700'} font-semibold flex items-center gap-1`}>
                                   <Lock className="w-3 h-3 shrink-0" />
                                   İletişim bilgisi güvenlik gereği maskelendi.
@@ -832,7 +832,7 @@ export default function MessagesClient() {
                             )}
 
                             <div
-                              className={`flex items-center justify-end gap-1 mt-1 text-[10px] ${
+                              className={`flex items-center justify-end gap-1 mt-1 text-[11px] ${
                                 isMe ? 'text-slate-300' : 'text-slate-400'
                               }`}
                             >
@@ -861,7 +861,7 @@ export default function MessagesClient() {
                                 setTargetMsgId(m.id);
                                 setReportModalOpen(true);
                               }}
-                              className="text-[10px] text-slate-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition mt-0.5 flex items-center gap-1"
+                              className="text-[11px] text-slate-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition mt-0.5 flex items-center gap-1"
                             >
                               <ShieldAlert className="w-3 h-3" />
                               Şikayet Et
@@ -970,13 +970,13 @@ export default function MessagesClient() {
         {/* 2. SORUN ÇÖZÜMÜ: Platform Güvenliği ve Harici Ödeme Önleme Uyarısı Modalı */}
         {showPaymentWarningModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/80 backdrop-blur-sm animate-fade-in">
-            <div className="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-slate-200 space-y-5">
+            <div className="bg-white rounded-xl max-w-lg w-full p-6 sm:p-7 shadow-lg border border-slate-200 space-y-5">
               <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
                   <ShieldAlert className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-black text-navy-900 text-base sm:text-lg leading-tight">
+                  <h3 className="font-bold text-navy-900 text-base sm:text-lg leading-tight">
                     Güvenli Mesajlaşma & Ödeme Uyarısı
                   </h3>
                   <p className="text-xs text-amber-700 font-semibold mt-0.5">
@@ -987,9 +987,9 @@ export default function MessagesClient() {
 
               <div className="space-y-3 text-xs sm:text-[13px] text-slate-600 leading-relaxed">
                 <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-900 font-semibold space-y-1">
-                  <div className="flex items-center gap-1.5 font-black text-red-800">
+                  <div className="flex items-center gap-1.5 font-bold text-red-800">
                     <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
-                    <span>Dışarıdan Ödeme Kesinlikle Yasaktır!</span>
+                    <span>Platform dışı ödeme yasaktır</span>
                   </div>
                   <p className="text-xs font-normal">
                     Şahsi IBAN&apos;a havale/EFT, elden nakit ödeme veya harici kaparo gönderilmesi platform kurallarımıza aykırıdır.
@@ -1013,10 +1013,10 @@ export default function MessagesClient() {
                 <button
                   type="button"
                   onClick={handleAcceptPaymentWarning}
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs sm:text-sm tracking-wide transition shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs sm:text-sm tracking-wide transition shadow-lg flex items-center justify-center gap-2"
                 >
                   <Check className="w-4 h-4" />
-                  <span>KURALLARI OKUDUM VE KABUL EDİYORUM</span>
+                  <span>Kuralları okudum, kabul ediyorum</span>
                 </button>
               </div>
             </div>
@@ -1026,9 +1026,9 @@ export default function MessagesClient() {
         {/* Report Modal */}
         {reportModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg border border-slate-200 space-y-4">
               <div className="flex items-center justify-between border-b pb-3">
-                <h3 className="font-extrabold text-navy-900 text-sm flex items-center gap-2">
+                <h3 className="font-semibold text-navy-900 text-sm flex items-center gap-2">
                   <ShieldAlert className="w-4 h-4 text-red-600" />
                   Mesajı / Kullanıcıyı Şikayet Et
                 </h3>
@@ -1096,9 +1096,9 @@ export default function MessagesClient() {
         {/* False Positive Dispute Modal ("Bu bir iletişim bilgisi değil") */}
         {disputeModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg border border-slate-200 space-y-4">
               <div className="flex items-center justify-between border-b pb-3">
-                <h3 className="font-extrabold text-navy-900 text-sm flex items-center gap-2">
+                <h3 className="font-semibold text-navy-900 text-sm flex items-center gap-2">
                   <Info className="w-4 h-4 text-orange-500" />
                   Hatalı Maskeleme Bildirimi
                 </h3>

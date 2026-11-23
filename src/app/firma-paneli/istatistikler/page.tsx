@@ -45,7 +45,7 @@ export default function CompanyStatisticsPage() {
           </Link>
           <div className="flex items-center gap-2">
             <TrendingUp className="w-6 h-6 text-orange-500" />
-            <h1 className="text-2xl sm:text-3xl font-black text-navy-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 tracking-tight">
               Firma Performansı ve İstatistikler
             </h1>
           </div>
@@ -55,7 +55,7 @@ export default function CompanyStatisticsPage() {
         </div>
 
         {/* Date Filter Buttons */}
-        <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-2xl self-start sm:self-auto">
+        <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl self-start sm:self-auto">
           {[
             { days: 7, label: 'Son 7 Gün' },
             { days: 30, label: 'Son 30 Gün' },
@@ -79,34 +79,34 @@ export default function CompanyStatisticsPage() {
 
       {/* KPI Stat Cards Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-2">
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-bold uppercase tracking-wider">Görüntülenme</span>
+            <span className="text-xs font-bold">Görüntülenme</span>
             <Eye className="w-4 h-4 text-blue-500" />
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-navy-900">
+          <div className="text-2xl sm:text-3xl font-bold text-navy-900">
             {stats.views.toLocaleString('tr-TR')}
           </div>
           <p className="text-[11px] text-slate-500">İlan detay sayfası açılışı</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-2">
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-bold uppercase tracking-wider">Tekil Ziyaretçi</span>
+            <span className="text-xs font-bold">Tekil Ziyaretçi</span>
             <Users className="w-4 h-4 text-emerald-500" />
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-navy-900">
+          <div className="text-2xl sm:text-3xl font-bold text-navy-900">
             {stats.uniqueVisitors.toLocaleString('tr-TR')}
           </div>
           <p className="text-[11px] text-slate-500">Farklı müteahhit oturumu</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-2">
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-bold uppercase tracking-wider">İletişim Talebi</span>
+            <span className="text-xs font-bold">İletişim Talebi</span>
             <Phone className="w-4 h-4 text-orange-500" />
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-navy-900">
+          <div className="text-2xl sm:text-3xl font-bold text-navy-900">
             {(stats.phoneClicks + stats.whatsappClicks).toLocaleString('tr-TR')}
           </div>
           <p className="text-[11px] text-slate-500">
@@ -114,12 +114,12 @@ export default function CompanyStatisticsPage() {
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-2">
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-bold uppercase tracking-wider">Dönüşüm Oranı</span>
+            <span className="text-xs font-bold">Dönüşüm Oranı</span>
             <Percent className="w-4 h-4 text-purple-500" />
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-purple-700">
+          <div className="text-2xl sm:text-3xl font-bold text-purple-700">
             %{stats.conversionRate}
           </div>
           <p className="text-[11px] text-slate-500">Teklif veya arama üretme oranı</p>
@@ -129,8 +129,8 @@ export default function CompanyStatisticsPage() {
       {/* Visual Activity Breakdown & Lead Funnel */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left: Lead Funnel */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
-          <h2 className="text-base font-extrabold text-navy-900 flex items-center gap-2">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
+          <h2 className="text-base font-semibold text-navy-900 flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-orange-500" />
             Müşteri Kazanım Hunisi
           </h2>
@@ -191,9 +191,9 @@ export default function CompanyStatisticsPage() {
         </div>
 
         {/* Right: Ad Performance Summary */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-extrabold text-navy-900 flex items-center gap-2">
+            <h2 className="text-base font-semibold text-navy-900 flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-orange-500" />
               Reklam ve Öne Çıkarma Performansı
             </h2>
@@ -208,26 +208,26 @@ export default function CompanyStatisticsPage() {
           <div className="grid grid-cols-3 gap-3">
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center">
               <div className="text-xs text-slate-500 font-bold uppercase">Reklam Gösterimi</div>
-              <div className="text-2xl font-black text-navy-900 mt-1">
+              <div className="text-2xl font-bold text-navy-900 mt-1">
                 {stats.adImpressions.toLocaleString('tr-TR')}
               </div>
-              <span className="text-[10px] text-slate-400">Arama & Vitrin slotu</span>
+              <span className="text-[11px] text-slate-400">Arama & Vitrin slotu</span>
             </div>
 
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center">
               <div className="text-xs text-slate-500 font-bold uppercase">Reklam Tıklaması</div>
-              <div className="text-2xl font-black text-navy-900 mt-1">
+              <div className="text-2xl font-bold text-navy-900 mt-1">
                 {stats.adClicks.toLocaleString('tr-TR')}
               </div>
-              <span className="text-[10px] text-slate-400">Doğrudan ilan açılışı</span>
+              <span className="text-[11px] text-slate-400">Doğrudan ilan açılışı</span>
             </div>
 
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center">
               <div className="text-xs text-slate-500 font-bold uppercase">Tıklama Oranı (CTR)</div>
-              <div className="text-2xl font-black text-orange-600 mt-1">
+              <div className="text-2xl font-bold text-orange-600 mt-1">
                 %{stats.adCtr}
               </div>
-              <span className="text-[10px] text-emerald-600 font-bold">Sektör ortalaması üstü</span>
+              <span className="text-[11px] text-emerald-600 font-bold">Sektör ortalaması üstü</span>
             </div>
           </div>
 
@@ -256,9 +256,9 @@ export default function CompanyStatisticsPage() {
       </div>
 
       {/* Listing Performance Breakdown Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
         <div className="p-5 border-b border-slate-200">
-          <h2 className="text-base font-extrabold text-navy-900">
+          <h2 className="text-base font-semibold text-navy-900">
             İlan Bazında Performans Kırılımı
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">

@@ -97,7 +97,7 @@ export default function AdminAdsPage() {
         <div>
           <div className="flex items-center gap-2">
             <Sparkles className="w-6 h-6 text-orange-500" />
-            <h1 className="text-2xl sm:text-3xl font-black text-navy-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 tracking-tight">
               Reklam ve Vitrin Moderasyonu
             </h1>
           </div>
@@ -107,11 +107,11 @@ export default function AdminAdsPage() {
         </div>
 
         {/* Tab switch */}
-        <div className="flex items-center gap-1.5 bg-slate-200/80 p-1 rounded-2xl">
+        <div className="flex items-center gap-1.5 bg-slate-200/80 p-1 rounded-xl">
           <button
             type="button"
             onClick={() => setActiveTab('campaigns')}
-            className={`px-4 py-2 rounded-xl text-xs font-black transition ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
               activeTab === 'campaigns'
                 ? 'bg-navy-900 text-white shadow-sm'
                 : 'text-slate-700 hover:text-navy-900'
@@ -122,7 +122,7 @@ export default function AdminAdsPage() {
           <button
             type="button"
             onClick={() => setActiveTab('products')}
-            className={`px-4 py-2 rounded-xl text-xs font-black transition ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
               activeTab === 'products'
                 ? 'bg-navy-900 text-white shadow-sm'
                 : 'text-slate-700 hover:text-navy-900'
@@ -160,7 +160,7 @@ export default function AdminAdsPage() {
           </div>
 
           {/* Table */}
-          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs sm:text-sm">
                 <thead className="bg-slate-50 text-slate-500 font-bold uppercase text-[11px] border-b">
@@ -183,7 +183,7 @@ export default function AdminAdsPage() {
                     return (
                       <tr key={camp.id} className="hover:bg-slate-50/80 transition">
                         <td className="py-3.5 px-4">
-                          <div className="font-extrabold text-navy-900">{camp.title}</div>
+                          <div className="font-semibold text-navy-900">{camp.title}</div>
                           <span className="text-[11px] text-orange-600 font-bold">
                             {camp.product_id}
                           </span>
@@ -208,27 +208,27 @@ export default function AdminAdsPage() {
                           <div className="font-bold text-navy-900">
                             {camp.impressions_count} / {camp.clicks_count}
                           </div>
-                          <span className="text-[10px] text-slate-500">CTR: %{ctr}</span>
+                          <span className="text-[11px] text-slate-500">CTR: %{ctr}</span>
                         </td>
 
                         <td className="py-3.5 px-4">
                           {camp.status === 'active' && (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800">
+                            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">
                               Yayında
                             </span>
                           )}
                           {camp.status === 'pending_moderation' && (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-800">
+                            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800">
                               Onay Bekliyor
                             </span>
                           )}
                           {camp.status === 'expired' && (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-100 text-slate-600">
+                            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600">
                               Süresi Doldu
                             </span>
                           )}
                           {camp.status === 'rejected' && (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-red-100 text-red-800">
+                            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-red-100 text-red-800">
                               Reddedildi
                             </span>
                           )}
@@ -267,9 +267,9 @@ export default function AdminAdsPage() {
         </div>
       ) : (
         /* Tab 2: Products and Slot Configuration */
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-6 shadow-sm">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-6 shadow-sm">
           <div>
-            <h2 className="text-lg font-black text-navy-900">
+            <h2 className="text-lg font-bold text-navy-900">
               Reklam Ürünleri, Fiyatlandırma ve Slot Kapasitesi
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -281,11 +281,11 @@ export default function AdminAdsPage() {
             {products.map((prod) => (
               <div
                 key={prod.id}
-                className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-4"
+                className="p-5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-4"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-3">
                   <div>
-                    <h3 className="font-black text-navy-900 text-base">{prod.name}</h3>
+                    <h3 className="font-bold text-navy-900 text-base">{prod.name}</h3>
                     <p className="text-xs text-slate-500">{prod.description}</p>
                   </div>
                   <span className="text-xs font-mono font-bold text-slate-400 bg-white px-2 py-1 rounded border">
@@ -361,7 +361,7 @@ export default function AdminAdsPage() {
           <button
             type="button"
             onClick={() => alert('Fiyat ve slot ayarları başarıyla güncellendi.')}
-            className="px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md shadow-orange-500/20 transition"
+            className="px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md transition"
           >
             Tüm Ayarları Kaydet
           </button>
@@ -371,9 +371,9 @@ export default function AdminAdsPage() {
       {/* Rejection Modal */}
       {rejectingCampaignId && (
         <div className="fixed inset-0 z-50 bg-navy-950/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 shadow-2xl">
+          <div className="bg-white rounded-xl p-6 sm:p-8 max-w-lg w-full space-y-4 shadow-lg">
             <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="font-black text-lg text-navy-900">Reklam Kampanyasını Reddet</h3>
+              <h3 className="font-bold text-lg text-navy-900">Reklam Kampanyasını Reddet</h3>
               <button
                 type="button"
                 onClick={() => setRejectingCampaignId(null)}
@@ -409,7 +409,7 @@ export default function AdminAdsPage() {
               <button
                 type="button"
                 onClick={handleRejectSubmit}
-                className="px-5 py-2 rounded-xl text-xs font-black bg-red-600 hover:bg-red-700 text-white shadow-md shadow-red-600/20"
+                className="px-5 py-2 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-700 text-white shadow-md"
               >
                 Reddet ve İade Et
               </button>

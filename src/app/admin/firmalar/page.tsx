@@ -91,7 +91,7 @@ export default function AdminCompaniesPage() {
             <span className="text-slate-400">/</span>
             <span className="text-xs text-orange-600 font-bold">Firma Doğrulama</span>
           </div>
-          <h1 className="text-2xl font-black text-navy-900 mt-1">
+          <h1 className="text-2xl font-bold text-navy-900 mt-1">
             Firma Doğrulama & Yetkilendirme
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -108,7 +108,7 @@ export default function AdminCompaniesPage() {
       )}
 
       {/* Filters & Search */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
           {['all', 'pending', 'approved', 'rejected'].map((st) => (
             <button
@@ -144,10 +144,10 @@ export default function AdminCompaniesPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-extrabold uppercase tracking-wider border-b border-slate-200 text-[10px]">
+            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200 text-[11px]">
               <tr>
                 <th className="py-3 px-4">Firma & Ünvan</th>
                 <th className="py-3 px-4">Vergi Bilgileri</th>
@@ -161,8 +161,8 @@ export default function AdminCompaniesPage() {
               {filtered.map((c) => (
                 <tr key={c.id} className="hover:bg-slate-50">
                   <td className="py-3 px-4">
-                    <div className="font-extrabold text-navy-900 text-sm">{c.name}</div>
-                    <div className="text-[10px] text-slate-400">{c.legal_type}</div>
+                    <div className="font-semibold text-navy-900 text-sm">{c.name}</div>
+                    <div className="text-[11px] text-slate-400">{c.legal_type}</div>
                   </td>
 
                   <td className="py-3 px-4">
@@ -228,13 +228,13 @@ export default function AdminCompaniesPage() {
       {/* Review Modal */}
       {activeCompany && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+          <div className="bg-white rounded-xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-lg border border-slate-200 overflow-hidden">
             <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
               <div>
-                <span className="text-[10px] font-bold uppercase text-orange-600">
+                <span className="text-[11px] font-bold uppercase text-orange-600">
                   Firma Evrak İnceleme Masası
                 </span>
-                <h3 className="font-black text-navy-900 text-base">{activeCompany.name}</h3>
+                <h3 className="font-bold text-navy-900 text-base">{activeCompany.name}</h3>
               </div>
               <button
                 type="button"

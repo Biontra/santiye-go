@@ -12,7 +12,7 @@ export default function RevealedContactCard({ details, roleLabel = 'Firma İleti
   const cleanPhone = (details.phone || '').replace(/[^0-9]/g, '');
 
   return (
-    <div className="bg-gradient-to-br from-emerald-50/80 to-white border-2 border-emerald-500/40 rounded-2xl p-5 shadow-sm space-y-4">
+    <div className="bg-emerald-50/60 border-2 border-emerald-500/40 rounded-xl p-5 shadow-sm space-y-4">
       {/* Header Badge */}
       <div className="flex items-center justify-between border-b border-emerald-100 pb-3">
         <div className="flex items-center gap-2">
@@ -20,14 +20,14 @@ export default function RevealedContactCard({ details, roleLabel = 'Firma İleti
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="text-xs font-black text-navy-900 uppercase tracking-wider">{roleLabel}</h4>
+            <h4 className="text-xs font-bold text-navy-900">{roleLabel}</h4>
             <div className="flex items-center gap-1 text-[11px] text-emerald-700 font-bold">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Teklif/Rezervasyon Onaylandı (İletişim Açıldı)</span>
             </div>
           </div>
         </div>
-        <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-extrabold uppercase">
+        <span className="text-[11px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-semibold uppercase">
           Onaylı
         </span>
       </div>
@@ -35,19 +35,19 @@ export default function RevealedContactCard({ details, roleLabel = 'Firma İleti
       {/* Details Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
         <div className="space-y-1">
-          <span className="text-[10px] font-bold text-slate-400 uppercase">Firma / Yetkili</span>
-          <div className="font-extrabold text-navy-900 text-sm flex items-center gap-1.5">
+          <span className="text-[11px] font-bold text-slate-400 uppercase">Firma / Yetkili</span>
+          <div className="font-semibold text-navy-900 text-sm flex items-center gap-1.5">
             <Building2 className="w-4 h-4 text-orange-500 shrink-0" />
             <span>{details.companyName || details.fullName}</span>
           </div>
         </div>
 
         <div className="space-y-1">
-          <span className="text-[10px] font-bold text-slate-400 uppercase">Telefon Numarası</span>
+          <span className="text-[11px] font-bold text-slate-400 uppercase">Telefon Numarası</span>
           <div>
             <a
               href={`tel:${details.phone}`}
-              className="font-black text-navy-900 hover:text-orange-600 text-sm flex items-center gap-1.5 transition"
+              className="font-bold text-navy-900 hover:text-orange-600 text-sm flex items-center gap-1.5 transition"
             >
               <Phone className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>{details.phone || 'Belirtilmedi'}</span>
@@ -56,7 +56,7 @@ export default function RevealedContactCard({ details, roleLabel = 'Firma İleti
         </div>
 
         <div className="sm:col-span-2 space-y-1">
-          <span className="text-[10px] font-bold text-slate-400 uppercase">Tam Şantiye / Garaj Adresi</span>
+          <span className="text-[11px] font-bold text-slate-400 uppercase">Tam Şantiye / Garaj Adresi</span>
           <div className="text-slate-700 flex items-start gap-1.5">
             <MapPin className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
             <span className="font-medium">{details.fullAddress || `${details.districtName}, ${details.cityName}`}</span>
@@ -87,7 +87,7 @@ export default function RevealedContactCard({ details, roleLabel = 'Firma İleti
         )}
       </div>
 
-      <p className="text-[10px] text-slate-400 text-center italic">
+      <p className="text-[11px] text-slate-400 text-center italic">
         * Bu iletişim kartı yalnızca teklifi/rezervasyonu onaylayan taraflara gösterilmektedir (Row Level Security).
       </p>
     </div>

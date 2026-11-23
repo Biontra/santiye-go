@@ -110,7 +110,7 @@ export default function LocationAutocomplete({
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
-        setQuery('📍 Mevcut Konumum');
+        setQuery('Mevcut konumum');
         setDropdownOpen(false);
         setGeoLoading(false);
         onSelectLocation({
@@ -265,7 +265,7 @@ export default function LocationAutocomplete({
 
           {/* Autocomplete Dropdown List */}
           {dropdownOpen && (
-            <div className="absolute top-full left-0 right-0 mt-1.5 bg-white rounded-xl shadow-2xl border border-slate-200 py-1.5 z-50 max-h-60 overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 mt-1.5 bg-white rounded-xl shadow-lg border border-slate-200 py-1.5 z-50 max-h-60 overflow-y-auto">
               {isSearching ? (
                 <div className="p-3 text-center text-xs text-slate-500 flex items-center justify-center gap-2">
                   <Loader2 className="w-4 h-4 animate-spin text-orange-500" />
@@ -284,13 +284,13 @@ export default function LocationAutocomplete({
                     className="w-full px-3.5 py-2 text-left hover:bg-orange-50/70 transition flex items-center justify-between text-xs"
                   >
                     <div>
-                      <div className="font-extrabold text-navy-900 flex items-center gap-1.5">
+                      <div className="font-semibold text-navy-900 flex items-center gap-1.5">
                         <MapPin className="w-3.5 h-3.5 text-orange-500 shrink-0" />
                         <span>{item.label}</span>
                       </div>
                       <div className="text-[11px] text-slate-500 pl-5">{item.subLabel}</div>
                     </div>
-                    <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">
+                    <span className="text-[11px] uppercase font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">
                       {item.type === 'postal_code' ? 'Posta Kodu' : item.type === 'neighborhood' ? 'Mahalle' : item.type === 'district' ? 'İlçe' : 'İl'}
                     </span>
                   </button>

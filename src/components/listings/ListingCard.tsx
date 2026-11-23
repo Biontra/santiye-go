@@ -56,7 +56,7 @@ export default function ListingCard({
                 / {listing.price_unit || 'm²'}
               </span>
             </div>
-            <div className="text-[10px] text-slate-500 font-semibold">Birim Hizmet Fiyatı</div>
+            <div className="text-[11px] text-slate-500 font-semibold">Birim Hizmet Fiyatı</div>
           </div>
         );
       }
@@ -65,7 +65,7 @@ export default function ListingCard({
           <div className="text-base sm:text-lg font-bold text-navy-900 tracking-tight">
             Teklife Göre
           </div>
-          <div className="text-[10px] text-slate-500 font-semibold">Keşif & Proje Bazlı</div>
+          <div className="text-[11px] text-slate-500 font-semibold">Keşif & Proje Bazlı</div>
         </div>
       );
     }
@@ -77,7 +77,7 @@ export default function ListingCard({
             <div className="text-lg sm:text-xl font-bold text-navy-900 tracking-tight">
               {Number(listing.price_sale).toLocaleString('tr-TR')} ₺
             </div>
-            <div className="text-[10px] text-slate-500 font-semibold">Satış Fiyatı</div>
+            <div className="text-[11px] text-slate-500 font-semibold">Satış Fiyatı</div>
           </div>
         );
       }
@@ -93,7 +93,7 @@ export default function ListingCard({
             <span className="text-[11px] font-semibold text-slate-500 ml-1">/ gün</span>
           </div>
           {listing.price_monthly && (
-            <div className="text-[10px] text-slate-500 font-medium">
+            <div className="text-[11px] text-slate-500 font-medium">
               Aylık: {Number(listing.price_monthly).toLocaleString('tr-TR')} ₺
             </div>
           )}
@@ -131,7 +131,7 @@ export default function ListingCard({
         isCompareSelected
           ? 'border-orange-500 ring-2 ring-orange-500/20'
           : listing.is_sponsored
-          ? 'border-amber-300 ring-1 ring-amber-300/40 bg-gradient-to-b from-amber-50/20 to-white'
+          ? 'border-amber-300 ring-1 ring-amber-300/40'
           : 'border-slate-200'
       }`}
     >
@@ -149,25 +149,25 @@ export default function ListingCard({
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center bg-slate-100 text-slate-400">
               <CameraOff className="w-8 h-8 opacity-40 mb-1" />
-              <span className="text-[10px] font-bold text-slate-400">Fotoğraf Yok</span>
+              <span className="text-[11px] font-bold text-slate-400">Fotoğraf Yok</span>
             </div>
           )}
 
           {/* Badges on Image */}
           <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5 z-10">
             {listing.is_sponsored && (
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-500 text-white shadow-sm flex items-center gap-1">
+              <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500 text-white shadow-sm flex items-center gap-1">
                 <Sparkles className="w-3 h-3 text-white" />
                 Sponsorlu
               </span>
             )}
             {listing.is_demo && (
-              <span className="px-2 py-0.5 rounded text-[9px] font-bold tracking-wide bg-amber-600 text-white shadow-sm">
+              <span className="px-2 py-0.5 rounded text-[11px] font-bold tracking-wide bg-amber-600 text-white shadow-sm">
                 Örnek İlan
               </span>
             )}
             <span
-              className={`px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wide text-white shadow-sm ${
+              className={`px-2 py-0.5 rounded text-[11px] font-semibold uppercase tracking-wide text-white shadow-sm ${
                 listing.listing_type === 'rental'
                   ? 'bg-navy-900'
                   : listing.listing_type === 'service'
@@ -179,7 +179,7 @@ export default function ListingCard({
             </span>
             {listing.has_license_document && (
               <span
-                className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-600 text-white shadow-sm flex items-center gap-0.5"
+                className="px-1.5 py-0.5 rounded text-[11px] font-bold bg-blue-600 text-white shadow-sm flex items-center gap-0.5"
                 title="Yetki / Mesleki Yeterlilik Belgesi Mevcut"
               >
                 ✓ Belgeli
@@ -221,7 +221,7 @@ export default function ListingCard({
 
           {/* Distance Badge if available */}
           {typeof listing.distance_km === 'number' && Number.isFinite(listing.distance_km) && (
-            <div className="absolute bottom-2.5 left-2.5 px-2 py-0.5 rounded-md bg-navy-950/85 backdrop-blur-md text-white text-[10px] font-bold flex items-center gap-1 shadow-md">
+            <div className="absolute bottom-2.5 left-2.5 px-2 py-0.5 rounded-md bg-navy-950/85 backdrop-blur-md text-white text-[11px] font-bold flex items-center gap-1 shadow-md">
               <MapPin className="w-3 h-3 text-orange-400" />
               <span>{listing.distance_km < 10 ? listing.distance_km.toFixed(1).replace('.', ',') : Math.round(listing.distance_km)} km</span>
             </div>
@@ -257,7 +257,7 @@ export default function ListingCard({
           </Link>
 
           {/* Inclusions Tags */}
-          <div className="flex flex-wrap gap-1 text-[10px]">
+          <div className="flex flex-wrap gap-1 text-[11px]">
             {listing.is_operator_included && (
               <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 font-semibold border border-amber-200">
                 <CheckCircle2 className="w-2.5 h-2.5 text-amber-600" />

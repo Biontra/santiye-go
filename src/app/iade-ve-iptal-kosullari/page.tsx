@@ -14,7 +14,7 @@ export default function CancellationAndRefundPage() {
         </Link>
 
         {/* Legal Disclaimer Box */}
-        <div className="p-4 bg-amber-50 border border-amber-300 rounded-2xl text-xs text-amber-950 flex items-start gap-3 shadow-sm">
+        <div className="p-4 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-950 flex items-start gap-3 shadow-sm">
           <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
           <div>
             <strong>Yasal Uyarı & Taslak Bildirimi:</strong>
@@ -24,9 +24,9 @@ export default function CancellationAndRefundPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-6 text-xs sm:text-sm text-slate-700 leading-relaxed">
+        <div className="bg-white rounded-xl border border-slate-200 p-8 shadow-sm space-y-6 text-xs sm:text-sm text-slate-700 leading-relaxed">
           <div className="border-b pb-4">
-            <h1 className="text-2xl font-black text-navy-900">
+            <h1 className="text-2xl font-bold text-navy-900">
               İptal, Cayma ve İade Koşulları (Taslak)
             </h1>
             <p className="text-xs text-slate-500 mt-1">
@@ -66,7 +66,7 @@ export default function CancellationAndRefundPage() {
           </div>
 
           <section className="space-y-2">
-            <h2 className="text-base font-extrabold text-navy-900">1. GENEL PRENSİP VE EMANET (ESCROW) HAVUZ SİSTEMİ</h2>
+            <h2 className="text-base font-semibold text-navy-900">1. GENEL PRENSİP VE EMANET (ESCROW) HAVUZ SİSTEMİ</h2>
             <p>
               Şantiye GO üzerinden yapılan tüm kiralama ve satın alma ödemeleri, 6563 sayılı Kanun ve BDDK/TCMB lisanslı ödeme kuruluşu (iyzico) nezdindeki güvenli havuz hesabında bloke edilir.
             </p>
@@ -76,7 +76,7 @@ export default function CancellationAndRefundPage() {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-extrabold text-navy-900">2. İŞ MAKİNESİ KİRALAMA İPTAL VE İADE KOŞULLARI</h2>
+            <h2 className="text-base font-semibold text-navy-900">2. İŞ MAKİNESİ KİRALAMA İPTAL VE İADE KOŞULLARI</h2>
             <ul className="list-disc pl-5 space-y-1.5">
               <li>
                 <strong>Erken İptal (24 Saat Öncesi):</strong> Kiralama başlangıç tarih ve saatinden en az 24 saat önce platform üzerinden yapılan iptal bildirimlerinde, hiçbir kesinti olmaksızın tahsil edilen bedelin %100&apos;ü Alıcı&apos;nın kredi kartına/hesabına iade edilir.
@@ -94,7 +94,7 @@ export default function CancellationAndRefundPage() {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-extrabold text-navy-900">3. YAPI MALZEMELERİ SİPARİŞLERİNDE İPTAL VE İADE</h2>
+            <h2 className="text-base font-semibold text-navy-900">3. YAPI MALZEMELERİ SİPARİŞLERİNDE İPTAL VE İADE</h2>
             <ul className="list-disc pl-5 space-y-1.5">
               <li>
                 <strong>Standart Ambalajlı Malzemeler:</strong> Seramik, boya, alçı, yalıtım levhası ve torba çimento gibi ambalajı açılmamış, hasar görmemiş ve tekrar satılabilirliği bozulmamış standart malzemelerde teslim tarihinden itibaren 14 gün içinde cayma ve iade hakkı mevcuttur. İade kargo/nakliye gideri cayma hakkını kullanan Alıcı&apos;ya aittir.
@@ -109,21 +109,21 @@ export default function CancellationAndRefundPage() {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-extrabold text-navy-900">4. NAKLİYE VE HAFRİYAT HİZMETLERİNDE İPTAL</h2>
+            <h2 className="text-base font-semibold text-navy-900">4. NAKLİYE VE HAFRİYAT HİZMETLERİNDE İPTAL</h2>
             <p>
               Nakliye araçlarının (hafriyat kamyonu, lowbed dorse vb.) şantiye adresine intikalinden önce yapılan iptallerde sefer organizasyon masrafı mahsup edilmez. Araç şantiye adresine gelmiş ancak sahada çalışma izni, yol kapanması veya Alıcı kaynaklı ruhsat eksiklikleri sebebiyle yükleme yapılamamışsa asgari bekleme/sefer taban ücreti tedarikçiye ödenir, kalan tutar iade edilir.
             </p>
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-extrabold text-navy-900">5. İADE TUTARININ HESABA YANSIMA SÜRESİ</h2>
+            <h2 className="text-base font-semibold text-navy-900">5. İADE TUTARININ HESABA YANSIMA SÜRESİ</h2>
             <p>
               Şantiye GO tarafından onaylanan iadeler, anlaşmalı ödeme kuruluşu iyzico altyapısı üzerinden aynı gün bankaya iletilir. Bankaların işlem prosedürlerine bağlı olarak tutarın kredi kartı ekstresine veya banka kartı hesabına yansıması ortalama 1 ila 7 iş günü sürebilmektedir.
             </p>
           </section>
 
           <section className="space-y-2 border-t pt-4">
-            <h2 className="text-base font-extrabold text-navy-900">6. İTİRAZ VE UYUŞMAZLIK ÇÖZÜMÜ</h2>
+            <h2 className="text-base font-semibold text-navy-900">6. İTİRAZ VE UYUŞMAZLIK ÇÖZÜMÜ</h2>
             <p>
               Alıcı ve Tedarikçi arasındaki saha teslimat ve performans uyuşmazlıklarında Şantiye GO arabulucu rolü üstlenerek platform üzerindeki konum logları, fotoğraf ekleri, mesajlaşma geçmişi ve iş teslim tutanakları üzerinden değerlendirme yapar. Çözülemeyen ihtilaflarda Tüketici Hakem Heyetleri ve T.C. Ticaret Mahkemeleri yetkilidir.
             </p>

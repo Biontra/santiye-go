@@ -111,12 +111,12 @@ export default function CompanyBookingsPage() {
         </div>
 
         {/* Header */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-black uppercase">
+            <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-bold uppercase">
               Firma Paneli
             </span>
-            <h1 className="text-2xl font-black text-navy-900 mt-1">
+            <h1 className="text-2xl font-bold text-navy-900 mt-1">
               Gelen Kiralama Rezervasyonları
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
@@ -136,7 +136,7 @@ export default function CompanyBookingsPage() {
         {loading ? (
           <div className="p-12 text-center text-slate-400">Yükleniyor...</div>
         ) : bookings.length === 0 ? (
-          <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 space-y-3">
+          <div className="p-12 text-center bg-white rounded-xl border border-slate-200 space-y-3">
             <Calendar className="w-12 h-12 text-slate-300 mx-auto" />
             <h3 className="font-bold text-navy-900 text-base">Gelen rezervasyon talebi yok</h3>
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
@@ -152,7 +152,7 @@ export default function CompanyBookingsPage() {
               return (
                 <div
                   key={b.id}
-                  className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-4"
+                  className="bg-white rounded-xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-4"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
                     <div className="flex items-center gap-2">
@@ -186,7 +186,7 @@ export default function CompanyBookingsPage() {
 
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
                     <div className="lg:col-span-8 space-y-2">
-                      <h3 className="text-base sm:text-lg font-black text-navy-900">
+                      <h3 className="text-base sm:text-lg font-bold text-navy-900">
                         {b.listing?.title}
                       </h3>
                       <TripCounter id={b.id} driver={b.status === 'approved' || b.status === 'confirmed'} />
@@ -212,10 +212,10 @@ export default function CompanyBookingsPage() {
 
                     <div className="lg:col-span-4 flex flex-col justify-between items-end border-t lg:border-t-0 lg:border-l lg:border-slate-100 lg:pl-5 pt-3 lg:pt-0">
                       <div className="text-right w-full">
-                        <span className="text-[10px] text-slate-400 uppercase font-bold block">
+                        <span className="text-[11px] text-slate-400 uppercase font-bold block">
                           Tahmini Tutar
                         </span>
-                        <span className="text-2xl font-black text-orange-600">
+                        <span className="text-2xl font-bold text-orange-600">
                           {(b.total_price || b.agreed_price || 0).toLocaleString('tr-TR')} ₺
                         </span>
                       </div>
@@ -225,7 +225,7 @@ export default function CompanyBookingsPage() {
                         <button
                           type="button"
                           onClick={() => handleOpenWaybill(b)}
-                          className="px-3.5 py-1.5 rounded-lg bg-navy-900 hover:bg-navy-800 text-white font-black text-xs shadow-sm transition flex items-center gap-1.5"
+                          className="px-3.5 py-1.5 rounded-lg bg-navy-900 hover:bg-navy-800 text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5"
                           title="Şantiyede teslimat için QR kod ve PIN göster"
                         >
                           <QrCode className="w-3.5 h-3.5 text-orange-400" />

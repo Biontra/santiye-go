@@ -114,16 +114,16 @@ export default function CompanyCreditsPage() {
     <div className="bg-slate-50 min-h-screen py-8 sm:py-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-8">
         {/* Header Breadcrumb */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-black uppercase">
+              <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-bold uppercase">
                 Firma Paneli
               </span>
               <span className="text-slate-400">•</span>
               <span className="text-xs text-slate-500 font-semibold">Cüzdan & Krediler</span>
             </div>
-            <h1 className="text-2xl font-black text-navy-900 mt-1 flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-navy-900 mt-1 flex items-center gap-2">
               <Coins className="w-6 h-6 text-orange-500" />
               Teklif Verme Kredisi & Cüzdan
             </h1>
@@ -135,7 +135,7 @@ export default function CompanyCreditsPage() {
           <div className="flex items-center gap-2">
             <Link
               href="/firma-paneli/talepler"
-              className="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-orange-500/20"
+              className="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md"
             >
               <Zap className="w-4 h-4" />
               Açık Talepleri Gör
@@ -152,7 +152,7 @@ export default function CompanyCreditsPage() {
         {/* System Mode Notice */}
         {config && (
           <div
-            className={`p-4 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs ${
+            className={`p-4 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs ${
               config.mode === 'ACTIVE'
                 ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
                 : config.mode === 'SHADOW'
@@ -163,7 +163,7 @@ export default function CompanyCreditsPage() {
             <div className="flex items-center gap-2.5">
               <ShieldCheck className="w-5 h-5 shrink-0 text-orange-500" />
               <div>
-                <span className="font-extrabold uppercase tracking-wide">
+                <span className="font-semibold">
                   Sistem Modu: {config.mode === 'ACTIVE' ? 'CANLI (AKTİF)' : config.mode === 'SHADOW' ? 'GÖLGE MOD (TEST/ÖLÇÜM)' : 'KAPALI'}
                 </span>
                 <p className="text-[11px] opacity-80 mt-0.5">
@@ -184,14 +184,14 @@ export default function CompanyCreditsPage() {
 
         {/* Balance Card & Quick Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-          <div className="bg-gradient-to-br from-navy-900 via-navy-800 to-navy-950 text-white rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between">
+          <div className="bg-navy-900 text-white rounded-xl p-6 shadow-md relative overflow-hidden flex flex-col justify-between">
             <div className="absolute right-[-15px] top-[-15px] w-32 h-32 bg-orange-500/10 rounded-full blur-2xl" />
             <div>
-              <span className="text-xs font-bold text-orange-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="text-xs font-bold text-orange-400 flex items-center gap-1.5">
                 <Coins className="w-4 h-4" />
                 Mevcut Kredi Bakiyesi
               </span>
-              <div className="text-4xl font-black mt-2 tracking-tight">
+              <div className="text-4xl font-bold mt-2 tracking-tight">
                 {loading ? '...' : balance} <span className="text-lg font-bold text-orange-300">Kredi</span>
               </div>
             </div>
@@ -200,25 +200,25 @@ export default function CompanyCreditsPage() {
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="text-xs font-bold text-slate-500 flex items-center gap-1.5">
                 <TrendingUp className="w-4 h-4 text-emerald-600" />
                 Toplam Kullanılan Teklif Kredisi
               </span>
-              <div className="text-3xl font-black text-navy-900 mt-2">
+              <div className="text-3xl font-bold text-navy-900 mt-2">
                 {ledgers.filter((l) => ['spend', 'shadow_spend'].includes(l.transaction_type)).length} Adet
               </div>
             </div>
             <div className="text-xs text-slate-500 pt-2 border-t border-slate-100 flex items-center justify-between">
               <span>Talep Başına Kontenjan:</span>
-              <span className="font-black text-navy-900">4 Firma (Slot)</span>
+              <span className="font-bold text-navy-900">4 Firma (Slot)</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="text-xs font-bold text-slate-500 flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-blue-600" />
                 Kredi İade Güvencesi
               </span>
@@ -236,7 +236,7 @@ export default function CompanyCreditsPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-black text-navy-900 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-navy-900 flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-orange-500" />
                 Teklif Kredisi Paketleri
               </h2>
@@ -252,22 +252,22 @@ export default function CompanyCreditsPage() {
               return (
                 <div
                   key={pkg.id}
-                  className={`bg-white rounded-2xl border p-5 shadow-sm transition hover:shadow-md flex flex-col justify-between relative ${
+                  className={`bg-white rounded-xl border p-5 shadow-sm transition hover:shadow-md flex flex-col justify-between relative ${
                     pkg.discount_percentage && pkg.discount_percentage > 20
                       ? 'border-orange-400 ring-2 ring-orange-500/10'
                       : 'border-slate-200'
                   }`}
                 >
                   {pkg.discount_percentage ? (
-                    <div className="absolute -top-2.5 right-4 px-2 py-0.5 rounded-full bg-orange-600 text-white text-[10px] font-black tracking-wide shadow-sm">
+                    <div className="absolute -top-2.5 right-4 px-2 py-0.5 rounded-full bg-orange-600 text-white text-[11px] font-bold tracking-wide shadow-sm">
                       %{pkg.discount_percentage} İNDİRİM
                     </div>
                   ) : null}
 
                   <div>
-                    <h3 className="font-black text-navy-900 text-sm">{pkg.name}</h3>
+                    <h3 className="font-bold text-navy-900 text-sm">{pkg.name}</h3>
                     <div className="mt-3 flex items-baseline gap-1">
-                      <span className="text-3xl font-black text-navy-900">{pkg.credits}</span>
+                      <span className="text-3xl font-bold text-navy-900">{pkg.credits}</span>
                       <span className="text-xs font-bold text-slate-500">Kredi</span>
                     </div>
 
@@ -278,8 +278,8 @@ export default function CompanyCreditsPage() {
 
                   <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
                     <div>
-                      <span className="text-xs text-slate-400 block text-[10px]">Toplam Fiyat</span>
-                      <span className="text-lg font-black text-navy-900">{pkg.price.toLocaleString('tr-TR')} ₺</span>
+                      <span className="text-xs text-slate-400 block text-[11px]">Toplam Fiyat</span>
+                      <span className="text-lg font-bold text-navy-900">{pkg.price.toLocaleString('tr-TR')} ₺</span>
                     </div>
 
                     <button
@@ -288,7 +288,7 @@ export default function CompanyCreditsPage() {
                         setSelectedPkg(pkg);
                         setPurchaseError('');
                       }}
-                      className="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-black shadow-sm transition"
+                      className="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold shadow-sm transition"
                     >
                       Satın Al
                     </button>
@@ -300,10 +300,10 @@ export default function CompanyCreditsPage() {
         </div>
 
         {/* Immutable Ledger Table (Değiştirilemez Defter) */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
             <div>
-              <h2 className="text-base font-black text-navy-900 flex items-center gap-2">
+              <h2 className="text-base font-bold text-navy-900 flex items-center gap-2">
                 <Receipt className="w-4 h-4 text-navy-700" />
                 Değiştirilemez Kredi Defteri (Hesap Ekstresi)
               </h2>
@@ -323,7 +323,7 @@ export default function CompanyCreditsPage() {
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-600 uppercase text-[10px] font-extrabold border-b border-slate-200">
+              <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-semibold border-b border-slate-200">
                 <tr>
                   <th className="py-2.5 px-3">Tarih</th>
                   <th className="py-2.5 px-3">İşlem Türü</th>
@@ -354,7 +354,7 @@ export default function CompanyCreditsPage() {
                         </td>
                         <td className="py-2.5 px-3">
                           <span
-                            className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                            className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase ${
                               l.transaction_type === 'purchase'
                                 ? 'bg-emerald-100 text-emerald-800'
                                 : l.transaction_type === 'spend'
@@ -380,10 +380,10 @@ export default function CompanyCreditsPage() {
                         <td className="py-2.5 px-3 font-medium text-slate-800">
                           {l.notes || l.reference_id || 'İşlem kaydı'}
                         </td>
-                        <td className="py-2.5 px-3 text-right font-black">
+                        <td className="py-2.5 px-3 text-right font-bold">
                           <span
                             className={
-                              isPositive
+                             isPositive
                                 ? 'text-emerald-600'
                                 : isZero
                                 ? 'text-slate-400'
@@ -393,7 +393,7 @@ export default function CompanyCreditsPage() {
                             {isPositive ? `+${l.amount}` : l.amount} Kredi
                           </span>
                         </td>
-                        <td className="py-2.5 px-3 text-right font-extrabold text-navy-900">
+                        <td className="py-2.5 px-3 text-right font-semibold text-navy-900">
                           {l.balance_after}
                         </td>
                       </tr>
@@ -406,9 +406,9 @@ export default function CompanyCreditsPage() {
         </div>
 
         {/* Dispute & Problematic Requests History */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
           <div className="border-b border-slate-100 pb-3">
-            <h2 className="text-base font-black text-navy-900 flex items-center gap-2">
+            <h2 className="text-base font-bold text-navy-900 flex items-center gap-2">
               <FileQuestion className="w-4 h-4 text-orange-500" />
               Sorunlu Talep & İade İtirazlarım
             </h2>
@@ -430,9 +430,9 @@ export default function CompanyCreditsPage() {
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-black text-navy-900">Talep Ref: {d.request_id}</span>
+                      <span className="font-bold text-navy-900">Talep Ref: {d.request_id}</span>
                       <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                        className={`px-2 py-0.5 rounded text-[11px] font-bold ${
                           d.status === 'approved'
                             ? 'bg-emerald-100 text-emerald-800'
                             : d.status === 'rejected'
@@ -469,11 +469,11 @@ export default function CompanyCreditsPage() {
         {/* Notification Preferences */}
         <form
           onSubmit={handleSaveNotifs}
-          className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4"
+          className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4"
         >
           <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
             <div>
-              <h2 className="text-base font-black text-navy-900 flex items-center gap-2">
+              <h2 className="text-base font-bold text-navy-900 flex items-center gap-2">
                 <Bell className="w-4 h-4 text-orange-500" />
                 Yeni Talep Bildirim Tercihleri
               </h2>
@@ -534,9 +534,9 @@ export default function CompanyCreditsPage() {
         {/* Purchase Confirmation Modal (Test / Sandbox iyzico) */}
         {selectedPkg && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg border border-slate-200 space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="text-base font-black text-navy-900 flex items-center gap-2">
+                <h3 className="text-base font-bold text-navy-900 flex items-center gap-2">
                   <Coins className="w-5 h-5 text-orange-500" />
                   Kredi Paketi Satın Alımı
                 </h3>
@@ -566,7 +566,7 @@ export default function CompanyCreditsPage() {
                     </div>
                     <div className="flex justify-between border-t border-slate-200 pt-2 font-bold">
                       <span className="text-slate-700">Ödenecek Tutar (KDV Dahil):</span>
-                      <span className="text-base text-navy-900 font-black">
+                      <span className="text-base text-navy-900 font-bold">
                         {selectedPkg.price.toLocaleString('tr-TR')} ₺
                       </span>
                     </div>
@@ -595,7 +595,7 @@ export default function CompanyCreditsPage() {
                       type="button"
                       disabled={purchasing}
                       onClick={handleBuyPackage}
-                      className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md transition disabled:opacity-50"
+                      className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md transition disabled:opacity-50"
                     >
                       {purchasing ? 'İşleniyor...' : 'Test Ödemesini Onayla'}
                     </button>

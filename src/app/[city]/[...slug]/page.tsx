@@ -146,12 +146,12 @@ export default async function ProgrammaticCatchAllPage({ params }: Props) {
               <span className="text-orange-600 font-bold">{category.name}</span>
             </nav>
 
-            <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-3">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 text-orange-700 text-xs font-black uppercase tracking-wider border border-orange-100">
+            <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-3">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 text-orange-700 text-xs font-bold border border-orange-100">
                 <MapPin className="w-3.5 h-3.5 text-orange-500" />
                 <span>{city.name} Bölgesi</span>
               </div>
-              <h1 className="text-2xl sm:text-4xl font-black text-navy-900 tracking-tight">
+              <h1 className="text-2xl sm:text-4xl font-bold text-navy-900 tracking-tight">
                 {city.name} {category.name} İlanları & Fiyatları
               </h1>
               <p className="text-sm text-slate-600 max-w-3xl leading-relaxed">
@@ -160,12 +160,12 @@ export default async function ProgrammaticCatchAllPage({ params }: Props) {
             </div>
 
             {listings.length === 0 ? (
-              <div className="bg-white rounded-3xl border-2 border-dashed border-slate-200 p-10 text-center space-y-4">
-                <div className="w-16 h-16 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mx-auto shadow-inner">
+              <div className="bg-white rounded-xl border-2 border-dashed border-slate-200 p-10 text-center space-y-4">
+                <div className="w-16 h-16 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center mx-auto shadow-inner">
                   <Sparkles className="w-8 h-8" />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="text-xl font-black text-navy-900">
+                  <h3 className="text-xl font-bold text-navy-900">
                     {city.name} Bölgesinde Henüz Aktif {category.name} İlanı Yok
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
@@ -175,7 +175,7 @@ export default async function ProgrammaticCatchAllPage({ params }: Props) {
                 <div className="pt-2">
                   <Link
                     href={`/teklif-iste?city=${city.id}&category=${category.slug}`}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-sm shadow-lg shadow-orange-500/20 transition active:scale-95"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm shadow-lg transition"
                   >
                     <PlusCircle className="w-4 h-4" />
                     <span>Ücretsiz Teklif Talebi Oluştur</span>
@@ -249,12 +249,12 @@ export default async function ProgrammaticCatchAllPage({ params }: Props) {
             <span className="text-orange-600 font-bold">{category.name}</span>
           </nav>
 
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-3">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 text-orange-700 text-xs font-black uppercase tracking-wider border border-orange-100">
+          <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 text-orange-700 text-xs font-bold border border-orange-100">
               <MapPin className="w-3.5 h-3.5 text-orange-500" />
               <span>{city.name} • {district.name}</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl font-black text-navy-900 tracking-tight">
+            <h1 className="text-2xl sm:text-4xl font-bold text-navy-900 tracking-tight">
               {city.name} {district.name} {category.name} İlanları
             </h1>
             <p className="text-sm text-slate-600 max-w-3xl leading-relaxed">
@@ -263,12 +263,12 @@ export default async function ProgrammaticCatchAllPage({ params }: Props) {
           </div>
 
           {listings.length === 0 ? (
-            <div className="bg-white rounded-3xl border-2 border-dashed border-slate-200 p-10 text-center space-y-4">
-              <div className="w-16 h-16 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mx-auto shadow-inner">
+            <div className="bg-white rounded-xl border-2 border-dashed border-slate-200 p-10 text-center space-y-4">
+              <div className="w-16 h-16 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center mx-auto shadow-inner">
                 <Sparkles className="w-8 h-8" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-xl font-black text-navy-900">
+                <h3 className="text-xl font-bold text-navy-900">
                   {district.name} İlçesinde Henüz Doğrudan İlan Bulunamadı
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
@@ -278,7 +278,7 @@ export default async function ProgrammaticCatchAllPage({ params }: Props) {
               <div className="pt-2">
                 <Link
                   href={`/teklif-iste?city=${city.id}&district=${district.id}&category=${category.slug}`}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-sm shadow-lg shadow-orange-500/20 transition active:scale-95"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm shadow-lg transition"
                 >
                   <PlusCircle className="w-4 h-4" />
                   <span>{district.name} İçin Teklif Talep Et</span>

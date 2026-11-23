@@ -73,13 +73,13 @@ export default function A2HSPrompt() {
     <>
       {/* Floating Bottom A2HS Banner */}
       <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:w-96 z-50 animate-slide-up">
-        <div className="bg-navy-900 border border-navy-700 text-white rounded-2xl p-4 shadow-2xl flex items-center justify-between gap-3">
+        <div className="bg-navy-900 border border-navy-700 text-white rounded-xl p-4 shadow-lg flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center text-white shrink-0 shadow-md">
               <HardHat className="w-5 h-5" />
             </div>
             <div>
-              <div className="font-black text-xs sm:text-sm tracking-tight">
+              <div className="font-bold text-xs sm:text-sm tracking-tight">
                 ŞANTİYE GO Uygulamasını Yükle
               </div>
               <p className="text-[11px] text-slate-300">
@@ -92,7 +92,7 @@ export default function A2HSPrompt() {
             <button
               type="button"
               onClick={handleInstallClick}
-              className="px-3 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs flex items-center gap-1 transition shadow-md shadow-orange-500/25"
+              className="px-3 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs flex items-center gap-1 transition shadow-md"
             >
               <Download className="w-3.5 h-3.5" />
               Yükle
@@ -112,13 +112,13 @@ export default function A2HSPrompt() {
       {/* iOS Installation Instruction Modal */}
       {showIOSGuide && (
         <div className="fixed inset-0 z-50 bg-navy-950/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 max-w-sm w-full space-y-4 text-center shadow-2xl animate-scale-up">
-            <div className="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mx-auto">
+          <div className="bg-white rounded-xl p-6 max-w-sm w-full space-y-4 text-center shadow-lg animate-scale-up">
+            <div className="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center mx-auto">
               <HardHat className="w-6 h-6" />
             </div>
 
             <div className="space-y-1">
-              <h3 className="font-black text-base text-navy-900">
+              <h3 className="font-bold text-base text-navy-900">
                 iOS Cihazınıza Yükleyin
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
@@ -126,17 +126,17 @@ export default function A2HSPrompt() {
               </p>
             </div>
 
-            <div className="bg-slate-50 rounded-2xl p-4 text-left text-xs space-y-2.5 border border-slate-100">
+            <div className="bg-slate-50 rounded-xl p-4 text-left text-xs space-y-2.5 border border-slate-100">
               <div className="flex items-center gap-2 text-slate-700 font-semibold">
-                <span className="w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-bold">1</span>
+                <span className="w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center text-[11px] font-bold">1</span>
                 <span>Safari&apos;nin altındaki <Share2 className="w-4 h-4 inline text-blue-600" /> (Paylaş) butonuna dokunun.</span>
               </div>
               <div className="flex items-center gap-2 text-slate-700 font-semibold">
-                <span className="w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-bold">2</span>
+                <span className="w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center text-[11px] font-bold">2</span>
                 <span>Aşağı kaydırıp <PlusSquare className="w-4 h-4 inline text-slate-800" /> &apos;Ana Ekrana Ekle&apos;yi seçin.</span>
               </div>
               <div className="flex items-center gap-2 text-slate-700 font-semibold">
-                <span className="w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center text-[10px] font-bold">3</span>
+                <span className="w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center text-[11px] font-bold">3</span>
                 <span>Sağ üstteki &apos;Ekle&apos;ye basın, uygulama hazır!</span>
               </div>
             </div>

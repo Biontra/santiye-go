@@ -79,7 +79,7 @@ export default function ReviewModal({
             key={star}
             type="button"
             onClick={() => onChange(star)}
-            className="p-1 focus:outline-none transition-transform hover:scale-110"
+            className="p-1 focus:outline-none transition-transform"
           >
             <Star
               className={`w-5 h-5 ${
@@ -97,15 +97,15 @@ export default function ReviewModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+      <div className="bg-white rounded-xl max-w-md w-full shadow-lg border border-slate-200 overflow-hidden">
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
           <div>
-            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase text-emerald-700">
+            <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase text-emerald-700">
               <ShieldCheck className="w-3.5 h-3.5" />
               Doğrulanmış Müşteri Değerlendirmesi
             </div>
-            <h3 className="font-extrabold text-navy-900 text-base">{companyName}</h3>
+            <h3 className="font-semibold text-navy-900 text-base">{companyName}</h3>
           </div>
           <button
             type="button"
@@ -169,7 +169,7 @@ export default function ReviewModal({
             <button
               type="submit"
               disabled={loading || success}
-              className="px-6 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md transition disabled:opacity-50"
+              className="px-6 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md transition disabled:opacity-50"
             >
               {loading ? 'Kaydediliyor...' : 'YORUMU YAYINLA'}
             </button>

@@ -82,7 +82,7 @@ export default function AdminAnalyticsPage() {
         <div>
           <div className="flex items-center gap-2">
             <BarChart3 className="w-6 h-6 text-orange-500" />
-            <h1 className="text-2xl sm:text-3xl font-black text-navy-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 tracking-tight">
               Bölgesel Analiz & Arz-Talep Açığı Raporu
             </h1>
           </div>
@@ -103,33 +103,33 @@ export default function AdminAnalyticsPage() {
 
       {/* Revenue Breakdown Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-1">
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-1">
           <span className="text-xs font-bold uppercase text-slate-500">Toplam Platform Geliri</span>
-          <div className="text-2xl sm:text-3xl font-black text-navy-900">
+          <div className="text-2xl sm:text-3xl font-bold text-navy-900">
             {formatTRY(revenueSummary.totalCents)}
           </div>
           <span className="text-[11px] text-emerald-600 font-bold block">Bu ayki toplam hacim</span>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-1">
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-1">
           <span className="text-xs font-bold uppercase text-emerald-700">Rezervasyon Komisyonları</span>
-          <div className="text-2xl font-black text-emerald-950">
+          <div className="text-2xl font-bold text-emerald-950">
             {formatTRY(revenueSummary.commissionCents)}
           </div>
           <span className="text-[11px] text-slate-500 block">Kiralama ve satış kesintileri</span>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-1">
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-1">
           <span className="text-xs font-bold uppercase text-blue-700">Firma Üyelik Paketleri</span>
-          <div className="text-2xl font-black text-blue-950">
+          <div className="text-2xl font-bold text-blue-950">
             {formatTRY(revenueSummary.membershipCents)}
           </div>
           <span className="text-[11px] text-slate-500 block">Pro & Premium abonelikler</span>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-1">
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-1">
           <span className="text-xs font-bold uppercase text-orange-600">Reklam & Vitrin Geliri</span>
-          <div className="text-2xl font-black text-orange-600">
+          <div className="text-2xl font-bold text-orange-600">
             {formatTRY(revenueSummary.advertisingCents)}
           </div>
           <span className="text-[11px] text-slate-500 block">Sponsorlu arama & vitrinler</span>
@@ -137,14 +137,14 @@ export default function AdminAnalyticsPage() {
       </div>
 
       {/* High-Value Supply-Demand Gap Table ("Çok Aranıyor / Az İlan Var") */}
-      <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm space-y-4 p-6">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm space-y-4 p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-4">
           <div>
-            <div className="flex items-center gap-1.5 text-xs font-black text-red-600 uppercase tracking-wider">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-red-600">
               <AlertTriangle className="w-4 h-4 text-red-500" />
               <span>Platform Büyüme Fırsatları</span>
             </div>
-            <h2 className="text-lg font-black text-navy-900 tracking-tight">
+            <h2 className="text-lg font-bold text-navy-900 tracking-tight">
               Arz-Talep Açığı Masası (&quot;Çok Aranıyor, Az İlan Var&quot;)
             </h2>
           </div>
@@ -169,7 +169,7 @@ export default function AdminAnalyticsPage() {
             <tbody className="divide-y divide-slate-100">
               {supplyDemandReports.map((report, idx) => (
                 <tr key={idx} className="hover:bg-slate-50/80 transition">
-                  <td className="py-3.5 px-4 font-extrabold text-navy-900">
+                  <td className="py-3.5 px-4 font-semibold text-navy-900">
                     <span className="flex items-center gap-1.5">
                       <MapPin className="w-4 h-4 text-orange-500 shrink-0" />
                       {report.cityName}
@@ -186,7 +186,7 @@ export default function AdminAnalyticsPage() {
 
                   <td className="py-3.5 px-4 text-center font-bold text-navy-900">
                     <span
-                      className={`px-2 py-0.5 rounded font-black ${
+                      className={`px-2 py-0.5 rounded font-bold ${
                         report.activeListingsCount <= 2
                           ? 'bg-red-100 text-red-800'
                           : 'bg-slate-100 text-slate-700'
@@ -202,11 +202,11 @@ export default function AdminAnalyticsPage() {
 
                   <td className="py-3.5 px-4 text-center">
                     {report.status === 'critical_shortage' ? (
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-red-100 text-red-800 uppercase tracking-wide">
+                      <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-100 text-red-800">
                         Kritik Açık ({report.gapScore}x)
                       </span>
                     ) : (
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 uppercase tracking-wide">
+                      <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">
                         Dengeli
                       </span>
                     )}
@@ -224,10 +224,10 @@ export default function AdminAnalyticsPage() {
 
       {/* Zero-Result Search Queries (Sonuç Çıkmayan Aramalar) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
           <div className="flex items-center justify-between border-b pb-3">
             <div>
-              <h2 className="text-base font-black text-navy-900 flex items-center gap-2">
+              <h2 className="text-base font-bold text-navy-900 flex items-center gap-2">
                 <Search className="w-4 h-4 text-orange-500" />
                 Sıfır Sonuçlu Aramalar (&quot;Arandı Ama Bulunamadı&quot;)
               </h2>
@@ -247,14 +247,14 @@ export default function AdminAnalyticsPage() {
                 className="p-3.5 rounded-xl border border-slate-100 bg-slate-50 flex items-center justify-between text-xs"
               >
                 <div>
-                  <div className="font-extrabold text-navy-900">{q.keyword}</div>
+                  <div className="font-semibold text-navy-900">{q.keyword}</div>
                   <span className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
                     <MapPin className="w-3 h-3 text-orange-500" /> {q.city} • {q.lastSearched}
                   </span>
                 </div>
                 <div className="text-right">
-                  <span className="font-black text-red-600 text-sm">{q.count} Kez</span>
-                  <span className="text-[10px] text-slate-400 block">0 Sonuç</span>
+                  <span className="font-bold text-red-600 text-sm">{q.count} Kez</span>
+                  <span className="text-[11px] text-slate-400 block">0 Sonuç</span>
                 </div>
               </div>
             ))}
@@ -262,10 +262,10 @@ export default function AdminAnalyticsPage() {
         </div>
 
         {/* Regional Activity Ranking */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
           <div className="flex items-center justify-between border-b pb-3">
             <div>
-              <h2 className="text-base font-black text-navy-900 flex items-center gap-2">
+              <h2 className="text-base font-bold text-navy-900 flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-orange-500" />
                 En Çok Şantiye Araması Yapılan İller
               </h2>

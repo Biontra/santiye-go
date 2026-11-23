@@ -109,17 +109,16 @@ export default function TeslimatOnayPage() {
         </Link>
 
         {/* Hero Header */}
-        <div className="bg-navy-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-          <div className="absolute right-0 top-0 translate-x-10 -translate-y-10 w-64 h-64 bg-orange-500/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="bg-navy-900 rounded-xl p-6 sm:p-8 text-white shadow-md relative overflow-hidden">
           <div className="relative z-10 flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center font-black">
+            <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center font-bold">
               <FileCheck2 className="w-5 h-5 text-white" />
             </div>
             <div>
-              <span className="px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 text-[10px] font-black uppercase tracking-wider border border-orange-500/30">
+              <span className="px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 text-[11px] font-bold border border-orange-500/30">
                 Dijital İrsaliye & QR Doğrulama
               </span>
-              <h1 className="text-xl sm:text-2xl font-black tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
                 Şantiye Malzeme Teslimat Onayı
               </h1>
             </div>
@@ -132,13 +131,13 @@ export default function TeslimatOnayPage() {
 
         {/* Tamamlandı Ekranı */}
         {completedWaybill ? (
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
-            <div className="p-6 bg-emerald-50 border-2 border-emerald-500 rounded-3xl text-center space-y-3">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-500 text-white flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/30">
+          <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
+            <div className="p-6 bg-emerald-50 border-2 border-emerald-500 rounded-xl text-center space-y-3">
+              <div className="w-16 h-16 rounded-xl bg-emerald-500 text-white flex items-center justify-center mx-auto shadow-lg">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <div>
-                <h2 className="text-xl font-black text-emerald-950">
+                <h2 className="text-xl font-bold text-emerald-950">
                   Dijital İrsaliye Onaylandı!
                 </h2>
                 <p className="text-xs text-emerald-700 font-semibold mt-1">
@@ -147,14 +146,14 @@ export default function TeslimatOnayPage() {
               </div>
             </div>
 
-            <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200 text-xs space-y-3">
+            <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 text-xs space-y-3">
               <div className="flex justify-between border-b pb-2">
                 <span className="text-slate-500 font-bold">Malzeme / İş:</span>
-                <span className="font-black text-navy-900">{completedWaybill.listing_title}</span>
+                <span className="font-bold text-navy-900">{completedWaybill.listing_title}</span>
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span className="text-slate-500 font-bold">Miktar:</span>
-                <span className="font-black text-navy-900">
+                <span className="font-bold text-navy-900">
                   {completedWaybill.quantity} {completedWaybill.unit}
                 </span>
               </div>
@@ -164,7 +163,7 @@ export default function TeslimatOnayPage() {
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span className="text-slate-500 font-bold">Serbest Bırakılan Tutar:</span>
-                <span className="font-black text-orange-600 text-sm">
+                <span className="font-bold text-orange-600 text-sm">
                   {completedWaybill.total_price.toLocaleString('tr-TR')} ₺
                 </span>
               </div>
@@ -186,7 +185,7 @@ export default function TeslimatOnayPage() {
             <div className="flex gap-3">
               <Link
                 href="/alici-paneli/rezervasyonlar"
-                className="flex-1 py-3.5 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-black text-xs text-center transition shadow-md"
+                className="flex-1 py-3.5 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-bold text-xs text-center transition shadow-md"
               >
                 Siparişlerime Dön
               </Link>
@@ -194,7 +193,7 @@ export default function TeslimatOnayPage() {
           </div>
         ) : (
           /* Kod Giriş ve Onay Kartı */
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
+          <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
             {actorId === null && (
               <div className="p-4 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-900 flex items-center justify-between gap-3">
                 <span>Teslimatı yalnızca siparişin alıcısı onaylayabilir. Lütfen alıcı hesabınızla giriş yapın.</span>
@@ -227,14 +226,14 @@ export default function TeslimatOnayPage() {
                     onChange={(e) => setPinOrToken(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleLookup()}
                     placeholder="Örn: 749215 veya 381942"
-                    className="w-full px-4 py-3.5 rounded-2xl border-2 border-slate-300 focus:border-orange-500 text-center font-mono text-2xl font-black tracking-widest text-navy-900 focus:outline-none uppercase bg-slate-50 focus:bg-white transition"
+                    className="w-full px-4 py-3.5 rounded-xl border-2 border-slate-300 focus:border-orange-500 text-center font-mono text-2xl font-bold text-navy-900 focus:outline-none bg-slate-50 focus:bg-white transition"
                   />
                   <KeyRound className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
                 <button
                   type="button"
                   onClick={handleLookup}
-                  className="px-6 py-3.5 rounded-2xl bg-navy-900 hover:bg-navy-800 text-white font-black text-xs tracking-wider transition shrink-0"
+                  className="px-6 py-3.5 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-bold text-xs tracking-wider transition shrink-0"
                 >
                   Sorgula
                 </button>
@@ -247,17 +246,17 @@ export default function TeslimatOnayPage() {
             {/* Bulunan İrsaliye Bilgileri */}
             {waybill && (
               <div className="space-y-5 pt-4 border-t border-slate-200">
-                <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3">
+                <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 space-y-3">
                   <div className="flex items-start justify-between">
                     <div>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">
+                      <span className="text-[11px] font-bold text-slate-400 uppercase">
                         Sipariş / Malzeme
                       </span>
-                      <h3 className="text-base font-black text-navy-900">
+                      <h3 className="text-base font-bold text-navy-900">
                         {waybill.listing_title}
                       </h3>
                     </div>
-                    <span className="text-xs font-black px-2.5 py-1 rounded-lg bg-orange-100 text-orange-800">
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-orange-100 text-orange-800">
                       {waybill.quantity} {waybill.unit}
                     </span>
                   </div>
@@ -307,7 +306,7 @@ export default function TeslimatOnayPage() {
                 </div>
 
                 {/* Escrow Bilgilendirmesi */}
-                <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-3.5 flex items-start gap-2.5 text-xs text-emerald-900">
+                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 flex items-start gap-2.5 text-xs text-emerald-900">
                   <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                   <p className="text-[11px] leading-relaxed">
                     <strong>Emanet Ödeme Serbest Bırakma:</strong> Onayınız ile havuzda bloke edilmiş olan{' '}
@@ -319,7 +318,7 @@ export default function TeslimatOnayPage() {
                   type="button"
                   disabled={loading}
                   onClick={handleConfirm}
-                  className="w-full py-4 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm tracking-wide shadow-lg shadow-orange-500/30 transition active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full py-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm tracking-wide shadow-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   <Lock className="w-4 h-4" />
                   {loading

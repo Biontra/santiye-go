@@ -45,7 +45,7 @@ export default function PushNotificationManager() {
   if (!isSupported) return null;
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+    <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center">
@@ -56,7 +56,7 @@ export default function PushNotificationManager() {
             )}
           </div>
           <div>
-            <h3 className="font-extrabold text-navy-900 text-sm">
+            <h3 className="font-semibold text-navy-900 text-sm">
               Web Push Bildirimleri
             </h3>
             <p className="text-xs text-slate-500">
@@ -71,7 +71,7 @@ export default function PushNotificationManager() {
           <button
             type="button"
             onClick={requestPermission}
-            className="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition shadow-md shadow-orange-500/20"
+            className="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition shadow-md"
           >
             Bildirimleri Aç
           </button>

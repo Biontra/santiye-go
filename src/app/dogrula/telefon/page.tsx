@@ -156,12 +156,12 @@ function PhoneVerificationForm() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50">
-      <div className="max-w-md w-full bg-white p-8 rounded-3xl border border-slate-200 shadow-xl space-y-6">
+      <div className="max-w-md w-full bg-white p-8 rounded-xl border border-slate-200 shadow-md space-y-6">
         <div className="text-center space-y-2">
-          <div className="inline-flex w-14 h-14 rounded-2xl bg-orange-50 text-orange-600 items-center justify-center border border-orange-100 shadow-inner">
+          <div className="inline-flex w-14 h-14 rounded-xl bg-orange-50 text-orange-600 items-center justify-center border border-orange-100 shadow-inner">
             <Phone className="w-7 h-7" />
           </div>
-          <h2 className="text-2xl font-black text-navy-900 tracking-tight">
+          <h2 className="text-2xl font-bold text-navy-900 tracking-tight">
             Hesabınızı Doğrulayın
           </h2>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
@@ -198,7 +198,7 @@ function PhoneVerificationForm() {
                 value={digit}
                 onChange={(e) => handleDigitChange(idx, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(idx, e)}
-                className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-black text-navy-900 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-orange-500 focus:bg-white focus:outline-none transition shadow-sm"
+                className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold text-navy-900 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-orange-500 focus:bg-white focus:outline-none transition shadow-sm"
               />
             ))}
           </div>
@@ -206,7 +206,7 @@ function PhoneVerificationForm() {
           {/* Sayaç ve Geçerlilik Bilgisi */}
           <div className="flex items-center justify-between text-xs text-slate-500 font-semibold px-1">
             <span>Kalan Süre:</span>
-            <span className={`font-mono font-black ${timeLeft < 60 ? 'text-red-600' : 'text-slate-700'}`}>
+            <span className={`font-mono font-bold ${timeLeft < 60 ? 'text-red-600' : 'text-slate-700'}`}>
               {formatTimer(timeLeft)}
             </span>
           </div>
@@ -214,7 +214,7 @@ function PhoneVerificationForm() {
           <button
             type="submit"
             disabled={loading || digits.join('').length !== 6 || timeLeft <= 0}
-            className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm shadow-lg shadow-orange-500/25 active:scale-[0.98] transition flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? (
               <span className="flex items-center gap-2">

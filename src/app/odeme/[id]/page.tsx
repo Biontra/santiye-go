@@ -172,24 +172,24 @@ export default function CheckoutPage() {
         </div>
 
         {/* Ödeme Modu Seçim Kutusu */}
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 space-y-4 shadow-sm">
-          <h2 className="text-base font-black text-navy-900">Ödeme Yöntemi Seçin</h2>
+        <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4 shadow-sm">
+          <h2 className="text-base font-bold text-navy-900">Ödeme Yöntemi Seçin</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* Platform Escrow Seçeneği */}
             <div
               onClick={() => isPlatformModeAvailable && setPaymentModeChoice('platform')}
-              className={`p-4 rounded-2xl border-2 transition cursor-pointer relative ${
+              className={`p-4 rounded-xl border-2 transition cursor-pointer relative ${
                 paymentModeChoice === 'platform'
                   ? 'border-emerald-500 bg-emerald-50/40'
                   : 'border-slate-200 hover:border-slate-300'
               } ${!isPlatformModeAvailable ? 'opacity-60 cursor-not-allowed' : ''}`}
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 font-black text-sm text-navy-900">
+                <div className="flex items-center gap-2 font-bold text-sm text-navy-900">
                   <Lock className="w-4 h-4 text-emerald-600" />
                   <span>Platform Ödeme Güvencesi</span>
                 </div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-100 text-emerald-800">
+                <span className="px-2 py-0.5 rounded text-[11px] font-bold uppercase bg-emerald-100 text-emerald-800">
                   Havuz Koruması
                 </span>
               </div>
@@ -201,18 +201,18 @@ export default function CheckoutPage() {
             {/* Platform Dışı Doğrudan Ödeme Seçeneği */}
             <div
               onClick={() => setPaymentModeChoice('external')}
-              className={`p-4 rounded-2xl border-2 transition cursor-pointer relative ${
+              className={`p-4 rounded-xl border-2 transition cursor-pointer relative ${
                 paymentModeChoice === 'external'
                   ? 'border-orange-500 bg-orange-50/40'
                   : 'border-slate-200 hover:border-slate-300'
               }`}
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 font-black text-sm text-navy-900">
+                <div className="flex items-center gap-2 font-bold text-sm text-navy-900">
                   <Banknote className="w-4 h-4 text-orange-600" />
                   <span>Platform Dışı Doğrudan</span>
                 </div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-slate-100 text-slate-700">
+                <span className="px-2 py-0.5 rounded text-[11px] font-bold uppercase bg-slate-100 text-slate-700">
                   Elden / Havale
                 </span>
               </div>
@@ -231,12 +231,12 @@ export default function CheckoutPage() {
         )}
 
         {agreedSuccess ? (
-          <div className="bg-white rounded-3xl border border-slate-200 p-8 text-center space-y-4 shadow-sm">
-            <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-100">
+          <div className="bg-white rounded-xl border border-slate-200 p-8 text-center space-y-4 shadow-sm">
+            <div className="w-16 h-16 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-100">
               <CheckCircle2 className="w-9 h-9" />
             </div>
             <div className="space-y-1">
-              <h2 className="text-2xl font-black text-navy-900">
+              <h2 className="text-2xl font-bold text-navy-900">
                 {paymentModeChoice === 'platform' ? 'Ödeme Korumalı Havuzda Bloke Edildi!' : 'Mutabakat Onaylandı!'}
               </h2>
               <p className="text-xs text-slate-500 max-w-md mx-auto">
@@ -247,13 +247,13 @@ export default function CheckoutPage() {
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
+          <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
             {/* Rezervasyon Özeti */}
             <div className="border-b border-slate-100 pb-5 space-y-3">
-              <span className="text-[11px] font-black text-orange-600 uppercase tracking-wider block">
+              <span className="text-[11px] font-bold text-orange-600 block">
                 Rezervasyon Dökümü
               </span>
-              <h2 className="text-xl font-black text-navy-900">{booking.listing?.title}</h2>
+              <h2 className="text-xl font-bold text-navy-900">{booking.listing?.title}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-600">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-slate-400" />
@@ -273,15 +273,15 @@ export default function CheckoutPage() {
             </div>
 
             {/* Tutar Özeti */}
-            <div className="bg-slate-50 rounded-2xl p-4 flex items-center justify-between">
+            <div className="bg-slate-50 rounded-xl p-4 flex items-center justify-between">
               <div>
                 <span className="text-xs text-slate-500 font-bold block">Toplam İş Bedeli</span>
-                <span className="text-2xl font-black text-navy-900">
+                <span className="text-2xl font-bold text-navy-900">
                   {totalAmount.toLocaleString('tr-TR')} ₺
                 </span>
               </div>
               <div className="text-right">
-                <span className="px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 text-xs font-black">
+                <span className="px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 text-xs font-bold">
                   {paymentModeChoice === 'platform' ? 'Platform Güvenceli' : 'Doğrudan'}
                 </span>
               </div>
@@ -305,10 +305,10 @@ export default function CheckoutPage() {
             <button
               onClick={handleProcessPayment}
               disabled={isProcessing}
-              className={`w-full py-4 rounded-2xl font-black text-sm text-white transition flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 ${
+              className={`w-full py-4 rounded-xl font-bold text-sm text-white transition flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 ${
                 paymentModeChoice === 'platform'
-                  ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/25'
-                  : 'bg-orange-600 hover:bg-orange-700 shadow-orange-600/25'
+                  ? 'bg-emerald-600 hover:bg-emerald-700'
+                  : 'bg-orange-600 hover:bg-orange-700'
               }`}
             >
               {isProcessing ? (

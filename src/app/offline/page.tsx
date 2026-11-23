@@ -11,17 +11,17 @@ export default function OfflinePage() {
 
   return (
     <div className="min-h-[75vh] flex items-center justify-center px-4 py-12">
-      <div className="max-w-md w-full bg-white rounded-3xl border border-slate-200 p-8 text-center space-y-6 shadow-xl">
-        <div className="w-20 h-20 rounded-3xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200 shadow-inner">
+      <div className="max-w-md w-full bg-white rounded-xl border border-slate-200 p-8 text-center space-y-6 shadow-md">
+        <div className="w-20 h-20 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200 shadow-inner">
           <WifiOff className="w-10 h-10" />
         </div>
 
         <div className="space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-[11px] font-bold text-slate-600">
             <HardHat className="w-3.5 h-3.5 text-orange-500" />
-            ŞANTİYE GO ÇEVRİMDIŞI MOD
+            Çevrimdışısınız
           </div>
-          <h1 className="text-2xl font-black text-navy-900 tracking-tight">
+          <h1 className="text-2xl font-bold text-navy-900 tracking-tight">
             İnternet Bağlantısı Yok
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
@@ -32,7 +32,7 @@ export default function OfflinePage() {
         <button
           type="button"
           onClick={handleReload}
-          className="w-full py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 active:scale-[0.98] text-white font-black text-xs shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 transition"
+          className="w-full py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-lg flex items-center justify-center gap-2 transition"
         >
           <RotateCcw className="w-4 h-4" />
           Bağlantıyı Yenile ve Tekrar Dene

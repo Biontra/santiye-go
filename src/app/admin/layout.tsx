@@ -78,11 +78,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   if (authorized === false) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white p-8 rounded-3xl border border-red-200 shadow-xl text-center space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mx-auto border border-red-100">
+        <div className="max-w-md w-full bg-white p-8 rounded-xl border border-red-200 shadow-md text-center space-y-4">
+          <div className="w-16 h-16 rounded-xl bg-red-50 text-red-600 flex items-center justify-center mx-auto border border-red-100">
             <AlertTriangle className="w-9 h-9" />
           </div>
-          <h2 className="text-2xl font-black text-navy-900">403 Yetkisiz Erişim</h2>
+          <h2 className="text-2xl font-bold text-navy-900">403 Yetkisiz Erişim</h2>
           <p className="text-xs text-slate-500">
             Bu bölüme yalnızca süper yönetici ve yetkili moderatör hesapları erişebilir.
           </p>
@@ -120,7 +120,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center font-bold text-white">
             <HardHat className="w-5 h-5" />
           </div>
-          <span className="font-black text-sm tracking-wide">ŞANTİYE GO ADMİN</span>
+          <span className="font-bold text-sm tracking-wide">ŞantiyeGO yönetim</span>
         </div>
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -144,14 +144,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 <HardHat className="w-5 h-5" />
               </div>
               <div>
-                <div className="font-black text-base tracking-tight flex items-center gap-1.5">
+                <div className="font-bold text-base tracking-tight flex items-center gap-1.5">
                   <span>ŞANTİYE</span>
                   <span className="text-orange-400">GO</span>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-orange-600/30 text-orange-400 border border-orange-500/40 font-bold">
+                  <span className="text-[11px] px-1.5 py-0.5 rounded bg-orange-600/30 text-orange-400 border border-orange-500/40 font-bold">
                     ADMİN
                   </span>
                 </div>
-                <div className="text-[10px] text-slate-400">Platform Yönetim Masası</div>
+                <div className="text-[11px] text-slate-400">Platform Yönetim Masası</div>
               </div>
             </Link>
           </div>
@@ -172,7 +172,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   onClick={() => setSidebarOpen(false)}
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition ${
                     isActive
-                      ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20'
+                      ? 'bg-orange-500 text-white shadow-md'
                       : 'text-slate-300 hover:bg-navy-900 hover:text-white'
                   }`}
                 >
@@ -195,8 +195,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </div>
 
           <div className="p-2.5 rounded-xl bg-navy-900 border border-navy-800 text-xs">
-            <div className="font-extrabold text-white">Süper Admin</div>
-            <div className="text-[10px] text-slate-400">admin@santiyego.com</div>
+            <div className="font-semibold text-white">Süper Admin</div>
+            <div className="text-[11px] text-slate-400">admin@santiyego.com</div>
           </div>
 
           <Link

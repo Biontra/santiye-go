@@ -46,17 +46,17 @@ export default function BuyerDashboardPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Top Banner */}
-      <div className="bg-navy-900 rounded-2xl p-6 sm:p-8 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
+      <div className="bg-navy-900 rounded-xl p-6 sm:p-8 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-md">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-black text-2xl shadow-lg shadow-orange-500/30">
+          <div className="w-14 h-14 rounded-xl bg-orange-500 text-white flex items-center justify-center font-bold text-2xl shadow-lg">
             <User className="w-7 h-7" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
                 Alıcı & Müteahhit Paneli
               </h1>
-              <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-navy-800 border border-slate-700 text-orange-400">
+              <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-navy-800 border border-slate-700 text-orange-400">
                 ALICI
               </span>
             </div>
@@ -69,7 +69,7 @@ export default function BuyerDashboardPage() {
         <div className="flex items-center gap-2">
           <Link
             href="/teklif-iste"
-            className="px-4 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-black shadow-lg shadow-orange-500/25 flex items-center gap-1.5 transition"
+            className="px-4 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold shadow-lg flex items-center gap-1.5 transition"
           >
             <Plus className="w-4 h-4" />
             Teklif Talebi Aç
@@ -88,12 +88,12 @@ export default function BuyerDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Link
           href="/alici-paneli/taleplerim"
-          className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-orange-500 hover:shadow-md transition group space-y-2"
+          className="p-5 rounded-xl bg-white border border-slate-200 shadow-sm hover:border-orange-500 hover:shadow-md transition group space-y-2"
         >
-          <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center group-hover:scale-110 transition">
+          <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center transition">
             <FileText className="w-5 h-5" />
           </div>
-          <h3 className="text-base font-extrabold text-navy-900 group-hover:text-orange-600 transition">
+          <h3 className="text-base font-semibold text-navy-900 group-hover:text-orange-600 transition">
             Teklif Taleplerim & Karşılaştırma
           </h3>
           <p className="text-xs text-slate-500 leading-relaxed">
@@ -103,12 +103,12 @@ export default function BuyerDashboardPage() {
 
         <Link
           href="/alici-paneli/rezervasyonlar"
-          className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-orange-500 hover:shadow-md transition group space-y-2"
+          className="p-5 rounded-xl bg-white border border-slate-200 shadow-sm hover:border-orange-500 hover:shadow-md transition group space-y-2"
         >
-          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-110 transition">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center transition">
             <Calendar className="w-5 h-5" />
           </div>
-          <h3 className="text-base font-extrabold text-navy-900 group-hover:text-orange-600 transition">
+          <h3 className="text-base font-semibold text-navy-900 group-hover:text-orange-600 transition">
             Kiralama Rezervasyonlarım
           </h3>
           <p className="text-xs text-slate-500 leading-relaxed">
@@ -118,12 +118,12 @@ export default function BuyerDashboardPage() {
 
         <Link
           href="/mesajlar"
-          className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-orange-500 hover:shadow-md transition group space-y-2"
+          className="p-5 rounded-xl bg-white border border-slate-200 shadow-sm hover:border-orange-500 hover:shadow-md transition group space-y-2"
         >
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center transition">
             <MessageSquare className="w-5 h-5" />
           </div>
-          <h3 className="text-base font-extrabold text-navy-900 group-hover:text-orange-600 transition">
+          <h3 className="text-base font-semibold text-navy-900 group-hover:text-orange-600 transition">
             Tedarikçi Mesajlarım
           </h3>
           <p className="text-xs text-slate-500 leading-relaxed">
@@ -135,7 +135,7 @@ export default function BuyerDashboardPage() {
       {/* Favorites Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-black text-navy-900 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-navy-900 flex items-center gap-2">
             <Heart className="w-5 h-5 text-red-500 fill-red-500" />
             Favori İlanlarım ({favorites.length})
           </h2>
@@ -145,7 +145,7 @@ export default function BuyerDashboardPage() {
         </div>
 
         {favorites.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-3 shadow-sm">
+          <div className="bg-white rounded-xl border border-slate-200 p-12 text-center space-y-3 shadow-sm">
             <Heart className="w-10 h-10 text-slate-300 mx-auto" />
             <h3 className="text-base font-bold text-navy-900">
               Henüz favoriye eklenmiş ilanınız yok

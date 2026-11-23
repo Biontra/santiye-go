@@ -147,9 +147,9 @@ export default function CompanyCalendarPage() {
         </div>
 
         {/* Header Hero */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-black text-navy-900 flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-navy-900 flex items-center gap-2">
               <CalendarIcon className="w-6 h-6 text-orange-500" />
               İş Makinesi Müsaitlik Takvimi
             </h1>
@@ -178,12 +178,12 @@ export default function CompanyCalendarPage() {
         </div>
 
         {!loadingListings && companyListings.length === 0 && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-10 text-center space-y-4 shadow-sm">
-            <div className="w-14 h-14 rounded-2xl bg-orange-50 text-orange-500 mx-auto flex items-center justify-center">
+          <div className="bg-white rounded-xl border border-slate-200 p-10 text-center space-y-4 shadow-sm">
+            <div className="w-14 h-14 rounded-xl bg-orange-50 text-orange-500 mx-auto flex items-center justify-center">
               <CalendarIcon className="w-7 h-7" />
             </div>
             <div className="space-y-1">
-              <h3 className="text-base font-black text-navy-900">Müsaitlik Takvimi İçin İlan Ekleyin</h3>
+              <h3 className="text-base font-bold text-navy-900">Müsaitlik Takvimi İçin İlan Ekleyin</h3>
               <p className="text-xs text-slate-500 max-w-md mx-auto">
                 Makinelerinizin kirada, müsait veya bakımda olduğu günleri takvim üzerinden yönetebilmek için
                 önce en az bir makine ilanı yayınlamalısınız.
@@ -191,7 +191,7 @@ export default function CompanyCalendarPage() {
             </div>
             <Link
               href="/firma-paneli/yeni-ilan"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-black transition shadow-lg shadow-orange-500/25"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold transition shadow-lg"
             >
               <span>+ Yeni İlan Ekle</span>
             </Link>
@@ -201,16 +201,16 @@ export default function CompanyCalendarPage() {
         {saveSuccess && (
           <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl flex items-center gap-2 text-sm shadow-sm">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-            <span>Takvim güncellemeleri başarıyla kaydedildi!</span>
+            <span>Takvim kaydedildi.</span>
           </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Main Calendar View (8 Cols) */}
-          <div className="lg:col-span-8 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+          <div className="lg:col-span-8 bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-5">
             {/* Month Header */}
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-              <h2 className="text-lg font-black text-navy-900">
+              <h2 className="text-lg font-bold text-navy-900">
                 {monthNames[currentDate.getMonth()]} {year}
               </h2>
               <div className="flex items-center gap-1.5">
@@ -254,7 +254,7 @@ export default function CompanyCalendarPage() {
             </div>
 
             {/* Days of Week Header */}
-            <div className="grid grid-cols-7 gap-2 text-center text-xs font-black text-slate-400 uppercase tracking-wider">
+            <div className="grid grid-cols-7 gap-2 text-center text-xs font-bold text-slate-400">
               <div>Pzt</div>
               <div>Sal</div>
               <div>Çar</div>
@@ -279,7 +279,7 @@ export default function CompanyCalendarPage() {
                 const isSelected = selectedDates.includes(dateStr);
 
                 let statusBadge = (
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/80 px-1 rounded">
+                  <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-1 rounded">
                     Müsait
                   </span>
                 );
@@ -288,14 +288,14 @@ export default function CompanyCalendarPage() {
                 if (entry?.status === 'booked') {
                   bgClass = 'border-red-200 bg-red-50/60';
                   statusBadge = (
-                    <span className="text-[10px] font-bold text-red-700 bg-red-100 px-1 rounded">
+                    <span className="text-[11px] font-bold text-red-700 bg-red-100 px-1 rounded">
                       Kirada
                     </span>
                   );
                 } else if (entry?.status === 'maintenance') {
                   bgClass = 'border-amber-200 bg-amber-50/60';
                   statusBadge = (
-                    <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-1 rounded">
+                    <span className="text-[11px] font-bold text-amber-700 bg-amber-100 px-1 rounded">
                       Bakımda
                     </span>
                   );
@@ -313,7 +313,7 @@ export default function CompanyCalendarPage() {
                     className={`h-20 p-2 rounded-xl border flex flex-col justify-between text-left transition select-none ${bgClass}`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-extrabold text-navy-900">{dayNum}</span>
+                      <span className="text-sm font-semibold text-navy-900">{dayNum}</span>
                       {isSelected && (
                         <span className="w-2 h-2 rounded-full bg-orange-500 shrink-0" />
                       )}
@@ -327,20 +327,20 @@ export default function CompanyCalendarPage() {
 
           {/* Batch Actions Toolbar (4 Cols) */}
           <div className="lg:col-span-4 space-y-5">
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
-              <h3 className="text-base font-extrabold text-navy-900 border-b border-slate-100 pb-2">
+            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
+              <h3 className="text-base font-semibold text-navy-900 border-b border-slate-100 pb-2">
                 Toplu Gün Güncelleme
               </h3>
 
               <div>
                 <span className="text-xs text-slate-500">Seçilen Gün Sayısı:</span>
-                <div className="text-xl font-black text-orange-600 mt-0.5">
+                <div className="text-xl font-bold text-orange-600 mt-0.5">
                   {selectedDates.length} Gün Seçildi
                 </div>
               </div>
 
               {selectedDates.length > 0 && (
-                <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto p-2 bg-slate-50 rounded-lg text-[10px] text-slate-600 font-mono">
+                <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto p-2 bg-slate-50 rounded-lg text-[11px] text-slate-600 font-mono">
                   {selectedDates.sort().map((d) => (
                     <span key={d} className="px-1.5 py-0.5 rounded bg-white border border-slate-200">
                       {d.slice(5)}
@@ -427,7 +427,7 @@ export default function CompanyCalendarPage() {
                 type="button"
                 disabled={selectedDates.length === 0 || saving}
                 onClick={handleBatchSave}
-                className="w-full py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md transition disabled:opacity-40 flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md transition disabled:opacity-40 flex items-center justify-center gap-2"
               >
                 <Save className="w-4 h-4" />
                 {saving ? 'Kaydediliyor...' : 'SEÇİLİ GÜNLERİ GÜNCELLE'}
@@ -445,8 +445,8 @@ export default function CompanyCalendarPage() {
             </div>
 
             {/* Machinery Stock Info Box */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm text-xs space-y-2">
-              <h4 className="font-extrabold text-navy-900 flex items-center gap-2">
+            <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm text-xs space-y-2">
+              <h4 className="font-semibold text-navy-900 flex items-center gap-2">
                 <Layers className="w-4 h-4 text-orange-500" />
                 Makine Bilgisi & Stok
               </h4>

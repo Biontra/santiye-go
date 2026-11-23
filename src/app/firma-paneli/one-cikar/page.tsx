@@ -102,7 +102,7 @@ export default function PromoteListingPage() {
           </Link>
           <div className="flex items-center gap-2">
             <Sparkles className="w-6 h-6 text-orange-500" />
-            <h1 className="text-2xl sm:text-3xl font-black text-navy-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 tracking-tight">
               İlanını & Firmanı Öne Çıkar
             </h1>
           </div>
@@ -121,9 +121,9 @@ export default function PromoteListingPage() {
       </div>
 
       {successMessage ? (
-        <div className="p-8 bg-emerald-50 border border-emerald-300 rounded-3xl text-center space-y-4 shadow-sm animate-fade-in">
+        <div className="p-8 bg-emerald-50 border border-emerald-300 rounded-xl text-center space-y-4 shadow-sm animate-fade-in">
           <CheckCircle2 className="w-16 h-16 text-emerald-600 mx-auto" />
-          <h2 className="text-xl font-black text-emerald-950">Ödeme Başarılı! (iyzico Sandbox)</h2>
+          <h2 className="text-xl font-bold text-emerald-950">Ödeme Başarılı! (iyzico Sandbox)</h2>
           <p className="text-sm text-emerald-800 max-w-lg mx-auto">
             {successMessage}
           </p>
@@ -134,9 +134,9 @@ export default function PromoteListingPage() {
           {/* Left: Product & Duration Selectors */}
           <div className="lg:col-span-2 space-y-6">
             {/* Step 1: Product Selection */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4 shadow-sm">
+            <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4 shadow-sm">
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-extrabold text-navy-900 flex items-center gap-2">
+                <h2 className="text-base font-semibold text-navy-900 flex items-center gap-2">
                   <span className="w-6 h-6 rounded-full bg-orange-500 text-white text-xs flex items-center justify-center">1</span>
                   Öne Çıkarma Ürünü Seçin
                 </h2>
@@ -159,7 +159,7 @@ export default function PromoteListingPage() {
                     >
                       <div>
                         <div className="flex items-center justify-between">
-                          <span className="font-black text-navy-900 text-sm">{prod.name}</span>
+                          <span className="font-bold text-navy-900 text-sm">{prod.name}</span>
                           {isSelected && <CheckCircle2 className="w-4 h-4 text-orange-500" />}
                         </div>
                         <p className="text-xs text-slate-500 mt-1 leading-relaxed">
@@ -168,7 +168,7 @@ export default function PromoteListingPage() {
                       </div>
                       <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                         <span className="text-slate-500">Başlangıç:</span>
-                        <span className="font-black text-navy-900">{formatTRY(prod.price_7_days_cents)}</span>
+                        <span className="font-bold text-navy-900">{formatTRY(prod.price_7_days_cents)}</span>
                       </div>
                     </button>
                   );
@@ -178,8 +178,8 @@ export default function PromoteListingPage() {
 
             {/* Step 2: Listing Selection */}
             {selectedProductId !== 'featured_company' && (
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4 shadow-sm">
-                <h2 className="text-base font-extrabold text-navy-900 flex items-center gap-2">
+              <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4 shadow-sm">
+                <h2 className="text-base font-semibold text-navy-900 flex items-center gap-2">
                   <span className="w-6 h-6 rounded-full bg-orange-500 text-white text-xs flex items-center justify-center">2</span>
                   Öne Çıkarılacak İlanınızı Seçin
                 </h2>
@@ -227,8 +227,8 @@ export default function PromoteListingPage() {
             )}
 
             {/* Step 3: Duration Selector */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4 shadow-sm">
-              <h2 className="text-base font-extrabold text-navy-900 flex items-center gap-2">
+            <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4 shadow-sm">
+              <h2 className="text-base font-semibold text-navy-900 flex items-center gap-2">
                 <span className="w-6 h-6 rounded-full bg-orange-500 text-white text-xs flex items-center justify-center">3</span>
                 Yayın Süresini Seçin
               </h2>
@@ -259,12 +259,12 @@ export default function PromoteListingPage() {
                       }`}
                     >
                       {dur.discount && (
-                        <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-emerald-600 text-[9px] font-black text-white">
+                        <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-emerald-600 text-[11px] font-bold text-white">
                           {dur.discount}
                         </span>
                       )}
-                      <div className="font-extrabold text-navy-900 text-sm">{dur.label}</div>
-                      <div className="text-xs font-black text-orange-600 mt-1">
+                      <div className="font-semibold text-navy-900 text-sm">{dur.label}</div>
+                      <div className="text-xs font-bold text-orange-600 mt-1">
                         {formatTRY(price)}
                       </div>
                     </button>
@@ -275,8 +275,8 @@ export default function PromoteListingPage() {
           </div>
 
           {/* Right: Checkout & Price Summary Card */}
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl space-y-6 sticky top-6">
-            <h2 className="text-lg font-black text-navy-900 border-b pb-3">
+          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-md space-y-6 sticky top-6">
+            <h2 className="text-lg font-bold text-navy-900 border-b pb-3">
               Sipariş Özeti
             </h2>
 
@@ -311,8 +311,8 @@ export default function PromoteListingPage() {
               </div>
 
               <div className="pt-3 border-t-2 border-slate-900 flex justify-between items-center">
-                <span className="font-black text-navy-900 text-base">Toplam Tutar:</span>
-                <span className="text-xl font-black text-orange-600">
+                <span className="font-bold text-navy-900 text-base">Toplam Tutar:</span>
+                <span className="text-xl font-bold text-orange-600">
                   {formatTRY(netPayableCents)}
                 </span>
               </div>
@@ -333,14 +333,14 @@ export default function PromoteListingPage() {
               type="button"
               disabled={isSubmitting}
               onClick={handlePurchase}
-              className="w-full py-4 rounded-xl bg-orange-500 hover:bg-orange-600 active:scale-[0.98] text-white font-black text-sm tracking-wide shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 transition disabled:opacity-50"
+              className="w-full py-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm tracking-wide shadow-lg flex items-center justify-center gap-2 transition disabled:opacity-50"
             >
               {isSubmitting ? (
                 <span>İşleniyor...</span>
               ) : (
                 <>
                   <CreditCard className="w-5 h-5" />
-                  <span>ÖDEME YAP VE YAYINA GÖNDER</span>
+                  <span>Ödeme yap ve yayına gönder</span>
                 </>
               )}
             </button>

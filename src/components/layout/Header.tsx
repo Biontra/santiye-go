@@ -173,7 +173,7 @@ export default function Header() {
             >
               <MessageSquare className="w-5 h-5" />
               {unreadMessagesCount > 0 && (
-                <span className="absolute top-1 right-1 px-1.5 py-0.2 rounded-full bg-orange-500 text-white text-[9px] font-black">
+                <span className="absolute top-1 right-1 px-1.5 py-0.2 rounded-full bg-orange-500 text-white text-[11px] font-bold">
                   {unreadMessagesCount}
                 </span>
               )}
@@ -189,7 +189,7 @@ export default function Header() {
               >
                 <Bell className="w-5 h-5" />
                 {unreadNotifsCount > 0 && (
-                  <span className="absolute top-1 right-1 px-1.5 py-0.2 rounded-full bg-orange-500 text-white text-[9px] font-black">
+                  <span className="absolute top-1 right-1 px-1.5 py-0.2 rounded-full bg-orange-500 text-white text-[11px] font-bold">
                     {unreadNotifsCount}
                   </span>
                 )}
@@ -197,16 +197,16 @@ export default function Header() {
 
               {/* Notification Popover */}
               {profile && notifDropdownOpen && (
-                <div className="absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden text-navy-900 z-50 animate-in fade-in zoom-in-95">
+                <div className="absolute right-0 top-12 w-80 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden text-navy-900 z-50 animate-in fade-in zoom-in-95">
                   <div className="p-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-                    <span className="text-xs font-black uppercase text-navy-900">
+                    <span className="text-xs font-bold uppercase text-navy-900">
                       Bildirimler ({unreadNotifsCount} Yeni)
                     </span>
                     {unreadNotifsCount > 0 && (
                       <button
                         type="button"
                         onClick={handleMarkAllRead}
-                        className="text-[10px] font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1"
+                        className="text-[11px] font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1"
                       >
                         <CheckCheck className="w-3 h-3" />
                         Tümünü Okundu Yap
@@ -229,9 +229,9 @@ export default function Header() {
                             !n.is_read ? 'bg-orange-50/50' : ''
                           }`}
                         >
-                          <div className="font-extrabold text-navy-900 flex items-center justify-between">
+                          <div className="font-semibold text-navy-900 flex items-center justify-between">
                             <span>{n.title}</span>
-                            <span className="text-[10px] text-slate-400 font-normal">
+                            <span className="text-[11px] text-slate-400 font-normal">
                               {new Date(n.created_at).toLocaleTimeString('tr-TR', {
                                 hour: '2-digit',
                                 minute: '2-digit',
@@ -367,7 +367,7 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(false)}
               className="px-3 py-2 rounded-md bg-orange-500/20 text-orange-400 font-bold"
             >
-              ⚡ Çoklu Teklif Talebi Oluştur
+              Teklif iste
             </Link>
             <Link href="/operatorler" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 rounded-md hover:bg-navy-800 text-slate-200">Operatör Havuzu</Link>
             <Link href="/kesif-yukle" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 rounded-md hover:bg-navy-800 text-slate-200">Keşif / BOQ Yükle</Link>

@@ -55,11 +55,11 @@ export default function ReviewList({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
+    <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-6">
       {/* Top Ratings Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
         <div>
-          <h2 className="text-base sm:text-lg font-black text-navy-900 flex items-center gap-2">
+          <h2 className="text-base sm:text-lg font-bold text-navy-900 flex items-center gap-2">
             <Star className="w-5 h-5 fill-amber-500 text-amber-500" />
             Doğrulanmış Değerlendirmeler & Yorumlar
           </h2>
@@ -72,12 +72,12 @@ export default function ReviewList({
         {stats.totalCount > 0 ? (
           <div className="flex items-center gap-3 bg-amber-50/60 border border-amber-200/80 px-4 py-2.5 rounded-xl shrink-0">
             <div className="text-right">
-              <div className="flex items-center gap-1 font-black text-navy-900 text-lg">
+              <div className="flex items-center gap-1 font-bold text-navy-900 text-lg">
                 <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
                 <span>{stats.actualAvg}</span>
                 <span className="text-xs text-slate-400 font-bold">/ 5.0</span>
               </div>
-              <div className="text-[10px] text-slate-500">
+              <div className="text-[11px] text-slate-500">
                 {stats.totalCount} Değerlendirme • Bayesian: {stats.bayesianScore}
               </div>
             </div>
@@ -102,11 +102,11 @@ export default function ReviewList({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-extrabold text-navy-900 text-sm">
+                    <span className="font-semibold text-navy-900 text-sm">
                       {rev.buyer_name}
                     </span>
                     {rev.is_verified && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200">
                         <ShieldCheck className="w-3 h-3" />
                         Doğrulanmış İşlem
                       </span>

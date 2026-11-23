@@ -198,7 +198,7 @@ function EmailVerificationContent() {
   if (isLinkVerification) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50">
-        <div className="max-w-md w-full bg-white p-8 rounded-3xl border border-slate-200 shadow-xl space-y-6 text-center">
+        <div className="max-w-md w-full bg-white p-8 rounded-xl border border-slate-200 shadow-md space-y-6 text-center">
           {loading ? (
             <div className="space-y-4 py-8">
               <div className="w-12 h-12 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin mx-auto" />
@@ -206,11 +206,11 @@ function EmailVerificationContent() {
             </div>
           ) : success ? (
             <div className="space-y-4 py-4">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-100 shadow-inner">
+              <div className="w-16 h-16 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-100 shadow-inner">
                 <CheckCircle2 className="w-9 h-9" />
               </div>
               <div className="space-y-1">
-                <h2 className="text-2xl font-black text-navy-900">E-posta Doğrulandı!</h2>
+                <h2 className="text-2xl font-bold text-navy-900">E-posta doğrulandı</h2>
                 <p className="text-xs text-slate-500">
                   Hesabınız başarıyla aktifleştirildi. Artık platformdaki tüm özellikleri güvenle kullanabilirsiniz.
                 </p>
@@ -218,7 +218,7 @@ function EmailVerificationContent() {
               <div className="pt-4">
                 <Link
                   href="/giris?verified=1"
-                  className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-sm shadow-lg shadow-orange-500/25 transition active:scale-95"
+                  className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm shadow-lg transition"
                 >
                   <span>Giriş Yap ve Başla</span>
                   <ArrowRight className="w-4 h-4" />
@@ -227,11 +227,11 @@ function EmailVerificationContent() {
             </div>
           ) : (
             <div className="space-y-4 py-4">
-              <div className="w-16 h-16 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mx-auto border border-red-100">
+              <div className="w-16 h-16 rounded-xl bg-red-50 text-red-600 flex items-center justify-center mx-auto border border-red-100">
                 <AlertCircle className="w-9 h-9" />
               </div>
               <div className="space-y-1">
-                <h2 className="text-2xl font-black text-navy-900">Bağlantı Geçersiz</h2>
+                <h2 className="text-2xl font-bold text-navy-900">Bağlantı Geçersiz</h2>
                 <p className="text-xs text-slate-500">
                   {errorMsg || 'Doğrulama bağlantısının süresi dolmuş veya daha önce kullanılmış olabilir.'}
                 </p>
@@ -239,7 +239,7 @@ function EmailVerificationContent() {
               <div className="pt-4">
                 <Link
                   href="/giris"
-                  className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-extrabold text-sm transition"
+                  className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-semibold text-sm transition"
                 >
                   <span>Giriş Ekranına Dön</span>
                 </Link>
@@ -254,12 +254,12 @@ function EmailVerificationContent() {
   // Kayıt Sonrası Doğrulama Ekranı (Link + OTP)
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50">
-      <div className="max-w-md w-full bg-white p-8 rounded-3xl border border-slate-200 shadow-xl space-y-6">
+      <div className="max-w-md w-full bg-white p-8 rounded-xl border border-slate-200 shadow-md space-y-6">
         <div className="text-center space-y-2">
-          <div className="inline-flex w-14 h-14 rounded-2xl bg-orange-50 text-orange-600 items-center justify-center border border-orange-100 shadow-inner">
+          <div className="inline-flex w-14 h-14 rounded-xl bg-orange-50 text-orange-600 items-center justify-center border border-orange-100 shadow-inner">
             <Mail className="w-7 h-7" />
           </div>
-          <h2 className="text-2xl font-black text-navy-900 tracking-tight">
+          <h2 className="text-2xl font-bold text-navy-900 tracking-tight">
             E-postanızı Doğrulayın
           </h2>
           <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
@@ -268,9 +268,9 @@ function EmailVerificationContent() {
         </div>
 
         {/* Bilgilendirme Kartı */}
-        <div className="p-3.5 bg-orange-50/80 border border-orange-200/80 rounded-2xl text-orange-950 text-xs space-y-1">
+        <div className="p-3.5 bg-orange-50/80 border border-orange-200/80 rounded-xl text-orange-950 text-xs space-y-1">
           <p className="font-bold flex items-center gap-1.5 text-orange-900">
-            <span>📬</span> 6 Haneli Onay Kodunuz Gönderildi
+            6 haneli onay kodunuz gönderildi
           </p>
           <p className="text-[11px] text-orange-800 leading-relaxed">
             <strong>onay@santiyego.com</strong> adresinden gelen 6 haneli güvenlik kodunu aşağıdaki kutucuklara giriniz. (Gelen kutusunda göremediyseniz spam/gereksiz klasörünü kontrol ediniz).
@@ -293,11 +293,11 @@ function EmailVerificationContent() {
 
         {success ? (
           <div className="space-y-4 py-4 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-100 shadow-inner">
+            <div className="w-14 h-14 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-100 shadow-inner">
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <div className="space-y-1">
-              <h3 className="text-xl font-black text-navy-900">Tebrikler!</h3>
+              <h3 className="text-xl font-bold text-navy-900">Hesabınız hazır</h3>
               <p className="text-xs text-slate-500">Hesabınız doğrulandı, yönlendiriliyorsunuz...</p>
             </div>
           </div>
@@ -317,7 +317,7 @@ function EmailVerificationContent() {
                   value={digit}
                   onChange={(e) => handleDigitChange(idx, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(idx, e)}
-                  className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-black text-navy-900 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-orange-500 focus:bg-white focus:outline-none transition shadow-sm"
+                  className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold text-navy-900 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-orange-500 focus:bg-white focus:outline-none transition shadow-sm"
                 />
               ))}
             </div>
@@ -325,7 +325,7 @@ function EmailVerificationContent() {
             {/* Sayaç ve Bilgi */}
             <div className="flex items-center justify-between text-xs text-slate-500 font-semibold px-1">
               <span>Kod Geçerlilik Süresi:</span>
-              <span className={`font-mono font-black ${timeLeft < 60 ? 'text-red-600' : 'text-slate-700'}`}>
+              <span className={`font-mono font-bold ${timeLeft < 60 ? 'text-red-600' : 'text-slate-700'}`}>
                 {formatTimer(timeLeft)}
               </span>
             </div>
@@ -333,7 +333,7 @@ function EmailVerificationContent() {
             <button
               type="submit"
               disabled={loading || digits.join('').length !== 6 || timeLeft <= 0}
-              className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm shadow-lg shadow-orange-500/25 active:scale-[0.98] transition flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {loading ? (
                 <span className="flex items-center gap-2">

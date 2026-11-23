@@ -12,7 +12,7 @@ export default function KvkkModal({ isOpen, onClose }: KvkkModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/70 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-200">
+      <div className="bg-white rounded-xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-lg border border-slate-200">
         {/* Header */}
         <div className="p-5 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -20,7 +20,7 @@ export default function KvkkModal({ isOpen, onClose }: KvkkModalProps) {
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-extrabold text-navy-900 text-lg">
+              <h3 className="font-semibold text-navy-900 text-lg">
                 KVKK Aydınlatma Metni
               </h3>
               <p className="text-xs text-slate-500">

@@ -126,7 +126,7 @@ export default function FirmaSozlesmelerPage() {
     <div className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <Link
@@ -137,7 +137,7 @@ export default function FirmaSozlesmelerPage() {
                 Firma Paneline Dön
               </Link>
             </div>
-            <h1 className="text-2xl font-black text-slate-900 flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
               <FileText className="w-6 h-6 text-amber-500" />
               Sözleşmelerim (Otomatik PDF)
             </h1>
@@ -196,11 +196,11 @@ export default function FirmaSozlesmelerPage() {
 
         {/* Sözleşmeler Listesi */}
         {loading ? (
-          <div className="bg-white p-12 text-center rounded-2xl border border-slate-200 text-slate-400 text-xs">
+          <div className="bg-white p-12 text-center rounded-xl border border-slate-200 text-slate-400 text-xs">
             Sözleşmeler yükleniyor...
           </div>
         ) : filteredContracts.length === 0 ? (
-          <div className="bg-white p-12 text-center rounded-2xl border border-slate-200 space-y-3">
+          <div className="bg-white p-12 text-center rounded-xl border border-slate-200 space-y-3">
             <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-400">
               <FileText className="w-6 h-6" />
             </div>
@@ -219,7 +219,7 @@ export default function FirmaSozlesmelerPage() {
               return (
                 <div
                   key={cnt.id}
-                  className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:border-slate-300 transition space-y-4"
+                  className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:border-slate-300 transition space-y-4"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
                     <div className="flex items-center gap-3">
@@ -228,8 +228,8 @@ export default function FirmaSozlesmelerPage() {
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-black text-slate-900 text-sm">{cnt.contract_number}</span>
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600">
+                          <span className="font-bold text-slate-900 text-sm">{cnt.contract_number}</span>
+                          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-600">
                             v{cnt.template_version}
                           </span>
                         </div>
@@ -288,7 +288,7 @@ export default function FirmaSozlesmelerPage() {
 
                     <div>
                       <span className="text-slate-400 block mb-0.5 font-medium">Sözleşme Bedeli:</span>
-                      <p className="font-black text-slate-900 text-sm">
+                      <p className="font-bold text-slate-900 text-sm">
                         {cnt.data_snapshot?.pricing?.total_price?.toLocaleString('tr-TR')}{' '}
                         {cnt.data_snapshot?.pricing?.currency || 'TL'}
                       </p>
@@ -330,7 +330,7 @@ export default function FirmaSozlesmelerPage() {
                     </div>
 
                     {/* SHA-256 Rozeti */}
-                    <div className="text-[10px] text-slate-400 flex items-center gap-1 font-mono">
+                    <div className="text-[11px] text-slate-400 flex items-center gap-1 font-mono">
                       <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
                       SHA256: {cnt.pdf_sha256?.slice(0, 16)}...
                     </div>
@@ -414,7 +414,7 @@ export default function FirmaSozlesmelerPage() {
         {/* Revizyon Modalı */}
         {revisionModalContractId && (
           <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-xl border border-slate-200">
+            <div className="bg-white rounded-xl max-w-md w-full p-6 space-y-4 shadow-md border border-slate-200">
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-rose-500" />
                 Sözleşme Revizyon Talebi
@@ -452,7 +452,7 @@ export default function FirmaSozlesmelerPage() {
         {/* Islak İmza Yükleme Modalı */}
         {uploadModalContractId && (
           <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-xl border border-slate-200">
+            <div className="bg-white rounded-xl max-w-md w-full p-6 space-y-4 shadow-md border border-slate-200">
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <Upload className="w-5 h-5 text-amber-500" />
                 Islak İmzalı Sözleşme Yükle

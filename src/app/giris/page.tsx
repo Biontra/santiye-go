@@ -86,17 +86,17 @@ function LoginForm() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50">
-      <div className="max-w-md w-full space-y-6 bg-white p-8 rounded-3xl border border-slate-200 shadow-xl">
+      <div className="max-w-md w-full space-y-6 bg-white p-8 rounded-xl border border-slate-200 shadow-md">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex w-12 h-12 rounded-2xl bg-navy-900 text-orange-500 items-center justify-center shadow-lg shadow-navy-900/10">
+          <div className="inline-flex w-12 h-12 rounded-xl bg-navy-900 text-orange-500 items-center justify-center shadow-lg shadow-navy-900/10">
             <HardHat className="w-7 h-7" />
           </div>
-          <h2 className="text-2xl font-black text-navy-900 tracking-tight">
-            Şantiye GO Giriş
+          <h2 className="text-2xl font-bold text-navy-900 tracking-tight">
+            Giriş yap
           </h2>
           <p className="text-xs text-slate-500 font-medium">
-            Hesabınıza güvenle giriş yaparak ilan, teklif ve mesajlarınızı yönetin
+            İlan, teklif ve mesajlarınız için hesabınıza girin
           </p>
         </div>
 
@@ -180,7 +180,7 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-sm shadow-lg shadow-orange-500/25 active:scale-[0.98] transition flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? (
               <span className="flex items-center gap-2">
@@ -196,7 +196,7 @@ function LoginForm() {
         <div className="text-center pt-2 text-xs text-slate-500">
           Hesabınız yok mu?{' '}
           <Link href="/kayit" className="font-bold text-orange-600 hover:underline">
-            Hemen Ücretsiz Kayıt Olun
+            Kayıt olun
           </Link>
         </div>
       </div>

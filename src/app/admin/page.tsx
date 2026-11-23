@@ -67,13 +67,13 @@ export default function AdminDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-[11px] font-black uppercase">
+            <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-[11px] font-bold uppercase">
               Süper Admin
             </span>
             <span className="text-slate-400">•</span>
             <span className="text-xs text-slate-500 font-semibold">Genel Bakış</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-navy-900 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 mt-1">
             Yönetim Gösterge Paneli
           </h1>
         </div>
@@ -96,41 +96,41 @@ export default function AdminDashboardPage() {
 
       {/* KPI Counters */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-1">
           <div className="flex items-center justify-between text-xs font-bold text-slate-500">
             <span>Toplam Kullanıcı</span>
             <Users className="w-4 h-4 text-blue-600" />
           </div>
-          <div className="text-2xl font-black text-navy-900">{metrics.totalUsers}</div>
+          <div className="text-2xl font-bold text-navy-900">{metrics.totalUsers}</div>
           <div className="text-[11px] text-slate-400">{metrics.totalCompanies} Onaylı Firma</div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-1">
           <div className="flex items-center justify-between text-xs font-bold text-slate-500">
             <span>Aktif İlanlar</span>
             <Layers className="w-4 h-4 text-orange-500" />
           </div>
-          <div className="text-2xl font-black text-navy-900">{metrics.activeListings}</div>
+          <div className="text-2xl font-bold text-navy-900">{metrics.activeListings}</div>
           <div className="text-[11px] text-slate-400">7 Farklı Şehirde Yayında</div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-1">
           <div className="flex items-center justify-between text-xs font-bold text-slate-500">
             <span>İşlem Hacmi (GMV)</span>
             <CreditCard className="w-4 h-4 text-emerald-600" />
           </div>
-          <div className="text-2xl font-black text-navy-900">
+          <div className="text-2xl font-bold text-navy-900">
             {formatMoney(metrics.totalVolumeCents)}
           </div>
           <div className="text-[11px] text-emerald-600 font-bold">Bu Ay: 28 Rezervasyon</div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-1">
           <div className="flex items-center justify-between text-xs font-bold text-slate-500">
             <span>Komisyon Geliri</span>
             <TrendingUp className="w-4 h-4 text-purple-600" />
           </div>
-          <div className="text-2xl font-black text-orange-600">
+          <div className="text-2xl font-bold text-orange-600">
             {formatMoney(metrics.totalCommissionCents)}
           </div>
           <div className="text-[11px] text-slate-400">Ortalama %8 Platform Komisyonu</div>
@@ -140,9 +140,9 @@ export default function AdminDashboardPage() {
       {/* Two Column Quick Review Lists: Pending Companies & Open Reports */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Pending Company Verifications */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h2 className="font-extrabold text-navy-900 text-sm sm:text-base flex items-center gap-2">
+            <h2 className="font-semibold text-navy-900 text-sm sm:text-base flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-orange-500" />
               Onay Bekleyen Firmalar ({pendingCompanies.length})
             </h2>
@@ -184,9 +184,9 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Open Reports Desk */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h2 className="font-extrabold text-navy-900 text-sm sm:text-base flex items-center gap-2">
+            <h2 className="font-semibold text-navy-900 text-sm sm:text-base flex items-center gap-2">
               <ShieldAlert className="w-4 h-4 text-red-500" />
               İnceleme Bekleyen Şikayetler ({openReports.length})
             </h2>
@@ -212,7 +212,7 @@ export default function AdminDashboardPage() {
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-navy-900">{r.reason}</span>
-                      <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[9px] font-bold">
+                      <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[11px] font-bold">
                         {r.status === 'investigating' ? 'İnceleniyor' : 'Yeni'}
                       </span>
                     </div>
@@ -232,9 +232,9 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Admin Audit Logs Stream */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-          <h2 className="font-extrabold text-navy-900 text-sm sm:text-base flex items-center gap-2">
+          <h2 className="font-semibold text-navy-900 text-sm sm:text-base flex items-center gap-2">
             <History className="w-4 h-4 text-slate-500" />
             Son Yönetici İşlem Kayıtları (Audit Logs)
           </h2>
@@ -244,7 +244,7 @@ export default function AdminDashboardPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-100 text-slate-400 uppercase text-[10px] tracking-wider font-extrabold">
+              <tr className="border-b border-slate-100 text-slate-400 text-[11px] font-semibold">
                 <th className="py-2.5 px-3">Zaman</th>
                 <th className="py-2.5 px-3">Yönetici</th>
                 <th className="py-2.5 px-3">Eylem</th>
@@ -261,7 +261,7 @@ export default function AdminDashboardPage() {
                   <td className="py-2.5 px-3 font-bold text-navy-900">{l.admin_id}</td>
                   <td className="py-2.5 px-3 font-semibold text-orange-600">{l.action}</td>
                   <td className="py-2.5 px-3">
-                    <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-mono text-[10px]">
+                    <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-mono text-[11px]">
                       {l.target_type}:{l.target_id?.slice(0, 8)}
                     </span>
                   </td>

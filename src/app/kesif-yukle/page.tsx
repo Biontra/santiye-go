@@ -49,13 +49,13 @@ export default function BoqPage(){
     setSummary(data as Group[]);
   }
   return <main className="mx-auto max-w-7xl space-y-5 px-4 py-8 text-navy-900">
-    <header className="rounded-2xl bg-navy-900 p-6 text-white"><h1 className="text-3xl font-black">Keşif / BOQ Yükle</h1></header>
-    {summary ? <section className="space-y-3 rounded-2xl border bg-white p-5 shadow-sm"><h2 className="text-xl font-black">Dağıtım özeti</h2>
+    <header className="rounded-xl bg-navy-900 p-6 text-white"><h1 className="text-3xl font-bold">Keşif / BOQ Yükle</h1></header>
+    {summary ? <section className="space-y-3 rounded-xl border bg-white p-5 shadow-sm"><h2 className="text-xl font-bold">Dağıtım özeti</h2>
       <p>{summary.length} kategori için talep kaydedildi. {summary.filter(g=>g.recipients>0).length} kategoride tedarikçi eşleşti.</p>
       {summary.map(g=><p key={g.request_id}>{g.category} · {g.recipients?g.recipients+' tedarikçiye iletildi':'Uygun tedarikçi bulunamadı'}</p>)}
       <Link className="font-bold text-orange-700" href="/alici-paneli/taleplerim">Teklif taleplerimi gör →</Link></section>:
     <fieldset disabled={busy} className="min-w-0 space-y-5">
-      <section className="space-y-4 rounded-2xl border bg-white p-5 shadow-sm">
+      <section className="space-y-4 rounded-xl border bg-white p-5 shadow-sm">
         <div className="flex gap-2">{(['file','text'] as const).map(t=><button key={t} aria-pressed={tab===t} className={tab===t?action:field} onClick={()=>setTab(t)}>{t==='file'?'Dosya yükle':'Liste yapıştır'}</button>)}</div>
         {tab==='file'?<label onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();upload(e.dataTransfer.files[0]);}} className="block cursor-pointer rounded-xl border-2 border-dashed p-6 text-center">
           XLSX, CSV, TSV, TXT veya metin içeren PDF dosyanızı buraya bırakın
@@ -64,7 +64,7 @@ export default function BoqPage(){
           <div className="flex gap-2"><button className={field} onClick={()=>setRaw(sample)}>Örnek doldur</button>
           <button className={action} onClick={()=>work(()=>parse(raw))}>Kalemleri ayrıştır</button></div></>}
       </section>
-      <section className="space-y-3 rounded-2xl border bg-white p-5 shadow-sm"><h2 className="text-xl font-black">Keşif kalemleri</h2>
+      <section className="space-y-3 rounded-xl border bg-white p-5 shadow-sm"><h2 className="text-xl font-bold">Keşif kalemleri</h2>
         {rows.length>0 && <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr>{['Seç','Malzeme / hizmet','Miktar','Birim','Kategori','Not',''].map(h=><th key={h} className="p-1 text-left">{h}</th>)}</tr></thead>
           <tbody>{rows.map((r,i)=><tr key={r.id}>
             <td><input aria-label={(i+1)+'. kalemi seç'} type="checkbox" checked={r.selected} onChange={e=>edit(r.id,{selected:e.target.checked})}/></td>
@@ -76,7 +76,7 @@ export default function BoqPage(){
             <td><button onClick={()=>{token.current='';setRows(rows.filter(x=>x.id!==r.id));}}>Çıkar</button></td>
           </tr>)}</tbody></table></div>}
         <button disabled={rows.length>=200} className={field} onClick={()=>{token.current='';setRows([...rows,blank()]);}}>+ Kalem ekle</button></section>
-      <form className="flex flex-wrap items-end gap-3 rounded-2xl border bg-white p-5" onChange={()=>{token.current='';}} onSubmit={e=>{e.preventDefault();void work(submit);}}>
+      <form className="flex flex-wrap items-end gap-3 rounded-xl border bg-white p-5" onChange={()=>{token.current='';}} onSubmit={e=>{e.preventDefault();void work(submit);}}>
         <label>Şehir<select className={field+' block'} required value={city} onChange={e=>{setCity(e.target.value);setDistrict('');setDistricts([]);}}><option value="">Seçin</option>{cities.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
         <label>İlçe<select className={field+' block'} required value={district} onChange={e=>setDistrict(e.target.value)}><option value="">Seçin</option>{districts.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
         <label>Teslim tarihi<input className={field+' block'} required type="date" min={new Date().toLocaleDateString('sv-SE',{timeZone:'Europe/Istanbul'})} value={date} onChange={e=>setDate(e.target.value)}/></label>

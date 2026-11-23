@@ -134,13 +134,13 @@ export default function FavoritesPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header */}
-      <div className="bg-navy-900 rounded-3xl p-6 sm:p-8 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
+      <div className="bg-navy-900 rounded-xl p-6 sm:p-8 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-md">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-black shadow-lg shadow-orange-500/30">
+          <div className="w-14 h-14 rounded-xl bg-orange-500 text-white flex items-center justify-center font-bold shadow-lg">
             <Heart className="w-7 h-7 fill-current" />
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight">Favori İlanlarım</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Favori İlanlarım</h1>
             <p className="text-xs sm:text-sm text-slate-300 mt-1">
               Takip ettiğiniz iş makineleri, yapı malzemeleri ve şantiye ekipmanları
             </p>
@@ -162,12 +162,12 @@ export default function FavoritesPage() {
           <p className="text-xs text-slate-500">Favorileriniz yükleniyor...</p>
         </div>
       ) : favorites.length === 0 ? (
-        <div className="bg-white rounded-3xl border-2 border-dashed border-slate-200 p-12 text-center space-y-4 shadow-sm">
-          <div className="w-16 h-16 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto">
+        <div className="bg-white rounded-xl border-2 border-dashed border-slate-200 p-12 text-center space-y-4 shadow-sm">
+          <div className="w-16 h-16 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto">
             <Heart className="w-8 h-8" />
           </div>
           <div className="space-y-1">
-            <h2 className="text-xl font-black text-navy-900">Henüz Favori İlanınız Yok</h2>
+            <h2 className="text-xl font-bold text-navy-900">Henüz Favori İlanınız Yok</h2>
             <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
               İlan detaylarından kalp butonuna basarak beğendiğiniz makineleri ve malzemeleri buraya
               kaydedebilir, hızlıca teklif alabilirsiniz.

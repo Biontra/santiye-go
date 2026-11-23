@@ -3,7 +3,7 @@ import { AlertTriangle, ShieldCheck } from 'lucide-react';
 export default function TermsPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
-      <div className="bg-white rounded-2xl border border-slate-200 p-8 sm:p-12 shadow-sm space-y-6 text-sm text-slate-600 leading-relaxed">
+      <div className="bg-white rounded-xl border border-slate-200 p-8 sm:p-12 shadow-sm space-y-6 text-sm text-slate-600 leading-relaxed">
         {/* Legal Disclaimer Badge */}
         <div className="p-4 bg-amber-50 border border-amber-300 rounded-xl flex items-start gap-3 text-xs text-amber-900">
           <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
@@ -12,7 +12,7 @@ export default function TermsPage() {
           </div>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-black text-navy-900 border-b border-slate-100 pb-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 border-b border-slate-100 pb-4">
           Kullanım Koşulları ve Üyelik Şartları
         </h1>
         <p>

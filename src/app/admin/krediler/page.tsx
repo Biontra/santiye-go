@@ -226,16 +226,16 @@ export default function AdminCreditsPage() {
       )}
 
       {/* Top Banner */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-[11px] font-black uppercase">
+            <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-[11px] font-bold uppercase">
               Gelir & Para Kazanma Motoru
             </span>
             <span className="text-slate-400">•</span>
-            <span className="text-xs text-slate-500 font-semibold">Prompt 9B</span>
+            
           </div>
-          <h1 className="text-2xl font-black text-navy-900 mt-1 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-navy-900 mt-1 flex items-center gap-2">
             <Coins className="w-6 h-6 text-orange-500" />
             Teklif Verme Kredisi & Talep Başına Gelir Yönetimi
           </h1>
@@ -246,10 +246,10 @@ export default function AdminCreditsPage() {
 
         {/* Global Mode Switcher */}
         {config && (
-          <div className="bg-slate-100 p-1.5 rounded-2xl border border-slate-200 flex items-center gap-1 self-start md:self-auto shrink-0">
+          <div className="bg-slate-100 p-1.5 rounded-xl border border-slate-200 flex items-center gap-1 self-start md:self-auto shrink-0">
             <button
               onClick={() => handleModeChange('OFF')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
                 config.mode === 'OFF'
                   ? 'bg-red-600 text-white shadow-sm'
                   : 'text-slate-600 hover:text-navy-900'
@@ -259,7 +259,7 @@ export default function AdminCreditsPage() {
             </button>
             <button
               onClick={() => handleModeChange('SHADOW')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
                 config.mode === 'SHADOW'
                   ? 'bg-amber-500 text-white shadow-sm'
                   : 'text-slate-600 hover:text-navy-900'
@@ -269,7 +269,7 @@ export default function AdminCreditsPage() {
             </button>
             <button
               onClick={() => handleModeChange('ACTIVE')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
                 config.mode === 'ACTIVE'
                   ? 'bg-emerald-600 text-white shadow-sm'
                   : 'text-slate-600 hover:text-navy-900'
@@ -339,11 +339,11 @@ export default function AdminCreditsPage() {
       {activeTab === 'overview' && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
+              <span className="text-[11px] font-bold text-slate-500 block">
                 Gölge Mod Potansiyel Gelir
               </span>
-              <div className="text-3xl font-black text-amber-600">
+              <div className="text-3xl font-bold text-amber-600">
                 ₺{stats?.shadowEstimatedRevenue?.toLocaleString('tr-TR') || '0'}
               </div>
               <p className="text-[11px] text-slate-500">
@@ -351,11 +351,11 @@ export default function AdminCreditsPage() {
               </p>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
+              <span className="text-[11px] font-bold text-slate-500 block">
                 Simüle Edilen Teklif Harcaması
               </span>
-              <div className="text-3xl font-black text-navy-900">
+              <div className="text-3xl font-bold text-navy-900">
                 {stats?.totalShadowSpentCredits || 0} Adet
               </div>
               <p className="text-[11px] text-slate-500">
@@ -363,11 +363,11 @@ export default function AdminCreditsPage() {
               </p>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
+              <span className="text-[11px] font-bold text-slate-500 block">
                 Ortalama Slot Doluluğu
               </span>
-              <div className="text-3xl font-black text-emerald-600">
+              <div className="text-3xl font-bold text-emerald-600">
                 {stats?.averageSlotsFilled || 2.4} / 4
               </div>
               <p className="text-[11px] text-slate-500">
@@ -375,11 +375,11 @@ export default function AdminCreditsPage() {
               </p>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
+              <span className="text-[11px] font-bold text-slate-500 block">
                 Bekleyen İade İtirazları
               </span>
-              <div className="text-3xl font-black text-orange-600">
+              <div className="text-3xl font-bold text-orange-600">
                 {stats?.activeDisputesCount || 0} Talep
               </div>
               <p className="text-[11px] text-slate-500">
@@ -389,10 +389,10 @@ export default function AdminCreditsPage() {
           </div>
 
           {/* Doldurulamayan Talepler & Fırsat Listesi */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <h3 className="text-base font-black text-navy-900 flex items-center gap-2">
+                <h3 className="text-base font-bold text-navy-900 flex items-center gap-2">
                   <BarChart2 className="w-5 h-5 text-orange-500" />
                   Doldurulamayan Talepler & Firma Kazanım Fırsatları
                 </h3>
@@ -404,24 +404,24 @@ export default function AdminCreditsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                <div className="font-extrabold text-navy-900 text-sm">Gebze / Kocaeli</div>
+                <div className="font-semibold text-navy-900 text-sm">Gebze / Kocaeli</div>
                 <div className="text-slate-600">Kategori: 30-50 Ton Paletli Ekskavatör</div>
                 <div className="text-orange-600 font-bold">1 / 4 Slot Dolu (3 Boş Kontenjan)</div>
-                <span className="text-[10px] text-slate-400 block">Talep Tarihi: Dün</span>
+                <span className="text-[11px] text-slate-400 block">Talep Tarihi: Dün</span>
               </div>
 
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                <div className="font-extrabold text-navy-900 text-sm">Çorlu / Tekirdağ</div>
+                <div className="font-semibold text-navy-900 text-sm">Çorlu / Tekirdağ</div>
                 <div className="text-slate-600">Kategori: 100 Ton Mobil Vinç</div>
                 <div className="text-red-600 font-bold">0 / 4 Slot Dolu (Hiç Teklif Yok)</div>
-                <span className="text-[10px] text-slate-400 block">Talep Tarihi: 2 gün önce</span>
+                <span className="text-[11px] text-slate-400 block">Talep Tarihi: 2 gün önce</span>
               </div>
 
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                <div className="font-extrabold text-navy-900 text-sm">Nilüfer / Bursa</div>
+                <div className="font-semibold text-navy-900 text-sm">Nilüfer / Bursa</div>
                 <div className="text-slate-600">Kategori: Mini Yükleyici (Bobcat)</div>
                 <div className="text-orange-600 font-bold">2 / 4 Slot Dolu (2 Boş Kontenjan)</div>
-                <span className="text-[10px] text-slate-400 block">Talep Tarihi: Bugün</span>
+                <span className="text-[11px] text-slate-400 block">Talep Tarihi: Bugün</span>
               </div>
             </div>
           </div>
@@ -430,9 +430,9 @@ export default function AdminCreditsPage() {
 
       {/* TAB 2: SETTINGS */}
       {activeTab === 'settings' && config && (
-        <form onSubmit={handleSaveSettings} className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
+        <form onSubmit={handleSaveSettings} className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-6">
           <div className="border-b border-slate-100 pb-3">
-            <h3 className="text-base font-black text-navy-900 flex items-center gap-2">
+            <h3 className="text-base font-bold text-navy-900 flex items-center gap-2">
               <Settings className="w-5 h-5 text-orange-500" />
               Kredi Maliyeti, Slot Kontenjanı ve İade Kuralları
             </h3>
@@ -551,7 +551,7 @@ export default function AdminCreditsPage() {
           <div className="flex justify-end pt-3">
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md transition"
+              className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md transition"
             >
               Ayarları Kaydet
             </button>
@@ -561,10 +561,10 @@ export default function AdminCreditsPage() {
 
       {/* TAB 3: PACKAGES */}
       {activeTab === 'packages' && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
-              <h3 className="text-base font-black text-navy-900 flex items-center gap-2">
+              <h3 className="text-base font-bold text-navy-900 flex items-center gap-2">
                 <Coins className="w-5 h-5 text-orange-500" />
                 Kredi Paketleri Yönetimi
               </h3>
@@ -594,7 +594,7 @@ export default function AdminCreditsPage() {
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-600 uppercase text-[10px] font-extrabold border-b border-slate-200">
+              <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-semibold border-b border-slate-200">
                 <tr>
                   <th className="py-2.5 px-3">Sıra</th>
                   <th className="py-2.5 px-3">Paket Adı</th>
@@ -610,10 +610,10 @@ export default function AdminCreditsPage() {
                   <tr key={pkg.id} className="hover:bg-slate-50/70">
                     <td className="py-2.5 px-3 text-slate-400 font-bold">{pkg.sort_order}</td>
                     <td className="py-2.5 px-3 font-bold text-navy-900">{pkg.name}</td>
-                    <td className="py-2.5 px-3 text-center font-black text-orange-600">
+                    <td className="py-2.5 px-3 text-center font-bold text-orange-600">
                       {pkg.credits} Kredi
                     </td>
-                    <td className="py-2.5 px-3 text-right font-extrabold text-navy-900">
+                    <td className="py-2.5 px-3 text-right font-semibold text-navy-900">
                       ₺{pkg.price.toLocaleString('tr-TR')}
                     </td>
                     <td className="py-2.5 px-3 text-center">
@@ -621,7 +621,7 @@ export default function AdminCreditsPage() {
                     </td>
                     <td className="py-2.5 px-3 text-center">
                       <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                        className={`px-2 py-0.5 rounded text-[11px] font-bold ${
                           pkg.is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-500'
                         }`}
                       >
@@ -655,9 +655,9 @@ export default function AdminCreditsPage() {
 
       {/* TAB 4: DISPUTES QUEUE */}
       {activeTab === 'disputes' && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
           <div className="border-b border-slate-100 pb-3">
-            <h3 className="text-base font-black text-navy-900 flex items-center gap-2">
+            <h3 className="text-base font-bold text-navy-900 flex items-center gap-2">
               <FileQuestion className="w-5 h-5 text-orange-500" />
               Sorunlu Talep & İade İnceleme Kuyruğu
             </h3>
@@ -679,11 +679,11 @@ export default function AdminCreditsPage() {
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-black text-navy-900">Talep Ref: {d.request_id}</span>
+                      <span className="font-bold text-navy-900">Talep Ref: {d.request_id}</span>
                       <span className="text-slate-400">•</span>
                       <span className="font-bold text-slate-700">Firma: {d.company?.name || d.company_id}</span>
                       <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                        className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase ${
                           d.status === 'approved'
                             ? 'bg-emerald-100 text-emerald-800'
                             : d.status === 'rejected'
@@ -740,9 +740,9 @@ export default function AdminCreditsPage() {
 
       {/* TAB 5: MANUAL ADJUST */}
       {activeTab === 'manual' && (
-        <form onSubmit={handleManualAdjust} className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4 max-w-xl">
+        <form onSubmit={handleManualAdjust} className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4 max-w-xl">
           <div className="border-b border-slate-100 pb-3">
-            <h3 className="text-base font-black text-navy-900 flex items-center gap-2">
+            <h3 className="text-base font-bold text-navy-900 flex items-center gap-2">
               <Users className="w-5 h-5 text-orange-500" />
               Manuel Kredi Ekleme & Çıkarma (Gerekçeli & Loglu)
             </h3>
@@ -809,10 +809,10 @@ export default function AdminCreditsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
           <form
             onSubmit={handleSavePackage}
-            className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4"
+            className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg border border-slate-200 space-y-4"
           >
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-black text-navy-900">
+              <h3 className="text-base font-bold text-navy-900">
                 {editingPkg.id ? 'Paketi Düzenle' : 'Yeni Kredi Paketi Ekle'}
               </h3>
               <button
@@ -917,7 +917,7 @@ export default function AdminCreditsPage() {
               <button
                 type="submit"
                 disabled={pkgSaving}
-                className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md"
+                className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md"
               >
                 {pkgSaving ? 'Kaydediliyor...' : 'Kaydet'}
               </button>
@@ -931,10 +931,10 @@ export default function AdminCreditsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
           <form
             onSubmit={handleResolveDispute}
-            className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4 text-xs"
+            className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg border border-slate-200 space-y-4 text-xs"
           >
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-black text-navy-900">İtirazı Karara Bağla</h3>
+              <h3 className="text-base font-bold text-navy-900">İtirazı Karara Bağla</h3>
               <button
                 type="button"
                 onClick={() => setResolvingDispute(null)}
@@ -947,7 +947,7 @@ export default function AdminCreditsPage() {
             <div className="space-y-2">
               <p className="text-slate-600">
                 <strong>Karar:</strong>{' '}
-                <span className={resolveAction === 'approved' ? 'text-emerald-700 font-black' : 'text-red-700 font-black'}>
+                <span className={resolveAction === 'approved' ? 'text-emerald-700 font-bold' : 'text-red-700 font-bold'}>
                   {resolveAction === 'approved' ? 'KREDİ İADESİ YAP (+1 Kredi)' : 'İTİRAZI REDDET'}
                 </span>
               </p>
@@ -978,7 +978,7 @@ export default function AdminCreditsPage() {
               <button
                 type="submit"
                 disabled={resolveSubmitting}
-                className={`px-6 py-2.5 rounded-xl text-white font-black shadow-md ${
+                className={`px-6 py-2.5 rounded-xl text-white font-bold shadow-md ${
                   resolveAction === 'approved' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-600 hover:bg-red-700'
                 }`}
               >

@@ -365,9 +365,9 @@ export default function NewListingPage() {
         <span className="text-xs font-semibold text-slate-400">Yeni İlan Girişi (7 Ana Kategori)</span>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 shadow-sm space-y-8">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-10 shadow-sm space-y-8">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-navy-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 tracking-tight">
             Yeni İlan Oluştur
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -385,7 +385,7 @@ export default function NewListingPage() {
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Section 1: Kategori ve Tür */}
           <div className="space-y-4">
-            <h3 className="text-sm font-extrabold text-navy-900 border-b border-slate-100 pb-2">
+            <h3 className="text-sm font-semibold text-navy-900 border-b border-slate-100 pb-2">
               1. Kategori ve İlan Türü
             </h3>
 
@@ -425,7 +425,7 @@ export default function NewListingPage() {
                       setListingType('rental');
                       setPricingType('fixed');
                     }}
-                    className={`py-2.5 rounded-xl text-xs font-extrabold border transition ${
+                    className={`py-2.5 rounded-xl text-xs font-semibold border transition ${
                       listingType === 'rental'
                         ? 'bg-navy-900 text-white border-navy-900'
                         : 'bg-slate-50 text-slate-700 border-slate-300 disabled:opacity-30'
@@ -440,7 +440,7 @@ export default function NewListingPage() {
                       setListingType('sale');
                       setPricingType('fixed');
                     }}
-                    className={`py-2.5 rounded-xl text-xs font-extrabold border transition ${
+                    className={`py-2.5 rounded-xl text-xs font-semibold border transition ${
                       listingType === 'sale'
                         ? 'bg-emerald-700 text-white border-emerald-700'
                         : 'bg-slate-50 text-slate-700 border-slate-300 disabled:opacity-30'
@@ -455,7 +455,7 @@ export default function NewListingPage() {
                       setListingType('service');
                       setPricingType('custom_quote');
                     }}
-                    className={`py-2.5 rounded-xl text-xs font-extrabold border transition ${
+                    className={`py-2.5 rounded-xl text-xs font-semibold border transition ${
                       listingType === 'service'
                         ? 'bg-orange-600 text-white border-orange-600'
                         : 'bg-slate-50 text-slate-700 border-slate-300 disabled:opacity-30'
@@ -483,7 +483,7 @@ export default function NewListingPage() {
 
           {/* Section 2: Başlık ve Açıklama */}
           <div className="space-y-4">
-            <h3 className="text-sm font-extrabold text-navy-900 border-b border-slate-100 pb-2">
+            <h3 className="text-sm font-semibold text-navy-900 border-b border-slate-100 pb-2">
               2. İlan Detayları
             </h3>
 
@@ -520,7 +520,7 @@ export default function NewListingPage() {
           {categoryAttributes.length > 0 && (
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                <h3 className="text-sm font-extrabold text-navy-900 flex items-center gap-1.5">
+                <h3 className="text-sm font-semibold text-navy-900 flex items-center gap-1.5">
                   <Layers className="w-4 h-4 text-orange-500" />
                   3. Kategoriye Özel Teknik Özellikler
                 </h3>
@@ -573,7 +573,7 @@ export default function NewListingPage() {
 
           {/* Section 4: Fiyatlandırma & Hizmet Seçenekleri */}
           <div className="space-y-4">
-            <h3 className="text-sm font-extrabold text-navy-900 border-b border-slate-100 pb-2">
+            <h3 className="text-sm font-semibold text-navy-900 border-b border-slate-100 pb-2">
               4. Fiyatlandırma ve Koşullar
             </h3>
 
@@ -592,7 +592,7 @@ export default function NewListingPage() {
                           : 'border-slate-200 bg-white text-slate-700'
                       }`}
                     >
-                      <div className="font-extrabold">Teklife Göre (Önerilen)</div>
+                      <div className="font-semibold">Teklife Göre (Önerilen)</div>
                       <span className="text-[11px] font-normal text-slate-500 block mt-0.5">
                         Şantiye keşfi ve metraja göre özel teklif verilir.
                       </span>
@@ -607,7 +607,7 @@ export default function NewListingPage() {
                           : 'border-slate-200 bg-white text-slate-700'
                       }`}
                     >
-                      <div className="font-extrabold">Birim / Başlangıç Fiyatı</div>
+                      <div className="font-semibold">Birim / Başlangıç Fiyatı</div>
                       <span className="text-[11px] font-normal text-slate-500 block mt-0.5">
                         m², saatlik veya iş başı taban ücret.
                       </span>
@@ -756,7 +756,7 @@ export default function NewListingPage() {
 
           {/* Section 5: Konum ve Hizmet Bölgesi */}
           <div className="space-y-4">
-            <h3 className="text-sm font-extrabold text-navy-900 border-b border-slate-100 pb-2">
+            <h3 className="text-sm font-semibold text-navy-900 border-b border-slate-100 pb-2">
               5. Konum ve Hizmet Alanı
             </h3>
 
@@ -809,7 +809,7 @@ export default function NewListingPage() {
                     onChange={(e) => setServiceRadiusKm(e.target.value)}
                     className="flex-1 accent-orange-500"
                   />
-                  <span className="text-xs font-black text-navy-900 bg-white px-3 py-1.5 rounded-lg border">
+                  <span className="text-xs font-bold text-navy-900 bg-white px-3 py-1.5 rounded-lg border">
                     {serviceRadiusKm} km Yarıçap
                   </span>
                 </div>
@@ -823,10 +823,10 @@ export default function NewListingPage() {
           {/* Section 6: Görseller */}
           <div id="photo-upload-section" className="space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-              <h3 className="text-sm font-extrabold text-navy-900 flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-navy-900 flex items-center gap-2">
                 <ImageIcon className="w-4 h-4 text-orange-500" />
                 <span>6. Gerçek İlan Fotoğrafları</span>
-                <span className="text-red-500 font-black text-xs bg-red-50 px-2 py-0.5 rounded border border-red-200">
+                <span className="text-red-500 font-bold text-xs bg-red-50 px-2 py-0.5 rounded border border-red-200">
                   * Zorunlu (En az 1 Adet)
                 </span>
               </h3>
@@ -850,7 +850,7 @@ export default function NewListingPage() {
 
             {/* Dosya Yükleme Alanı */}
             <label
-              className={`border-2 border-dashed rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer transition text-center group ${
+              className={`border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition text-center group ${
                 images.length === 0
                   ? 'border-orange-300 bg-orange-50/20 hover:border-orange-500 hover:bg-orange-50/40'
                   : 'border-slate-300 hover:border-orange-500 bg-slate-50 hover:bg-orange-50/30'
@@ -864,14 +864,14 @@ export default function NewListingPage() {
                 disabled={uploadingImage || images.length >= 10}
                 className="hidden"
               />
-              <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 text-orange-500 flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 text-orange-500 flex items-center justify-center mb-3 shadow-sm transition-transform">
                 {uploadingImage ? (
                   <span className="w-5 h-5 border-2 border-orange-500/30 border-t-orange-500 rounded-full animate-spin" />
                 ) : (
                   <UploadCloud className="w-6 h-6" />
                 )}
               </div>
-              <p className="text-xs font-black text-navy-900">
+              <p className="text-xs font-bold text-navy-900">
                 {uploadingImage ? 'Fotoğraflar Yükleniyor ve Optimize Ediliyor...' : 'Fotoğrafları Seçin veya Buraya Sürükleyin (En az 1 adet zorunlu)'}
               </p>
               <p className="text-[11px] text-slate-500 mt-1">
@@ -895,13 +895,13 @@ export default function NewListingPage() {
                       <button
                         type="button"
                         onClick={() => handleRemoveImage(i)}
-                        className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-red-600/90 hover:bg-red-600 text-white text-xs font-black flex items-center justify-center shadow transition"
+                        className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-red-600/90 hover:bg-red-600 text-white text-xs font-bold flex items-center justify-center shadow transition"
                         title="Fotoğrafı Sil"
                       >
                         ✕
                       </button>
                       {i === 0 && (
-                        <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded bg-navy-900/90 text-white text-[10px] font-black tracking-wider uppercase shadow">
+                        <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded bg-navy-900/90 text-white text-[11px] font-bold shadow">
                           Kapak Fotoğrafı
                         </span>
                       )}
@@ -930,14 +930,14 @@ export default function NewListingPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm tracking-wide shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 transition disabled:opacity-50"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm tracking-wide shadow-lg flex items-center justify-center gap-2 transition disabled:opacity-50"
             >
               {loading ? (
                 <span>Kaydediliyor...</span>
               ) : (
                 <>
                   <PlusCircle className="w-5 h-5" />
-                  <span>İLANIMI YAYINA AL</span>
+                  <span>İlanımı yayına al</span>
                 </>
               )}
             </button>

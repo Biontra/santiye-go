@@ -222,15 +222,15 @@ export default function CompanyProfilePage() {
         <span className="text-xs font-semibold text-slate-400">Firma Profili & Onay</span>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
         {/* Header & Verification Badge */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-navy-900 text-orange-500 flex items-center justify-center font-black text-2xl shadow-sm">
+            <div className="w-16 h-16 rounded-xl bg-navy-900 text-orange-500 flex items-center justify-center font-bold text-2xl shadow-sm">
               {name ? name.charAt(0).toUpperCase() : 'F'}
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-black text-navy-900">
+              <h1 className="text-xl sm:text-2xl font-bold text-navy-900">
                 {name || 'Firma Profilini Düzenle'}
               </h1>
               <p className="text-xs text-slate-500">
@@ -241,17 +241,17 @@ export default function CompanyProfilePage() {
 
           <div>
             {verificationStatus === 'approved' ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 text-xs font-black border border-emerald-200">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
                 Doğrulanmış Firma
               </span>
             ) : verificationStatus === 'pending' ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 text-xs font-black border border-amber-200">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 text-xs font-bold border border-amber-200">
                 <Clock className="w-4 h-4 text-amber-600" />
                 Onay Bekliyor
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-black border border-slate-200">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200">
                 <AlertCircle className="w-4 h-4 text-slate-500" />
                 Doğrulanmamış Firma
               </span>
@@ -262,7 +262,7 @@ export default function CompanyProfilePage() {
         {saved && (
           <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-xl flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>Firma profil bilgileriniz başarıyla güncellendi!</span>
+            <span>Profil bilgileriniz güncellendi.</span>
           </div>
         )}
 
@@ -380,7 +380,7 @@ export default function CompanyProfilePage() {
 
           {/* Gerçek Doğrulama Belgeleri Yükleme Alanı */}
           <div className="pt-4 border-t border-slate-100 space-y-3">
-            <h3 className="text-xs font-black text-navy-900 uppercase tracking-wider">
+            <h3 className="text-xs font-bold text-navy-900">
               Kurumsal Doğrulama Belgeleri (PDF / Resim)
             </h3>
             <p className="text-xs text-slate-500">
@@ -389,7 +389,7 @@ export default function CompanyProfilePage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* Vergi Levhası */}
-              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
                 <span className="text-xs font-bold text-navy-900 block">Güncel Vergi Levhası</span>
                 {taxPlateUrl ? (
                   <div className="flex items-center justify-between text-xs text-emerald-700 font-semibold bg-emerald-50 p-2 rounded-xl border border-emerald-100">
@@ -419,7 +419,7 @@ export default function CompanyProfilePage() {
               </div>
 
               {/* İmza Sirküleri / Yetki Belgesi */}
-              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
                 <span className="text-xs font-bold text-navy-900 block">İmza Sirküleri / Yetki Belgesi</span>
                 {signatureCircularUrl ? (
                   <div className="flex items-center justify-between text-xs text-emerald-700 font-semibold bg-emerald-50 p-2 rounded-xl border border-emerald-100">
@@ -462,7 +462,7 @@ export default function CompanyProfilePage() {
 
         {/* KVKK Madde 11: Kullanıcı Hakları ve Veri Yönetimi */}
         <div className="pt-6 border-t border-slate-200 space-y-3">
-          <h3 className="text-sm font-black text-navy-900 flex items-center gap-1.5">
+          <h3 className="text-sm font-bold text-navy-900 flex items-center gap-1.5">
             <span>KVKK Veri Yönetimi & Kullanıcı Hakları</span>
           </h3>
           <p className="text-xs text-slate-500 leading-relaxed">
@@ -493,7 +493,7 @@ export default function CompanyProfilePage() {
               }}
               className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-navy-900 font-bold text-xs transition border border-slate-300"
             >
-              📥 Verilerimi İndir (JSON)
+              Verilerimi indir
             </button>
 
             <button
@@ -508,7 +508,7 @@ export default function CompanyProfilePage() {
               }}
               className="px-4 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs transition border border-red-200"
             >
-              ⚠️ Hesabımı Silme / Kapatma Talebi
+              Hesabımı kapatma talebi
             </button>
           </div>
         </div>

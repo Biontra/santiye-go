@@ -6,13 +6,13 @@ import { ShieldAlert, ArrowLeft, Home } from 'lucide-react';
 export default function UnauthorizedPage() {
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4 py-16">
-      <div className="max-w-md w-full bg-white rounded-3xl border border-slate-200 p-8 sm:p-10 text-center space-y-6 shadow-xl">
-        <div className="w-16 h-16 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-100">
+      <div className="max-w-md w-full bg-white rounded-xl border border-slate-200 p-8 sm:p-10 text-center space-y-6 shadow-md">
+        <div className="w-16 h-16 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-100">
           <ShieldAlert className="w-8 h-8" />
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-2xl font-black text-navy-900 tracking-tight">Erişim Yetkiniz Yok</h1>
+          <h1 className="text-2xl font-bold text-navy-900 tracking-tight">Erişim Yetkiniz Yok</h1>
           <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
             Bu sayfayı görüntülemek için hesabınızın gerekli izinleri bulunmamaktadır.
           </p>

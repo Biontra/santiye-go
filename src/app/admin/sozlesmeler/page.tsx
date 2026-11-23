@@ -109,9 +109,9 @@ export default function AdminSozlesmelerPage() {
   return (
     <div className="space-y-6">
       {/* Başlık ve Sekmeler */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
         <div>
-          <h1 className="text-2xl font-black text-navy-900 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-navy-900 flex items-center gap-2">
             <FileText className="w-6 h-6 text-amber-500" />
             Otomatik Sözleşmeler & Şablonlar
           </h1>
@@ -185,7 +185,7 @@ export default function AdminSozlesmelerPage() {
           </div>
 
           {/* Tablo */}
-          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
@@ -211,7 +211,7 @@ export default function AdminSozlesmelerPage() {
                       <tr key={cnt.id} className="hover:bg-slate-50/70 transition">
                         <td className="py-3 px-4">
                           <span className="font-bold text-slate-900 block">{cnt.contract_number}</span>
-                          <span className="text-[10px] text-slate-400">
+                          <span className="text-[11px] text-slate-400">
                             v{cnt.template_version} • {cnt.contract_type === 'rental' ? 'Kiralama' : 'Hizmet'}
                           </span>
                         </td>
@@ -219,7 +219,7 @@ export default function AdminSozlesmelerPage() {
                           <span className="font-semibold text-slate-800 block">
                             {cnt.data_snapshot?.company?.name || '-'}
                           </span>
-                          <span className="text-[10px] text-slate-400">
+                          <span className="text-[11px] text-slate-400">
                             {cnt.data_snapshot?.company?.city || '-'}
                           </span>
                         </td>
@@ -227,7 +227,7 @@ export default function AdminSozlesmelerPage() {
                           <span className="font-semibold text-slate-800 block">
                             {cnt.data_snapshot?.buyer?.company_name || cnt.data_snapshot?.buyer?.full_name || '-'}
                           </span>
-                          <span className="text-[10px] text-slate-400">
+                          <span className="text-[11px] text-slate-400">
                             {cnt.data_snapshot?.buyer?.phone || '-'}
                           </span>
                         </td>
@@ -235,7 +235,7 @@ export default function AdminSozlesmelerPage() {
                           <span className="font-medium text-slate-800 block max-w-xs truncate">
                             {cnt.data_snapshot?.subject?.title}
                           </span>
-                          <span className="text-[10px] text-slate-400">
+                          <span className="text-[11px] text-slate-400">
                             {cnt.data_snapshot?.subject?.start_date}
                           </span>
                         </td>
@@ -260,7 +260,7 @@ export default function AdminSozlesmelerPage() {
                             </span>
                           )}
                           {cnt.status === 'superseded' && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] bg-slate-100 text-slate-500">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] bg-slate-100 text-slate-500">
                               Eski Sürüm
                             </span>
                           )}
@@ -314,7 +314,7 @@ export default function AdminSozlesmelerPage() {
             {templates.map((tmpl) => (
               <div
                 key={tmpl.id}
-                className="bg-white rounded-2xl border border-slate-200 p-6 space-y-3 shadow-sm hover:border-slate-300 transition"
+                className="bg-white rounded-xl border border-slate-200 p-6 space-y-3 shadow-sm hover:border-slate-300 transition"
               >
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                   <div>
@@ -340,7 +340,7 @@ export default function AdminSozlesmelerPage() {
       {/* Snapshot Detay Modalı */}
       {selectedContract && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-xl border border-slate-200 max-h-[85vh] overflow-y-auto">
+          <div className="bg-white rounded-xl max-w-2xl w-full p-6 space-y-4 shadow-md border border-slate-200 max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <h3 className="text-base font-bold text-slate-900">
@@ -368,7 +368,7 @@ export default function AdminSozlesmelerPage() {
       {/* Yeni Şablon Modalı */}
       {showNewTemplateModal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-xl w-full p-6 space-y-4 shadow-xl border border-slate-200">
+          <div className="bg-white rounded-xl max-w-xl w-full p-6 space-y-4 shadow-md border border-slate-200">
             <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
               <Plus className="w-5 h-5 text-amber-500" />
               Yeni Şablon Sürümü Tanımla

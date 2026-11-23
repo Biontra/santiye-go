@@ -1,8 +1,8 @@
 export default function PrivacyPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
-      <div className="bg-white rounded-2xl border border-slate-200 p-8 sm:p-12 shadow-sm space-y-6 text-sm text-slate-600 leading-relaxed">
-        <h1 className="text-2xl sm:text-3xl font-black text-navy-900 border-b border-slate-100 pb-4">
+      <div className="bg-white rounded-xl border border-slate-200 p-8 sm:p-12 shadow-sm space-y-6 text-sm text-slate-600 leading-relaxed">
+        <h1 className="text-2xl sm:text-3xl font-bold text-navy-900 border-b border-slate-100 pb-4">
           Gizlilik ve Çerez Politikası
         </h1>
         <p>

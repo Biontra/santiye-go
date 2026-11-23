@@ -255,7 +255,7 @@ export default function ListingMap({
   };
 
   return (
-    <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-inner bg-slate-100">
+    <div className="relative rounded-xl overflow-hidden border border-slate-200 shadow-inner bg-slate-100">
       <div ref={mapContainerRef} style={{ height }} className="w-full z-10" />
 
       {/* Floating "Bu Bölgede Ara" Button */}
@@ -263,7 +263,7 @@ export default function ListingMap({
         <button
           type="button"
           onClick={handleSearchCurrentArea}
-          className="absolute top-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 bg-navy-900 hover:bg-orange-600 text-white font-bold text-xs rounded-full shadow-xl flex items-center gap-1.5 transition active:scale-95 animate-bounce"
+          className="absolute top-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 bg-navy-900 hover:bg-orange-600 text-white font-bold text-xs rounded-full shadow-md flex items-center gap-1.5 transition animate-bounce"
         >
           <RefreshCw className="w-3.5 h-3.5 text-orange-400" />
           <span>Bu Bölgede Ara</span>

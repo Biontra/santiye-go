@@ -3,14 +3,14 @@ import { ShieldCheck, AlertTriangle, FileText, Lock } from 'lucide-react';
 export default function KvkkPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
-      <div className="bg-white rounded-2xl border border-slate-200 p-8 sm:p-12 shadow-sm space-y-6">
+      <div className="bg-white rounded-xl border border-slate-200 p-8 sm:p-12 shadow-sm space-y-6">
         {/* Header */}
         <div className="flex items-center gap-3 border-b border-slate-100 pb-6">
           <div className="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center">
             <ShieldCheck className="w-7 h-7" />
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-navy-900">
+            <h1 className="text-2xl sm:text-3xl font-bold text-navy-900">
               KVKK Aydınlatma Metni & Gizlilik Politikası
             </h1>
             <p className="text-xs sm:text-sm text-slate-500">

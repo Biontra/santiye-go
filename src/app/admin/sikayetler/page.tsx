@@ -62,7 +62,7 @@ export default function AdminReportsPage() {
             <span className="text-slate-400">/</span>
             <span className="text-xs text-orange-600 font-bold">Şikayet Masası</span>
           </div>
-          <h1 className="text-2xl font-black text-navy-900 mt-1">
+          <h1 className="text-2xl font-bold text-navy-900 mt-1">
             Şikayet & Uyuşmazlık Yönetimi
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -104,10 +104,10 @@ export default function AdminReportsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-extrabold uppercase tracking-wider border-b border-slate-200 text-[10px]">
+            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200 text-[11px]">
               <tr>
                 <th className="py-3 px-4">Şikayet Nedeni</th>
                 <th className="py-3 px-4">Hedef Türü</th>
@@ -121,7 +121,7 @@ export default function AdminReportsPage() {
               {filtered.map((r) => (
                 <tr key={r.id} className="hover:bg-slate-50">
                   <td className="py-3 px-4">
-                    <div className="font-extrabold text-navy-900 text-sm">{r.reason}</div>
+                    <div className="font-semibold text-navy-900 text-sm">{r.reason}</div>
                     <div className="text-[11px] text-slate-500 line-clamp-1">{r.details}</div>
                   </td>
 
@@ -145,29 +145,29 @@ export default function AdminReportsPage() {
 
                   <td className="py-3 px-4">
                     <div>{r.reporter_id}</div>
-                    <div className="text-[10px] text-slate-400">
+                    <div className="text-[11px] text-slate-400">
                       {new Date(r.created_at).toLocaleDateString('tr-TR')}
                     </div>
                   </td>
 
                   <td className="py-3 px-4">
                     {r.status === 'pending' && (
-                      <span className="px-2 py-0.5 rounded bg-orange-100 text-orange-800 text-[10px] font-bold">
+                      <span className="px-2 py-0.5 rounded bg-orange-100 text-orange-800 text-[11px] font-bold">
                         Yeni
                       </span>
                     )}
                     {r.status === 'investigating' && (
-                      <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold">
+                      <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[11px] font-bold">
                         İnceleniyor
                       </span>
                     )}
                     {r.status === 'resolved' && (
-                      <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                      <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[11px] font-bold">
                         Çözüldü
                       </span>
                     )}
                     {r.status === 'dismissed' && (
-                      <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-bold">
+                      <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[11px] font-bold">
                         Reddedildi
                       </span>
                     )}
@@ -199,9 +199,9 @@ export default function AdminReportsPage() {
       {/* Resolution Modal */}
       {activeReport && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-5 shadow-2xl border border-slate-200 space-y-4 text-xs">
+          <div className="bg-white rounded-xl max-w-lg w-full p-5 shadow-lg border border-slate-200 space-y-4 text-xs">
             <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="font-extrabold text-navy-900 text-base">Şikayet İnceleme Masası</h3>
+              <h3 className="font-semibold text-navy-900 text-base">Şikayet İnceleme Masası</h3>
               <button
                 type="button"
                 onClick={() => setActiveReport(null)}

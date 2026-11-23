@@ -14,7 +14,7 @@ export default function AdvertisingTermsPage() {
         </Link>
 
         {/* Legal Disclaimer Box */}
-        <div className="p-4 bg-amber-50 border border-amber-300 rounded-2xl text-xs text-amber-950 flex items-start gap-3 shadow-sm">
+        <div className="p-4 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-950 flex items-start gap-3 shadow-sm">
           <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
           <div>
             <strong>Yasal Uyarı & Taslak Bildirimi:</strong>
@@ -24,9 +24,9 @@ export default function AdvertisingTermsPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-6 text-xs sm:text-sm text-slate-700 leading-relaxed">
+        <div className="bg-white rounded-xl border border-slate-200 p-8 shadow-sm space-y-6 text-xs sm:text-sm text-slate-700 leading-relaxed">
           <div className="border-b pb-4">
-            <h1 className="text-2xl font-black text-navy-900">
+            <h1 className="text-2xl font-bold text-navy-900">
               Reklam ve Öne Çıkarma Şartları (Taslak)
             </h1>
             <p className="text-xs text-slate-500 mt-1">
@@ -66,14 +66,14 @@ export default function AdvertisingTermsPage() {
           </div>
 
           <section className="space-y-2">
-            <h2 className="text-base font-extrabold text-navy-900">1. GENEL PRENSİPLER VE KAPSAM</h2>
+            <h2 className="text-base font-semibold text-navy-900">1. GENEL PRENSİPLER VE KAPSAM</h2>
             <p>
               Şantiye GO platformu üzerinden satın alınan tüm reklam ve öne çıkarma hizmetleri (Ana Sayfa Vitrini, Kategori Vitrini, Sponsorlu Arama Sonucu, Bölgesel Hedefli Reklam ve Öne Çıkan Firma Profili), inşaat ve şantiye sektörünün güvenliğini ve şeffaflığını koruma amacıyla işbu kurallara tabidir.
             </p>
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-extrabold text-navy-900">2. YASAKLI İÇERİKLER VE REKLAM STANDARTLARI</h2>
+            <h2 className="text-base font-semibold text-navy-900">2. YASAKLI İÇERİKLER VE REKLAM STANDARTLARI</h2>
             <p>Aşağıdaki unsurları içeren reklam başvuruları derhal reddedilir:</p>
             <ul className="list-disc pl-5 space-y-1.5">
               <li>Mülkiyeti veya yasal kiralama hakkı bulunmayan sahte iş makineleri veya yanıltıcı stok bilgileri.</li>
@@ -84,21 +84,21 @@ export default function AdvertisingTermsPage() {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-extrabold text-navy-900">3. SLOT YÖNETİMİ VE ADİL ROTASYON KURALI</h2>
+            <h2 className="text-base font-semibold text-navy-900">3. SLOT YÖNETİMİ VE ADİL ROTASYON KURALI</h2>
             <p>
               Arama sonuçlarında ve ana sayfa vitrininde kullanıcı deneyimini bozmamak adına slot kapasiteleri sınırlıdır (Arama sonuçlarında en fazla 2 slot). Aynı kategori ve bölgede slot kapasitesinden fazla aktif reklam bulunması halinde platform <strong>Ağırlıklı Adil Paylaşımlı Rotasyon (Weighted Fair-Share Round-Robin)</strong> uygular. Her firma satın aldığı süre boyunca hedeflenen gösterim dengesine göre eşit şansa sahip olur.
             </p>
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-extrabold text-navy-900">4. ARAMA FİLTRELERİNİN ÜSTÜNLÜĞÜ VE DEDUPİNG</h2>
+            <h2 className="text-base font-semibold text-navy-900">4. ARAMA FİLTRELERİNİN ÜSTÜNLÜĞÜ VE DEDUPİNG</h2>
             <p>
               Reklamlar kullanıcıların konum ve kategori filtrelerini asla bypass edemez. Örneğin bir kullanıcı Samsun&apos;da 25 km yarıçap arıyorsa, İstanbul merkezli bir reklam bu arama sonucunda gösterilmez. Ayrıca üst sponsorlu slotta çıkan bir ilan, alt organik listeden otomatik olarak çıkarılarak aynı sayfada mükerrer gösterilmesi engellenir.
             </p>
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-base font-extrabold text-navy-900">5. ÜCRET VE İADE KOŞULLARI</h2>
+            <h2 className="text-base font-semibold text-navy-900">5. ÜCRET VE İADE KOŞULLARI</h2>
             <p>
               5.1. Reklam ücretleri satın alma anında kredi kartı / iyzico altyapısı ile tahsil edilir.
             </p>

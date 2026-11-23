@@ -98,14 +98,14 @@ export default function BookingModal({ listing, isOpen, onClose }: BookingModalP
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+      <div className="bg-white rounded-xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-lg border border-slate-200 overflow-hidden">
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
           <div>
-            <span className="text-[10px] font-bold uppercase text-orange-600 tracking-wider">
+            <span className="text-[11px] font-bold text-orange-600">
               Rezervasyon Talebi
             </span>
-            <h3 className="font-black text-navy-900 text-base line-clamp-1">
+            <h3 className="font-bold text-navy-900 text-base line-clamp-1">
               {listing.title}
             </h3>
             <p className="text-xs text-slate-500">{listing.company?.name}</p>
@@ -174,15 +174,15 @@ export default function BookingModal({ listing, isOpen, onClose }: BookingModalP
                 <span className="text-[11px] font-bold text-slate-600 block">
                   Hesaplanan Süre: {dayCount} Gün
                 </span>
-                <span className="text-[10px] text-slate-400">
+                <span className="text-[11px] text-slate-400">
                   (Günlük: {dailyPrice.toLocaleString('tr-TR')} ₺)
                 </span>
               </div>
               <div className="text-right">
-                <span className="text-[10px] uppercase font-bold text-orange-700 block">
+                <span className="text-[11px] uppercase font-bold text-orange-700 block">
                   Tahmini Toplam Tutar
                 </span>
-                <span className="text-lg font-black text-orange-600">
+                <span className="text-lg font-bold text-orange-600">
                   {estimatedTotal.toLocaleString('tr-TR')} ₺
                 </span>
               </div>
@@ -272,7 +272,7 @@ export default function BookingModal({ listing, isOpen, onClose }: BookingModalP
             <button
               type="submit"
               disabled={loading || success || dayCount <= 0}
-              className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md transition disabled:opacity-50"
+              className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md transition disabled:opacity-50"
             >
               {loading ? 'İletiliyor...' : 'REZERVASYON TALEBİ GÖNDER'}
             </button>

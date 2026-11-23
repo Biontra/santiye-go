@@ -161,19 +161,19 @@ export default function CompanyEarningsPage() {
         </div>
 
         {actionSuccess && (
-          <div className="p-4 bg-emerald-50 border border-emerald-300 text-emerald-950 rounded-2xl text-xs font-bold flex items-center gap-2 shadow-sm">
+          <div className="p-4 bg-emerald-50 border border-emerald-300 text-emerald-950 rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>{actionSuccess}</span>
           </div>
         )}
 
         {/* Top Header */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-black uppercase">
+            <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-bold uppercase">
               Firma Finans
             </span>
-            <h1 className="text-2xl font-black text-navy-900 mt-1">
+            <h1 className="text-2xl font-bold text-navy-900 mt-1">
               Kazançlarım & Hakediş Raporu
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
@@ -184,11 +184,11 @@ export default function CompanyEarningsPage() {
           {/* Submerchant IBAN Card (SADECE SON 4 HANE GÖSTERİLİR) */}
           <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-1 shrink-0">
             <div className="flex items-center justify-between gap-3">
-              <span className="text-slate-400 font-bold uppercase text-[10px]">
+              <span className="text-slate-400 font-bold uppercase text-[11px]">
                 Alt Üye İşyeri Hesabı
               </span>
               <span
-                className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                className={`px-2 py-0.5 rounded text-[11px] font-bold ${
                   subMerchantStatus === 'approved'
                     ? 'bg-emerald-100 text-emerald-800'
                     : 'bg-slate-100 text-slate-600'
@@ -204,7 +204,7 @@ export default function CompanyEarningsPage() {
               <span className="text-slate-500 font-semibold">{legalTitle.slice(0, 24)}...</span>
               <button
                 onClick={() => setOnboardingModalOpen(true)}
-                className="text-orange-600 hover:underline font-bold text-[10px] ml-2"
+                className="text-orange-600 hover:underline font-bold text-[11px] ml-2"
               >
                 Bilgileri Güncelle
               </button>
@@ -215,69 +215,69 @@ export default function CompanyEarningsPage() {
         {/* 5 Balance Cards (Prompt 9E Şartı) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {/* 1. Havuzda Bekleyen */}
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-1">
             <div className="flex items-center gap-1.5 text-xs font-bold text-blue-700">
               <Lock className="w-3.5 h-3.5" />
               <span>Havuzda (Escrow)</span>
             </div>
-            <div className="text-xl font-black text-navy-900">
+            <div className="text-xl font-bold text-navy-900">
               {formatCentsToTRY(poolCents)}
             </div>
-            <div className="text-[10px] text-slate-400">İş teslimatı bekleniyor</div>
+            <div className="text-[11px] text-slate-400">İş teslimatı bekleniyor</div>
           </div>
 
           {/* 2. Serbest Bırakılabilir */}
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-1">
             <div className="flex items-center gap-1.5 text-xs font-bold text-amber-700">
               <Clock className="w-3.5 h-3.5" />
               <span>Serbest Bırakılabilir</span>
             </div>
-            <div className="text-xl font-black text-amber-700">
+            <div className="text-xl font-bold text-amber-700">
               {formatCentsToTRY(releasableCents)}
             </div>
-            <div className="text-[10px] text-slate-400">İtiraz süresi doluyor</div>
+            <div className="text-[11px] text-slate-400">İtiraz süresi doluyor</div>
           </div>
 
           {/* 3. Aktarılan (Net) */}
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-1">
             <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-700">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Aktarılan (Net)</span>
             </div>
-            <div className="text-xl font-black text-emerald-700">
+            <div className="text-xl font-bold text-emerald-700">
               {formatCentsToTRY(transferredCents)}
             </div>
-            <div className="text-[10px] text-slate-400">IBAN&apos;a gönderilen</div>
+            <div className="text-[11px] text-slate-400">IBAN&apos;a gönderilen</div>
           </div>
 
           {/* 4. İade Edilen */}
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-1">
             <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500">
               <RotateCcw className="w-3.5 h-3.5" />
               <span>İade Edilen</span>
             </div>
-            <div className="text-xl font-black text-slate-700">
+            <div className="text-xl font-bold text-slate-700">
               {formatCentsToTRY(refundedCents)}
             </div>
-            <div className="text-[10px] text-slate-400">İptal/iade işlemleri</div>
+            <div className="text-[11px] text-slate-400">İptal/iade işlemleri</div>
           </div>
 
           {/* 5. İtirazda Olan */}
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-1">
             <div className="flex items-center gap-1.5 text-xs font-bold text-red-700">
               <AlertTriangle className="w-3.5 h-3.5" />
               <span>İtirazda (Dondurulmuş)</span>
             </div>
-            <div className="text-xl font-black text-red-600">
+            <div className="text-xl font-bold text-red-600">
               {formatCentsToTRY(disputedCents)}
             </div>
-            <div className="text-[10px] text-slate-400">Hakem incelemesinde</div>
+            <div className="text-[11px] text-slate-400">Hakem incelemesinde</div>
           </div>
         </div>
 
         {/* Tavan Komisyon Tasarruf Rozeti */}
         {totalCappedSavingsCents > 0 && (
-          <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-950 flex items-center justify-between gap-4">
+          <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-950 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0" />
               <span>
@@ -285,16 +285,16 @@ export default function CompanyEarningsPage() {
                 <strong>{formatCentsToTRY(totalCappedSavingsCents)}</strong> komisyon avantajı sağladınız.
               </span>
             </div>
-            <span className="px-3 py-1 bg-emerald-600 text-white rounded-lg font-black text-xs shrink-0">
+            <span className="px-3 py-1 bg-emerald-600 text-white rounded-lg font-bold text-xs shrink-0">
               Korumalı Hakediş
             </span>
           </div>
         )}
 
         {/* Transaction Table */}
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
           <div className="p-5 border-b border-slate-100 flex items-center justify-between">
-            <h2 className="text-base font-black text-navy-900">Tüm Hakediş ve Ödeme Geçmişi</h2>
+            <h2 className="text-base font-bold text-navy-900">Tüm Hakediş ve Ödeme Geçmişi</h2>
             <span className="text-xs text-slate-500 font-bold">
               Toplam {companyTransactions.length} Kayıt
             </span>
@@ -302,7 +302,7 @@ export default function CompanyEarningsPage() {
 
           {companyTransactions.length === 0 ? (
             <div className="p-12 text-center space-y-3 bg-slate-50/60">
-              <div className="w-12 h-12 rounded-2xl bg-orange-100/60 text-orange-600 flex items-center justify-center mx-auto">
+              <div className="w-12 h-12 rounded-xl bg-orange-100/60 text-orange-600 flex items-center justify-center mx-auto">
                 <CreditCard className="w-6 h-6" />
               </div>
               <div className="space-y-1">
@@ -315,7 +315,7 @@ export default function CompanyEarningsPage() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 text-slate-500 uppercase font-black text-[10px] border-b border-slate-200">
+                <thead className="bg-slate-50 text-slate-500 uppercase font-bold text-[11px] border-b border-slate-200">
                   <tr>
                     <th className="py-3 px-4">İşlem / Tarih</th>
                     <th className="py-3 px-4">Alıcı</th>
@@ -353,30 +353,30 @@ export default function CompanyEarningsPage() {
                           <div className="font-mono text-[11px] font-bold text-navy-900">
                             #{tx.id.slice(0, 14)}
                           </div>
-                          <div className="text-[10px] text-slate-400">
+                          <div className="text-[11px] text-slate-400">
                             {new Date(tx.created_at).toLocaleDateString('tr-TR')}
                           </div>
                         </td>
                         <td className="py-3.5 px-4 font-semibold text-slate-800">
                           {tx.buyer?.full_name || 'Alıcı Kullanıcı'}
                         </td>
-                        <td className="py-3.5 px-4 font-black text-navy-900">
+                        <td className="py-3.5 px-4 font-bold text-navy-900">
                           {formatCentsToTRY(tx.amount_cents)}
                         </td>
                         <td className="py-3.5 px-4">
                           <span className="text-slate-600 font-semibold">
                             {formatCentsToTRY(tx.commission_amount_cents)}
                           </span>
-                          <span className="text-[10px] text-slate-400 block">
+                          <span className="text-[11px] text-slate-400 block">
                             (%{tx.commission_rate_percent})
                           </span>
                         </td>
-                        <td className="py-3.5 px-4 font-black text-emerald-700">
+                        <td className="py-3.5 px-4 font-bold text-emerald-700">
                           {formatCentsToTRY(tx.net_company_amount_cents)}
                         </td>
                         <td className="py-3.5 px-4">
                           <span
-                            className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-black uppercase ${
+                            className={`inline-block px-2.5 py-1 rounded-full text-[11px] font-bold uppercase ${
                               statusColors[tx.status] || 'bg-slate-100 text-slate-600'
                             }`}
                           >
@@ -395,11 +395,11 @@ export default function CompanyEarningsPage() {
         {/* Alt Üye İşyeri Güncelleme Modalı */}
         {onboardingModalOpen && (
           <div className="fixed inset-0 z-50 bg-navy-950/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-slate-100">
+            <div className="bg-white rounded-xl max-w-lg w-full p-6 space-y-4 shadow-lg border border-slate-100">
               <div className="flex items-center justify-between border-b pb-3">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                  <h3 className="text-base font-black text-navy-900">iyzico Alt Üye İşyeri Bilgileri</h3>
+                  <h3 className="text-base font-bold text-navy-900">iyzico Alt Üye İşyeri Bilgileri</h3>
                 </div>
                 <button
                   onClick={() => setOnboardingModalOpen(false)}
@@ -456,7 +456,7 @@ export default function CompanyEarningsPage() {
                     maxLength={26}
                     className="w-full font-mono border border-slate-300 rounded-xl p-2.5 text-navy-900"
                   />
-                  <span className="text-[10px] text-slate-400 mt-0.5 block">
+                  <span className="text-[11px] text-slate-400 mt-0.5 block">
                     Girilen IBAN şirketin yasal unvanı ile birebir uyumlu olmalıdır.
                   </span>
                 </div>
@@ -484,7 +484,7 @@ export default function CompanyEarningsPage() {
                   type="button"
                   onClick={handleRegisterSubMerchant}
                   disabled={isSubmitting}
-                  className="px-4 py-2 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white transition disabled:opacity-50"
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition disabled:opacity-50"
                 >
                   {isSubmitting ? 'Doğrulanıyor...' : 'iyzico Doğrulaması Gönder'}
                 </button>

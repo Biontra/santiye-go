@@ -161,7 +161,7 @@ export default function AdminCategoriesPage() {
             <span className="text-slate-400">/</span>
             <span className="text-xs text-orange-600 font-bold">Kategori Yönetimi</span>
           </div>
-          <h1 className="text-2xl font-black text-navy-900 mt-1">Kategori & Dinamik Özellik Yönetimi</h1>
+          <h1 className="text-2xl font-bold text-navy-900 mt-1">Kategori & Dinamik Özellik Yönetimi</h1>
           <p className="text-xs text-slate-500 mt-0.5">
             İskele, asansör, ekipman ve inşaat hizmetleri kategorilerini, ilan tiplerini ve dinamik teknik alanlarını yönetin.
           </p>
@@ -170,10 +170,10 @@ export default function AdminCategoriesPage() {
         <button
           type="button"
           onClick={() => openModal()}
-          className="px-4 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md flex items-center gap-2"
+          className="px-4 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          YENİ KATEGORİ EKLE
+          Yeni kategori ekle
         </button>
       </div>
 
@@ -189,17 +189,17 @@ export default function AdminCategoriesPage() {
         {categories.map((cat) => (
           <div
             key={cat.id}
-            className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-3 flex flex-col justify-between"
+            className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-3 flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-mono font-bold">
+                <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[11px] font-mono font-bold">
                   Sıra: #{cat.order_index}
                 </span>
                 <span className="w-2 h-2 rounded-full bg-emerald-500" title="Aktif" />
               </div>
 
-              <h3 className="font-extrabold text-navy-900 text-base mt-2">{cat.name}</h3>
+              <h3 className="font-semibold text-navy-900 text-base mt-2">{cat.name}</h3>
               <div className="text-[11px] text-slate-400 font-mono">/{cat.slug}</div>
 
               {/* Allowed Listing Types Badges */}
@@ -207,7 +207,7 @@ export default function AdminCategoriesPage() {
                 {(cat.allowed_listing_types || ['rental', 'sale']).map((t) => (
                   <span
                     key={t}
-                    className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                    className={`px-2 py-0.5 rounded text-[11px] font-bold ${
                       t === 'rental'
                         ? 'bg-navy-100 text-navy-900'
                         : t === 'service'
@@ -222,7 +222,7 @@ export default function AdminCategoriesPage() {
 
               {cat.subcategories && cat.subcategories.length > 0 && (
                 <div className="mt-3 space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 block">
+                  <span className="text-[11px] uppercase font-bold text-slate-400 block">
                     Alt Kategoriler ({cat.subcategories.length}):
                   </span>
                   <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto pt-1">
@@ -265,9 +265,9 @@ export default function AdminCategoriesPage() {
       {/* Category Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/75 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+          <div className="bg-white rounded-xl max-w-md w-full shadow-lg border border-slate-200 overflow-hidden">
             <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-              <h3 className="font-extrabold text-navy-900 text-base">
+              <h3 className="font-semibold text-navy-900 text-base">
                 {editingCat ? 'Kategori Düzenle' : 'Yeni Kategori Ekle'}
               </h3>
               <button
@@ -378,10 +378,10 @@ export default function AdminCategoriesPage() {
       {/* Dynamic Attributes Modal */}
       {attrModalOpen && activeCategory && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/80 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-lg border border-slate-200 overflow-hidden">
             <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
               <div>
-                <h3 className="font-extrabold text-navy-900 text-base">
+                <h3 className="font-semibold text-navy-900 text-base">
                   Dinamik Özellikler: {activeCategory.name}
                 </h3>
                 <p className="text-xs text-slate-500">
@@ -400,7 +400,7 @@ export default function AdminCategoriesPage() {
             <div className="p-5 overflow-y-auto space-y-6">
               {/* Existing Attributes List */}
               <div>
-                <h4 className="text-xs font-black text-slate-500 uppercase tracking-wider mb-2">
+                <h4 className="text-xs font-bold text-slate-500 mb-2">
                   Tanımlı Alanlar ({catAttributes.length})
                 </h4>
                 {catAttributes.length === 0 ? (
@@ -415,12 +415,12 @@ export default function AdminCategoriesPage() {
                           <div className="font-bold text-navy-900 flex items-center gap-2">
                             <span>{attr.name}</span>
                             {attr.unit && (
-                              <span className="px-1.5 py-0.5 rounded bg-slate-100 text-[10px] text-slate-600 font-mono">
+                              <span className="px-1.5 py-0.5 rounded bg-slate-100 text-[11px] text-slate-600 font-mono">
                                 {attr.unit}
                               </span>
                             )}
                             {attr.is_required && (
-                              <span className="px-1 py-0.2 rounded bg-red-100 text-red-700 text-[9px] font-bold">
+                              <span className="px-1 py-0.2 rounded bg-red-100 text-red-700 text-[11px] font-bold">
                                 Zorunlu
                               </span>
                             )}
@@ -430,7 +430,7 @@ export default function AdminCategoriesPage() {
                             {attr.options ? ` • seçenekler: [${attr.options.join(', ')}]` : ''}
                           </div>
                         </div>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold shrink-0">
+                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold shrink-0">
                           Aktif
                         </span>
                       </div>
@@ -441,7 +441,7 @@ export default function AdminCategoriesPage() {
 
               {/* Add New Attribute Form */}
               <div className="border border-orange-200 rounded-xl p-4 bg-orange-50/30 space-y-3">
-                <h4 className="text-xs font-black text-navy-900 flex items-center gap-1.5">
+                <h4 className="text-xs font-bold text-navy-900 flex items-center gap-1.5">
                   <Plus className="w-3.5 h-3.5 text-orange-500" />
                   Yeni Dinamik Özellik / Alan Ekle
                 </h4>

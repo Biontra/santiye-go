@@ -91,10 +91,10 @@ function ResultCard({
           : 'bg-white border-slate-200 text-navy-900'
       }`}
     >
-      <span className={`text-[11px] font-bold uppercase tracking-wider ${highlight ? 'text-orange-100' : 'text-slate-500'}`}>
+      <span className={`text-[11px] font-bold ${highlight ? 'text-orange-100' : 'text-slate-500'}`}>
         {label}
       </span>
-      <span className={`text-2xl font-black leading-tight ${highlight ? 'text-white' : 'text-navy-900'}`}>
+      <span className={`text-2xl font-bold leading-tight ${highlight ? 'text-white' : 'text-navy-900'}`}>
         {value}
       </span>
       {sub && (
@@ -111,14 +111,14 @@ function QuoteButton({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="w-full mt-5 flex items-center justify-between gap-3 px-5 py-4 rounded-2xl bg-navy-900 hover:bg-navy-800 text-white font-black text-sm shadow-lg transition active:scale-95 group"
+      className="w-full mt-5 flex items-center justify-between gap-3 px-5 py-4 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-bold text-sm shadow-lg transition group"
     >
       <div className="flex items-center gap-2.5">
         <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center shrink-0">
           <Zap className="w-4 h-4 text-white" />
         </div>
         <div className="text-left">
-          <div className="text-sm font-black leading-tight">1 Tıkla Teklif İste</div>
+          <div className="text-sm font-bold leading-tight">1 Tıkla Teklif İste</div>
           <div className="text-[11px] text-slate-300 font-normal mt-0.5">
             Hesaplanan miktarı forma otomatik aktar, bölgendeki tedarikçilerden teklif al
           </div>
@@ -267,9 +267,9 @@ function DuvarTab({ onQuote }: { onQuote: (title: string, desc: string, qty: num
   };
 
   const malzemeLabels: Record<DuvarMalzeme, string> = {
-    tugla: '🧱 Delikli Tuğla (19×19×8.5 cm)',
+    tugla: 'Delikli Tuğla (19×19×8.5 cm)',
     bims: '⬜ Bims Blok (40×20×20 cm)',
-    gazbeton: '🟫 Gazbeton / AAC (60×20×25 cm)',
+    gazbeton: 'Gazbeton / AAC (60×20×25 cm)',
   };
 
   return (
@@ -442,18 +442,17 @@ export default function HesaplayiciPage() {
         </div>
 
         {/* Hero Banner */}
-        <div className="bg-navy-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl mb-8 relative overflow-hidden">
-          <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-64 h-64 bg-orange-500/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="bg-navy-900 rounded-xl p-6 sm:p-8 text-white shadow-md mb-8 relative overflow-hidden">
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-9 h-9 rounded-xl bg-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
+              <div className="w-9 h-9 rounded-xl bg-orange-500 flex items-center justify-center shadow-lg">
                 <Calculator className="w-5 h-5 text-white" />
               </div>
-              <span className="px-3 py-1 rounded-full bg-orange-500/20 text-orange-300 text-[11px] font-black uppercase tracking-wider border border-orange-500/30">
+              <span className="px-3 py-1 rounded-full bg-orange-500/20 text-orange-300 text-[11px] font-bold border border-orange-500/30">
                 Ücretsiz Metraj Aracı
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-snug">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug">
               Saha Metraj & Malzeme Hesaplayıcı
             </h1>
             <p className="text-sm text-slate-300 mt-2 leading-relaxed max-w-2xl">
@@ -485,7 +484,7 @@ export default function HesaplayiciPage() {
               }`}
             >
               <div
-                className={`flex items-center gap-1.5 font-black text-sm ${
+                className={`flex items-center gap-1.5 font-bold text-sm ${
                   activeTab === tab.id ? 'text-orange-600' : 'text-navy-900'
                 }`}
               >
@@ -503,8 +502,8 @@ export default function HesaplayiciPage() {
         </div>
 
         {/* Tab Content Card */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
-          <h2 className="text-base font-extrabold text-navy-900 mb-5 flex items-center gap-2">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 sm:p-8">
+          <h2 className="text-base font-semibold text-navy-900 mb-5 flex items-center gap-2">
             <span className="text-orange-500">
               {TABS.find((t) => t.id === activeTab)?.icon}
             </span>
@@ -518,16 +517,16 @@ export default function HesaplayiciPage() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="mt-6 p-5 bg-orange-50 border border-orange-200 rounded-2xl flex flex-col sm:flex-row items-center gap-4 justify-between">
+        <div className="mt-6 p-5 bg-orange-50 border border-orange-200 rounded-xl flex flex-col sm:flex-row items-center gap-4 justify-between">
           <div>
-            <p className="text-sm font-black text-navy-900">İhtiyacınız hesaplayıcıda yok mu?</p>
+            <p className="text-sm font-bold text-navy-900">İhtiyacınız hesaplayıcıda yok mu?</p>
             <p className="text-xs text-slate-500 mt-0.5">
               Çok kalemli veya özel işler için doğrudan teklif talebi formunu kullanabilirsiniz.
             </p>
           </div>
           <Link
             href="/teklif-iste"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm transition shadow-md shadow-orange-500/25 whitespace-nowrap"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm transition shadow-md whitespace-nowrap"
           >
             Teklif İste
             <ArrowRight className="w-4 h-4" />

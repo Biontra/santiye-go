@@ -53,10 +53,10 @@ export default function CircularMarketPage() {
 
   return (
     <main className="mx-auto max-w-7xl space-y-5 px-4 py-8 text-navy-900">
-      <header className="flex flex-wrap items-start justify-between gap-4 rounded-2xl bg-navy-900 p-6 text-white">
+      <header className="flex flex-wrap items-start justify-between gap-4 rounded-xl bg-navy-900 p-6 text-white">
         <div>
           <p className="flex items-center gap-2 text-sm font-bold text-orange-400"><Recycle className="h-4 w-4" aria-hidden /> Döngüsel Lojistik Pazarı</p>
-          <h1 className="text-3xl font-black">Şantiyeden Şantiyeye</h1>
+          <h1 className="text-3xl font-bold">Şantiyeden Şantiyeye</h1>
           <p className="mt-1 max-w-2xl text-slate-300">
             Şantiyede artan malzemeyi indirimli alın ya da satın; boş dönen kamyon ve lowbed araçlarını güzergahına göre ucuza değerlendirin.
           </p>
@@ -80,7 +80,7 @@ export default function CircularMarketPage() {
         {TABS.map(t => (
           <button key={t} type="button" role="tab" id={`tab-${t}`} aria-selected={tab === t} aria-controls="market-panel"
             onClick={() => { setTab(t); setCategory(''); }}
-            className={`inline-flex items-center gap-2 rounded-xl border px-4 py-3 font-black transition ${tab === t ? 'border-navy-900 bg-navy-900 text-white' : 'border-slate-300 bg-white text-navy-900 hover:border-orange-500'}`}>
+            className={`inline-flex items-center gap-2 rounded-xl border px-4 py-3 font-bold transition ${tab === t ? 'border-navy-900 bg-navy-900 text-white' : 'border-slate-300 bg-white text-navy-900 hover:border-orange-500'}`}>
             {t === 'SURPLUS_MATERIAL' ? <Package className="h-4 w-4" aria-hidden /> : <Truck className="h-4 w-4" aria-hidden />}
             {LISTING_TYPE_LABEL[t]}
             <span className={`rounded-full px-2 py-0.5 text-xs ${tab === t ? 'bg-orange-500 text-navy-900' : 'bg-slate-100'}`}>{count(t)}</span>
@@ -89,7 +89,7 @@ export default function CircularMarketPage() {
       </div>
 
       <section id="market-panel" role="tabpanel" aria-labelledby={`tab-${tab}`} className="space-y-4">
-        <div aria-label="Filtreler" className="grid gap-3 rounded-2xl border bg-white p-5 sm:grid-cols-3">
+        <div aria-label="Filtreler" className="grid gap-3 rounded-xl border bg-white p-5 sm:grid-cols-3">
           <label className="text-sm font-bold">{truck ? 'Şehir (kalkış veya varış)' : 'Şehir'}
             <select className={input + ' mt-1 font-normal'} value={city} onChange={e => setCity(e.target.value)}>
               <option value="">Tüm şehirler</option>
@@ -114,7 +114,7 @@ export default function CircularMarketPage() {
           <p role="status" className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">Henüz yayında ilan yok. Pazarın nasıl göründüğü için örnek ilanlar gösteriliyor; ilk gerçek ilanı siz verin.</p>
         )}
         {!loading && !results.length && (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center">
+          <div className="rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center">
             <p className="font-bold">Bu filtrelerle eşleşen ilan bulunamadı.</p>
             <button type="button" className={action + ' mt-4'} onClick={() => setCreating(true)}>İlk ilanı siz verin</button>
           </div>
@@ -142,9 +142,9 @@ function ListingCard({ item, onInquire }: { item: MarketListing; onInquire: () =
   const truck = item.listing_type === 'BACKHAUL_TRUCK';
   const place = (city: string, district?: string | null) => (district ? `${district}, ${city}` : city);
   return (
-    <article className="relative flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <article className="relative flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
       {pct !== null && (
-        <span className="absolute -top-3 right-4 inline-flex items-center gap-1 rounded-full bg-orange-500 px-3 py-1 text-xs font-black text-navy-900 shadow">
+        <span className="absolute -top-3 right-4 inline-flex items-center gap-1 rounded-full bg-orange-500 px-3 py-1 text-xs font-bold text-navy-900 shadow">
           <BadgePercent className="h-3.5 w-3.5" aria-hidden /> −%{pct}
         </span>
       )}
@@ -153,7 +153,7 @@ function ListingCard({ item, onInquire }: { item: MarketListing; onInquire: () =
         {isDemo(item.id) && <span className="rounded-md bg-amber-100 px-2 py-1 text-xs font-bold text-amber-900">Örnek ilan</span>}
         {item.is_mine && <span className="rounded-md bg-navy-900 px-2 py-1 text-xs font-bold text-white">Sizin ilanınız</span>}
       </div>
-      <h2 className="text-lg font-black leading-snug">{item.title}</h2>
+      <h2 className="text-lg font-bold leading-snug">{item.title}</h2>
       <p className="flex items-center gap-2 text-sm font-semibold">
         {truck ? <Truck className="h-4 w-4 shrink-0 text-orange-600" aria-hidden /> : <Package className="h-4 w-4 shrink-0 text-orange-600" aria-hidden />}
         {item.quantity_info}
@@ -173,8 +173,8 @@ function ListingCard({ item, onInquire }: { item: MarketListing; onInquire: () =
         <CalendarDays className="h-3.5 w-3.5" aria-hidden /> {formatDate(item.available_until)} tarihine kadar {truck ? 'müsait' : 'geçerli'}
       </p>
       <div className="mt-auto">
-        <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{truck ? 'Nakliye bedeli' : 'Toplam fiyat'}</p>
-        <p className="text-2xl font-black">{formatPrice(item.price)}</p>
+        <p className="text-xs font-bold text-slate-500">{truck ? 'Nakliye bedeli' : 'Toplam fiyat'}</p>
+        <p className="text-2xl font-bold">{formatPrice(item.price)}</p>
         {item.discount_note && <p className="text-xs font-semibold text-emerald-700">{item.discount_note}</p>}
       </div>
       <button type="button" className={action} onClick={onInquire} disabled={item.is_mine}>
@@ -189,9 +189,9 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => { ref.current?.showModal(); }, []);
   return (
-    <dialog ref={ref} onClose={onClose} aria-labelledby="circular-modal-title" className="w-full max-w-lg rounded-2xl p-0 text-navy-900 backdrop:bg-navy-900/60">
+    <dialog ref={ref} onClose={onClose} aria-labelledby="circular-modal-title" className="w-full max-w-lg rounded-xl p-0 text-navy-900 backdrop:bg-navy-900/60">
       <div className="flex items-center justify-between gap-3 bg-navy-900 px-5 py-3 text-white">
-        <h2 id="circular-modal-title" className="text-lg font-black">{title}</h2>
+        <h2 id="circular-modal-title" className="text-lg font-bold">{title}</h2>
         <button type="button" aria-label="Kapat" onClick={() => ref.current?.close()} className="rounded p-1 hover:bg-navy-800"><X className="h-5 w-5" /></button>
       </div>
       <div className="max-h-[80vh] overflow-y-auto p-5">{children}</div>
@@ -248,7 +248,7 @@ function InquiryDialog({ item, userId, close }: { item: MarketListing; userId: s
           {phone && (
             <p className="flex items-center gap-2 rounded-lg bg-slate-50 p-3">
               <Phone className="h-4 w-4 text-orange-600" aria-hidden /> İlan sahibi:
-              <a className="font-black underline" href={phoneHref(phone)}>{phone}</a>
+              <a className="font-bold underline" href={phoneHref(phone)}>{phone}</a>
             </p>
           )}
           <button type="button" className={action} onClick={close}>Kapat</button>
@@ -312,7 +312,7 @@ function CreateDialog({ userId, close, onCreated }: { userId: string | null; clo
           <div role="radiogroup" aria-label="İlan türü" className="grid grid-cols-2 gap-2">
             {TABS.map(t => (
               <button key={t} type="button" role="radio" aria-checked={type === t} onClick={() => setType(t)}
-                className={`rounded-lg border px-3 py-2 text-sm font-black ${type === t ? 'border-navy-900 bg-navy-900 text-white' : 'border-slate-300 hover:border-orange-500'}`}>
+                className={`rounded-lg border px-3 py-2 text-sm font-bold ${type === t ? 'border-navy-900 bg-navy-900 text-white' : 'border-slate-300 hover:border-orange-500'}`}>
                 {t === 'SURPLUS_MATERIAL' ? 'Artan Malzeme' : 'Boş Dönüş Aracı'}
               </button>
             ))}
@@ -408,8 +408,8 @@ function MyPanel({ refreshKey }: { refreshKey: number }) {
   const when = (iso: string) => new Date(iso).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Istanbul' });
 
   return (
-    <section aria-label="İlanlarım ve gelen talepler" className="space-y-3 rounded-2xl border-2 border-navy-900 bg-white p-5">
-      <h2 className="text-xl font-black">İlanlarım &amp; Gelen Talepler</h2>
+    <section aria-label="İlanlarım ve gelen talepler" className="space-y-3 rounded-xl border-2 border-navy-900 bg-white p-5">
+      <h2 className="text-xl font-bold">İlanlarım &amp; Gelen Talepler</h2>
       {error && <p role="alert" className="rounded-lg bg-red-50 p-2 text-sm font-semibold text-red-700">{error}</p>}
       {items === null && !error && <p role="status">Yükleniyor…</p>}
       {items?.length === 0 && <p>Henüz ilanınız yok.</p>}
@@ -419,7 +419,7 @@ function MyPanel({ refreshKey }: { refreshKey: number }) {
           <article key={l.id} className="space-y-2 rounded-xl border border-slate-200 p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <p className="font-black">{l.title}</p>
+                <p className="font-bold">{l.title}</p>
                 <p className="text-sm text-slate-600">{LISTING_TYPE_LABEL[l.listing_type]} · {formatPrice(l.price)} · {formatDate(l.available_until)} tarihine kadar</p>
               </div>
               <span className={`rounded-md px-2 py-1 text-xs font-bold ${l.status === 'ACTIVE' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700'}`}>

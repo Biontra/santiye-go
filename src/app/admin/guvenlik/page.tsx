@@ -124,7 +124,7 @@ export default function AdminSecurityCompliancePage() {
             <span className="text-slate-400">/</span>
             <span className="text-xs text-orange-600 font-bold">İletişim Güvenliği & Denetim</span>
           </div>
-          <h1 className="text-2xl font-black text-navy-900 mt-1 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-navy-900 mt-1 flex items-center gap-2">
             <ShieldCheck className="w-7 h-7 text-emerald-600" />
             İletişim Bilgisi Koruma & Açılış Yönetimi
           </h1>
@@ -151,48 +151,48 @@ export default function AdminSecurityCompliancePage() {
 
       {/* KPI Stats Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Maskelenen</div>
-          <div className="text-2xl font-black text-navy-900">{stats.totalMasked}</div>
-          <div className="text-[10px] text-slate-500">Otomatik taranan</div>
+        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-1">
+          <div className="text-[11px] font-bold text-slate-400">Maskelenen</div>
+          <div className="text-2xl font-bold text-navy-900">{stats.totalMasked}</div>
+          <div className="text-[11px] text-slate-500">Otomatik taranan</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Telefon / GSM</div>
-          <div className="text-2xl font-black text-orange-600">{stats.phoneCount}</div>
-          <div className="text-[10px] text-slate-500">Türkiye formatları</div>
+        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-1">
+          <div className="text-[11px] font-bold text-slate-400">Telefon / GSM</div>
+          <div className="text-2xl font-bold text-orange-600">{stats.phoneCount}</div>
+          <div className="text-[11px] text-slate-500">Türkiye formatları</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">IBAN Tespiti</div>
-          <div className="text-2xl font-black text-purple-600">{stats.ibanCount}</div>
-          <div className="text-[10px] text-slate-500">TR+24 hane</div>
+        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-1">
+          <div className="text-[11px] font-bold text-slate-400">IBAN Tespiti</div>
+          <div className="text-2xl font-bold text-purple-600">{stats.ibanCount}</div>
+          <div className="text-[11px] text-slate-500">TR+24 hane</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Sosyal & WP</div>
-          <div className="text-2xl font-black text-blue-600">{stats.socialCount}</div>
-          <div className="text-[10px] text-slate-500">Harici yönlendirme</div>
+        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-1">
+          <div className="text-[11px] font-bold text-slate-400">Sosyal & WP</div>
+          <div className="text-2xl font-bold text-blue-600">{stats.socialCount}</div>
+          <div className="text-[11px] text-slate-500">Harici yönlendirme</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">İtiraz Kuyruğu</div>
-          <div className="text-2xl font-black text-amber-600">{stats.disputeCount}</div>
-          <div className="text-[10px] text-slate-500">Yanlış alarm bildirimi</div>
+        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-1">
+          <div className="text-[11px] font-bold text-slate-400">İtiraz Kuyruğu</div>
+          <div className="text-2xl font-bold text-amber-600">{stats.disputeCount}</div>
+          <div className="text-[11px] text-slate-500">Yanlış alarm bildirimi</div>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Numara Göster</div>
-          <div className="text-2xl font-black text-emerald-600">{stats.softModeRevealCount}</div>
-          <div className="text-[10px] text-slate-500">Yumuşak mod kullanımı</div>
+        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-1">
+          <div className="text-[11px] font-bold text-slate-400">Numara Göster</div>
+          <div className="text-2xl font-bold text-emerald-600">{stats.softModeRevealCount}</div>
+          <div className="text-[11px] text-slate-500">Yumuşak mod kullanımı</div>
         </div>
       </div>
 
       {/* Main Grid: Settings & False Positive Queue */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Settings Column */}
-        <div className="lg:col-span-5 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
-          <h2 className="text-base font-extrabold text-navy-900 flex items-center gap-2 border-b pb-3">
+        <div className="lg:col-span-5 bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-5">
+          <h2 className="text-base font-semibold text-navy-900 flex items-center gap-2 border-b pb-3">
             <Sliders className="w-5 h-5 text-orange-500" />
             Kontrollü Açılış & Eşik Ayarları
           </h2>
@@ -211,16 +211,16 @@ export default function AdminSecurityCompliancePage() {
                 <option value="teklif_kabul">teklif_kabul (VARSAYILAN: Teklif veya rezervasyon onaylandığında)</option>
                 <option value="numara_goster_butonu">numara_goster_butonu (Yumuşak Mod: Doğrulanmış kullanıcıya günlük kotalı)</option>
                 <option value="odeme">odeme (Platform üzerinden ödeme tamamlandığında)</option>
-                <option value="talep_kredisi">talep_kredisi (Tedarikçi teklif kredisi harcadığında - Prompt 9B)</option>
+                <option value="talep_kredisi">talep_kredisi (Tedarikçi teklif kredisi harcadığında)</option>
               </select>
               {revealRule === 'odeme' && (
                 <p className="text-[11px] text-amber-700 bg-amber-50 p-2 rounded-lg border border-amber-200 mt-2 font-semibold">
-                  ⚠️ Uyarı: Canlı online ödeme kapısı devreye alınana kadar &apos;odeme&apos; modu kullanıcıların iletişim görmesini engelleyebilir. Varsayılan &apos;teklif_kabul&apos; önerilir.
+                  Uyarı: Canlı online ödeme kapısı devreye alınana kadar &apos;odeme&apos; modu kullanıcıların iletişim görmesini engelleyebilir. Varsayılan &apos;teklif_kabul&apos; önerilir.
                 </p>
               )}
               {revealRule === 'numara_goster_butonu' && (
                 <p className="text-[11px] text-emerald-800 bg-emerald-50 p-2 rounded-lg border border-emerald-200 mt-2 font-semibold">
-                  💡 Yumuşak Mod: Platformun erken aşamasında kullanıcıyı ürkütmemek için, SMS onaylı hesaplara günlük sınırla &quot;Numarayı Göster&quot; butonu verir.
+                  Yumuşak mod: Platformun erken aşamasında kullanıcıyı ürkütmemek için, SMS onaylı hesaplara günlük sınırla &quot;Numarayı Göster&quot; butonu verir.
                 </p>
               )}
             </div>
@@ -239,7 +239,7 @@ export default function AdminSecurityCompliancePage() {
                 onChange={(e) => setThreshold(Number(e.target.value))}
                 className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-bold text-navy-900 focus:ring-2 focus:ring-orange-500"
               />
-              <p className="text-[10px] text-slate-400 mt-1">
+              <p className="text-[11px] text-slate-400 mt-1">
                 İlk ihlalde bilgilendirme, ikincide nazik uyarı, {threshold}. ihlalde kullanıcı inceleme kuyruğuna alınır.
               </p>
             </div>
@@ -271,7 +271,7 @@ export default function AdminSecurityCompliancePage() {
                 onChange={(e) => setKeywords(e.target.value)}
                 className="w-full p-2.5 rounded-xl border border-slate-300 text-xs text-navy-900 focus:ring-2 focus:ring-orange-500 leading-relaxed font-mono text-[11px]"
               />
-              <p className="text-[10px] text-slate-400 mt-1">
+              <p className="text-[11px] text-slate-400 mt-1">
                 Koda gömülü regex desenlerine ek olarak anlık taranacak harici yönlendirme kelimeleri.
               </p>
             </div>
@@ -280,7 +280,7 @@ export default function AdminSecurityCompliancePage() {
               <button
                 type="submit"
                 disabled={savingSettings}
-                className="w-full py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md transition disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 <Save className="w-4 h-4" />
                 {savingSettings ? 'Kaydediliyor...' : 'GÜVENLİK AYARLARINI GÜNCELLE'}
@@ -290,9 +290,9 @@ export default function AdminSecurityCompliancePage() {
         </div>
 
         {/* False Positive & Dispute Queue Column */}
-        <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div className="lg:col-span-7 bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
           <div className="flex items-center justify-between border-b pb-3">
-            <h2 className="text-base font-extrabold text-navy-900 flex items-center gap-2">
+            <h2 className="text-base font-semibold text-navy-900 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-amber-500" />
               Yanlış Alarm & İtiraz Kuyruğu
             </h2>
@@ -314,11 +314,11 @@ export default function AdminSecurityCompliancePage() {
                       <span className="text-xs font-bold text-navy-900">
                         {item.user_name || item.user_id}
                       </span>
-                      <span className="text-[10px] px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md font-semibold">
+                      <span className="text-[11px] px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md font-semibold">
                         {item.target_entity_type}
                       </span>
                     </div>
-                    <span className="text-[10px] text-slate-400">
+                    <span className="text-[11px] text-slate-400">
                       {new Date(item.created_at).toLocaleDateString('tr-TR', {
                         day: 'numeric',
                         month: 'short',
@@ -329,13 +329,13 @@ export default function AdminSecurityCompliancePage() {
                   </div>
 
                   <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-700 space-y-1">
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    <div className="text-[11px] font-bold text-slate-400">
                       Kullanıcı İtiraz Açıklaması:
                     </div>
                     <div className="font-medium italic text-slate-800">
                       &quot;{item.false_positive_notes || 'Açıklama belirtilmedi'}&quot;
                     </div>
-                    <div className="text-[10px] text-slate-500 pt-1 flex items-center gap-1">
+                    <div className="text-[11px] text-slate-500 pt-1 flex items-center gap-1">
                       <span>Algılanan Desen:</span>
                       <span className="font-bold text-orange-600">
                         {item.detected_types.join(', ')}
@@ -379,10 +379,10 @@ export default function AdminSecurityCompliancePage() {
       </div>
 
       {/* Repeat Offenders Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
         <div className="flex items-center justify-between border-b pb-3">
           <div>
-            <h2 className="text-base font-extrabold text-navy-900 flex items-center gap-2">
+            <h2 className="text-base font-semibold text-navy-900 flex items-center gap-2">
               <Users className="w-5 h-5 text-red-600" />
               Tekrarlayan İhlal & Platform Dışı Yönlendirme Takibi
             </h2>
@@ -397,7 +397,7 @@ export default function AdminSecurityCompliancePage() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-600 font-bold uppercase tracking-wider text-[10px] border-b">
+            <thead className="bg-slate-50 text-slate-600 font-bold text-[11px] border-b">
               <tr>
                 <th className="p-3">Kullanıcı / Firma</th>
                 <th className="p-3">Rol</th>
@@ -421,13 +421,13 @@ export default function AdminSecurityCompliancePage() {
                     </span>
                   </td>
                   <td className="p-3 text-center">
-                    <span className="px-2.5 py-1 rounded-full font-black text-xs bg-red-50 text-red-700 border border-red-200">
+                    <span className="px-2.5 py-1 rounded-full font-bold text-xs bg-red-50 text-red-700 border border-red-200">
                       {offender.mask_violation_count} İhlal
                     </span>
                   </td>
                   <td className="p-3 text-center">
                     <span
-                      className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${
+                      className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${
                         offender.compliance_status === 'suspended'
                           ? 'bg-red-600 text-white'
                           : offender.compliance_status === 'warned'
@@ -445,21 +445,21 @@ export default function AdminSecurityCompliancePage() {
                   <td className="p-3 text-right space-x-1.5">
                     <button
                       onClick={() => handleOffenderAction(offender.user_id, 'warn')}
-                      className="px-2.5 py-1 rounded-lg border border-amber-300 bg-amber-50 text-amber-800 text-[10px] font-bold hover:bg-amber-100 transition"
+                      className="px-2.5 py-1 rounded-lg border border-amber-300 bg-amber-50 text-amber-800 text-[11px] font-bold hover:bg-amber-100 transition"
                     >
                       Uyarı Gönder
                     </button>
                     {offender.compliance_status !== 'suspended' ? (
                       <button
                         onClick={() => handleOffenderAction(offender.user_id, 'suspend')}
-                        className="px-2.5 py-1 rounded-lg bg-red-600 text-white text-[10px] font-bold hover:bg-red-700 transition"
+                        className="px-2.5 py-1 rounded-lg bg-red-600 text-white text-[11px] font-bold hover:bg-red-700 transition"
                       >
                         Askıya Al
                       </button>
                     ) : (
                       <button
                         onClick={() => handleOffenderAction(offender.user_id, 'clear')}
-                        className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[10px] font-bold hover:bg-emerald-700 transition"
+                        className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-bold hover:bg-emerald-700 transition"
                       >
                         Askıyı Kaldır
                       </button>
