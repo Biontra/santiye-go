@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Search } from 'lucide-react';
 import LocationAutocomplete from '@/components/search/LocationAutocomplete';
 
 export default function HeroSearch() {
@@ -42,43 +42,26 @@ export default function HeroSearch() {
   };
 
   return (
-    <div className="relative bg-gradient-to-b from-navy-900 via-navy-900 to-navy-950 text-white py-12 md:py-20 px-4 overflow-hidden border-b border-navy-800">
-      {/* Background Architectural Grid */}
-      <div 
-        className="absolute inset-0 opacity-10 pointer-events-none"
-        style={{
-          backgroundImage: 'radial-gradient(#F97316 1px, transparent 1px)',
-          backgroundSize: '28px 28px',
-        }}
-      />
-
-      <div className="relative max-w-5xl mx-auto text-center space-y-6">
-        {/* Badges / Slogan */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-navy-800 border border-slate-700/80 text-xs font-semibold text-orange-400 shadow-inner">
-          <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-          Akıllı şantiye ve yapı marketiniz
+    <div className="bg-navy-900 text-white py-10 md:py-14 px-4">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div className="space-y-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
+            Şantiyeniz için makine, malzeme ve nakliye
+          </h1>
+          <p className="text-slate-300 text-sm sm:text-base">
+            Yakınınızdaki firmaların ilanlarını görün, fiyat teklifi alın.
+          </p>
         </div>
-
-        {/* Main Title Required */}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight sm:leading-none">
-          Şantiyeniz için ihtiyacınız olan <br className="hidden sm:inline" />
-          <span className="text-orange-500">her şey tek yerde!</span>
-        </h1>
-
-        {/* Promise */}
-        <p className="text-slate-300 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-normal">
-          &quot;Aradığın her şey, sana en yakın yerde, en iyi tekliflerle!&quot;
-        </p>
 
         {/* Big Search Form Box */}
         <form
           onSubmit={handleSearch}
-          className="bg-white rounded-2xl shadow-2xl p-3.5 sm:p-5 text-navy-900 max-w-4xl mx-auto border-2 border-slate-200/80"
+          className="bg-white rounded-xl p-3.5 sm:p-5 text-navy-900"
         >
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
             {/* Input 1: "Ne arıyorsunuz?" */}
             <div className="md:col-span-5 relative text-left">
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 pl-1">
+              <label className="block text-xs font-semibold text-slate-600 mb-1 pl-1">
                 Ne arıyorsunuz?
               </label>
               <div className="relative flex items-center">
@@ -87,7 +70,7 @@ export default function HeroSearch() {
                   type="text"
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
-                  placeholder="Ekskavatör, Çimento, Lowbed, JCB, Demir..."
+                  placeholder="Örn: ekskavatör, hazır beton, lowbed"
                   className="w-full pl-10 pr-4 py-3 bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-navy-900 placeholder:text-slate-400 rounded-xl text-sm font-medium border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none transition"
                 />
               </div>
@@ -105,25 +88,22 @@ export default function HeroSearch() {
             <div className="md:col-span-3">
               <button
                 type="submit"
-                className="w-full py-3.5 px-6 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-base tracking-wide shadow-lg shadow-orange-500/30 active:scale-[0.98] transition flex items-center justify-center gap-2 uppercase"
+                className="w-full py-3.5 px-6 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold text-base transition-colors flex items-center justify-center gap-2"
               >
                 <Search className="w-5 h-5" />
-                <span>HEMEN ARA</span>
+                <span>Ara</span>
               </button>
             </div>
           </div>
 
           {/* Distance Radius Selector */}
           <div className="mt-3.5 pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-600 gap-2 px-1">
-            <div className="flex items-center gap-1.5 font-bold text-navy-900">
-              <SlidersHorizontal className="w-3.5 h-3.5 text-orange-500" />
-              <span>Arama Yarıçapı (PostGIS):</span>
-            </div>
+            <span className="font-semibold text-slate-700">Mesafe</span>
             <div className="flex flex-wrap items-center gap-1.5">
               {[
                 { label: '5 km', val: '5' },
                 { label: '10 km', val: '10' },
-                { label: '25 km (Varsayılan)', val: '25' },
+                { label: '25 km', val: '25' },
                 { label: '50 km', val: '50' },
                 { label: '100 km', val: '100' },
                 { label: 'Tüm Türkiye', val: 'all' },
@@ -134,7 +114,7 @@ export default function HeroSearch() {
                   onClick={() => setRadius(item.val)}
                   className={`px-2.5 py-1 rounded-md text-xs font-semibold transition ${
                     radius === item.val
-                      ? 'bg-orange-500 text-white shadow-sm font-bold'
+                      ? 'bg-navy-900 text-white'
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
@@ -145,17 +125,15 @@ export default function HeroSearch() {
           </div>
         </form>
 
-        {/* Quick Popular Tags */}
-        <div className="pt-2 flex flex-wrap items-center justify-center gap-2 text-xs font-medium text-slate-400">
-          <span className="text-slate-300">Popüler Şantiye Aramaları:</span>
+        {/* Sık arananlar */}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-300">
+          <span className="text-slate-400">Sık arananlar:</span>
           {[
             'Ekskavatör',
-            'Samsun OSB',
-            'Ostim Kepçe',
-            'Tuzla Vinç',
-            'Hazır Beton',
-            'Lowbed Nakliye',
-            'Nervürlü Demir',
+            'Vinç',
+            'Hazır beton',
+            'Lowbed nakliye',
+            'İnşaat demiri',
           ].map((tag) => (
             <button
               key={tag}
@@ -163,7 +141,7 @@ export default function HeroSearch() {
                 setKeyword(tag);
                 router.push(`/ilanlar?q=${encodeURIComponent(tag)}`);
               }}
-              className="px-2.5 py-1 rounded-full bg-navy-800/80 hover:bg-navy-700 border border-slate-700 text-slate-300 hover:text-white transition"
+              className="underline underline-offset-4 decoration-slate-500 hover:text-white hover:decoration-white transition-colors"
             >
               {tag}
             </button>

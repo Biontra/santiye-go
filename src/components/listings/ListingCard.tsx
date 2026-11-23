@@ -50,7 +50,7 @@ export default function ListingCard({
         const rate = listing.price_daily || listing.price_sale || 0;
         return (
           <div>
-            <div className="text-lg sm:text-xl font-black text-orange-600 tracking-tight">
+            <div className="text-lg sm:text-xl font-bold text-orange-600 tracking-tight">
               {Number(rate).toLocaleString('tr-TR')} ₺
               <span className="text-[11px] font-semibold text-slate-500 ml-1">
                 / {listing.price_unit || 'm²'}
@@ -62,7 +62,7 @@ export default function ListingCard({
       }
       return (
         <div>
-          <div className="text-base sm:text-lg font-black text-navy-900 tracking-tight">
+          <div className="text-base sm:text-lg font-bold text-navy-900 tracking-tight">
             Teklife Göre
           </div>
           <div className="text-[10px] text-slate-500 font-semibold">Keşif & Proje Bazlı</div>
@@ -74,7 +74,7 @@ export default function ListingCard({
       if (listing.price_sale) {
         return (
           <div>
-            <div className="text-lg sm:text-xl font-black text-navy-900 tracking-tight">
+            <div className="text-lg sm:text-xl font-bold text-navy-900 tracking-tight">
               {Number(listing.price_sale).toLocaleString('tr-TR')} ₺
             </div>
             <div className="text-[10px] text-slate-500 font-semibold">Satış Fiyatı</div>
@@ -88,7 +88,7 @@ export default function ListingCard({
     if (listing.price_daily) {
       return (
         <div>
-          <div className="text-lg sm:text-xl font-black text-orange-600 tracking-tight">
+          <div className="text-lg sm:text-xl font-bold text-orange-600 tracking-tight">
             {Number(listing.price_daily).toLocaleString('tr-TR')} ₺
             <span className="text-[11px] font-semibold text-slate-500 ml-1">/ gün</span>
           </div>
@@ -104,7 +104,7 @@ export default function ListingCard({
     if (listing.price_monthly) {
       return (
         <div>
-          <div className="text-lg sm:text-xl font-black text-orange-600 tracking-tight">
+          <div className="text-lg sm:text-xl font-bold text-orange-600 tracking-tight">
             {Number(listing.price_monthly).toLocaleString('tr-TR')} ₺
             <span className="text-[11px] font-semibold text-slate-500 ml-1">/ ay</span>
           </div>
@@ -122,11 +122,12 @@ export default function ListingCard({
   const displayTitle = listing.is_demo
     ? (rawTitle.toLowerCase().startsWith('örnek') ? rawTitle : `Örnek: ${rawTitle}`)
     : rawTitle;
-  const displayCompanyName = (listing.company?.name || 'Onaylı Tedarikçi').replace(/^\[DEMO\]\s*/i, '');
+  const displayCompanyName = (listing.company?.name || '').replace(/^\[DEMO\]\s*/i, '');
+  const isCompanyVerified = !!(listing.company as { is_verified?: boolean } | undefined)?.is_verified;
 
   return (
     <div
-      className={`group bg-white rounded-xl border overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 flex flex-col justify-between ${
+      className={`group bg-white rounded-xl border overflow-hidden hover:border-slate-400 transition-colors flex flex-col justify-between ${
         isCompareSelected
           ? 'border-orange-500 ring-2 ring-orange-500/20'
           : listing.is_sponsored
@@ -142,7 +143,7 @@ export default function ListingCard({
               src={imageSrc}
               alt={displayTitle}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              className="object-cover"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           ) : (
@@ -155,7 +156,7 @@ export default function ListingCard({
           {/* Badges on Image */}
           <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5 z-10">
             {listing.is_sponsored && (
-              <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-amber-500 text-white shadow-sm flex items-center gap-1">
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-500 text-white shadow-sm flex items-center gap-1">
                 <Sparkles className="w-3 h-3 text-white" />
                 Sponsorlu
               </span>
@@ -219,10 +220,10 @@ export default function ListingCard({
           </div>
 
           {/* Distance Badge if available */}
-          {listing.distance_km !== undefined && (
+          {typeof listing.distance_km === 'number' && Number.isFinite(listing.distance_km) && (
             <div className="absolute bottom-2.5 left-2.5 px-2 py-0.5 rounded-md bg-navy-950/85 backdrop-blur-md text-white text-[10px] font-bold flex items-center gap-1 shadow-md">
               <MapPin className="w-3 h-3 text-orange-400" />
-              <span>{listing.distance_km} km mesafede</span>
+              <span>{listing.distance_km < 10 ? listing.distance_km.toFixed(1).replace('.', ',') : Math.round(listing.distance_km)} km</span>
             </div>
           )}
         </div>
@@ -231,14 +232,14 @@ export default function ListingCard({
         <div className="p-3.5 space-y-2">
           {/* Location & Category Header */}
           <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
-            <span className="flex items-center gap-1 text-slate-700 font-semibold truncate text-[11px]">
+            <span className="flex items-center gap-1 text-slate-600 truncate text-xs">
               <MapPin className="w-3 h-3 text-orange-500 shrink-0" />
               {listing.city_name || 'Türkiye'}
               {listing.district_name ? `, ${listing.district_name}` : ''}
             </span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-bold shrink-0">
-              {listing.category?.name || 'Genel'}
-            </span>
+            {listing.category?.name && (
+              <span className="text-xs text-slate-500 shrink-0">{listing.category.name}</span>
+            )}
           </div>
 
           {/* Title */}
@@ -278,10 +279,14 @@ export default function ListingCard({
           </div>
 
           {/* Company Name */}
-          <div className="pt-0.5 text-[11px] text-slate-500 flex items-center gap-1 truncate">
-            <ShieldCheck className="w-3 h-3 text-emerald-600 shrink-0" />
-            <span className="truncate">{displayCompanyName}</span>
-          </div>
+          {displayCompanyName && (
+            <div className="pt-0.5 text-xs text-slate-500 flex items-center gap-1 truncate">
+              {isCompanyVerified && (
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" aria-label="Onaylı firma" />
+              )}
+              <span className="truncate">{displayCompanyName}</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -290,9 +295,9 @@ export default function ListingCard({
         <div>{renderPrice()}</div>
         <Link
           href={`/ilan/${listing.slug || listing.id}`}
-          className="px-3 py-1.5 rounded-lg bg-navy-900 hover:bg-orange-500 text-white text-[11px] font-bold transition shadow-sm"
+          className="px-3 py-1.5 rounded-lg border border-slate-300 hover:border-navy-900 text-navy-900 text-xs font-semibold transition-colors"
         >
-          Detay
+          İncele
         </Link>
       </div>
     </div>

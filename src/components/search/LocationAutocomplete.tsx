@@ -216,22 +216,20 @@ export default function LocationAutocomplete({
     <div ref={wrapperRef} className={`relative ${className}`}>
       {/* Top Header with Mode and Geolocation Buttons */}
       <div className="flex items-center justify-between mb-1 px-1">
-        <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-          İl, İlçe, Mahalle veya Posta Kodu
-        </label>
+        <label className="text-xs font-semibold text-slate-600">Nerede?</label>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setManualMode(!manualMode)}
-            className="text-[11px] font-bold text-slate-500 hover:text-navy-900 underline transition"
+            className="text-xs text-slate-500 hover:text-navy-900 underline transition-colors"
           >
-            {manualMode ? 'Arama Kutusuna Geç' : 'Kademeli Seçici'}
+            {manualMode ? 'Yazarak ara' : 'Listeden seç'}
           </button>
           <button
             type="button"
             onClick={handleUseMyLocation}
             disabled={geoLoading}
-            className="text-[11px] font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1 active:scale-95 transition"
+            className="text-xs font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1 transition-colors"
           >
             {geoLoading ? (
               <Loader2 className="w-3 h-3 animate-spin text-orange-500" />

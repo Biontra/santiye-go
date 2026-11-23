@@ -18,6 +18,7 @@ import {
   LogOut,
   Calculator,
   Recycle,
+  ChevronDown,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Profile, Notification } from '@/types/database';
@@ -117,68 +118,49 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-navy-900 border-b border-navy-800 text-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
+        <div className="flex items-center justify-between gap-6 h-16">
           {/* Logo & Brand */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-orange-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform">
-              <HardHat className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="flex items-center text-xl sm:text-2xl font-black tracking-tight">
-                <span>ŞANTİYE</span>
-                <span className="ml-1 px-1.5 py-0.5 rounded bg-orange-500 text-white text-base sm:text-lg font-extrabold tracking-wider">
-                  GO
-                </span>
-              </div>
-              <p className="hidden sm:block text-[10px] text-slate-300 font-medium tracking-wide">
-                Şantiyenizin akıllı çözüm ortağı
-              </p>
-            </div>
+          <Link href="/" className="flex items-center gap-2.5 shrink-0">
+            <span className="w-9 h-9 rounded-lg bg-orange-500 flex items-center justify-center text-white">
+              <HardHat className="w-5 h-5" />
+            </span>
+            <span className="text-xl font-bold tracking-tight">
+              Şantiye<span className="text-orange-500">GO</span>
+            </span>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-2.5 text-[13px] font-semibold text-slate-200">
-            <Link
-              href="/ilanlar?category=is-makineleri"
-              className="hover:text-orange-500 transition-colors"
-            >
-              İş Makineleri
+          <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-slate-200">
+            <Link href="/ilanlar?category=is-makineleri" className="hover:text-white transition-colors">
+              İş makineleri
             </Link>
-            <Link
-              href="/ilanlar?category=yapi-malzemeleri"
-              className="hover:text-orange-500 transition-colors"
-            >
-              Yapı Malzemeleri
+            <Link href="/ilanlar?category=yapi-malzemeleri" className="hover:text-white transition-colors">
+              Yapı malzemeleri
             </Link>
-            <Link
-              href="/ilanlar?category=nakliye"
-              className="hover:text-orange-500 transition-colors"
-            >
+            <Link href="/ilanlar?category=nakliye" className="hover:text-white transition-colors">
               Nakliye
             </Link>
-            <Link href="/operatorler" className="hover:text-orange-500 transition-colors">Operatör Havuzu</Link>
-            <Link href="/kesif-yukle" className="hover:text-orange-500 transition-colors">Keşif / BOQ Yükle</Link>
-            <Link
-              href="/santiyeden-santiyeye"
-              className="hover:text-orange-500 transition-colors flex items-center gap-1.5 leading-tight"
-            >
-              <Recycle className="w-3.5 h-3.5" />
-              Şantiyeden Şantiyeye
+            <Link href="/teklif-iste" className="hover:text-white transition-colors">
+              Teklif iste
             </Link>
-            <Link
-              href="/hesaplayici"
-              className="hover:text-emerald-400 text-emerald-400 font-bold transition-colors flex items-center gap-1.5"
-            >
-              <Calculator className="w-3.5 h-3.5" />
-              Hesaplayıcı
-            </Link>
-            <Link
-              href="/teklif-iste"
-              className="hover:text-orange-400 text-orange-400 font-bold transition-colors flex items-center gap-1.5"
-            >
-              <Send className="w-3.5 h-3.5" />
-              Teklif İste
-            </Link>
+            <div className="relative group">
+              <button
+                type="button"
+                className="flex items-center gap-1 hover:text-white transition-colors"
+                aria-haspopup="true"
+              >
+                Araçlar
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 transition-opacity absolute left-0 top-full pt-2 z-50">
+                <div className="w-56 bg-white text-navy-900 rounded-lg border border-slate-200 shadow-lg py-1 text-sm">
+                  <Link href="/hesaplayici" className="block px-4 py-2 hover:bg-slate-50">Metraj hesaplayıcı</Link>
+                  <Link href="/kesif-yukle" className="block px-4 py-2 hover:bg-slate-50">Keşif listesi yükle</Link>
+                  <Link href="/operatorler" className="block px-4 py-2 hover:bg-slate-50">Operatör havuzu</Link>
+                  <Link href="/santiyeden-santiyeye" className="block px-4 py-2 hover:bg-slate-50">Şantiyeden şantiyeye</Link>
+                </div>
+              </div>
+            </div>
           </nav>
 
           {/* User & Action Buttons */}
@@ -326,13 +308,13 @@ export default function Header() {
                   href="/giris"
                   className="px-3.5 py-2 text-xs sm:text-sm font-bold text-slate-200 hover:text-white transition"
                 >
-                  Giriş Yap
+                  Giriş yap
                 </Link>
                 <Link
                   href="/kayit"
                   className="px-3.5 py-2 text-xs sm:text-sm font-bold rounded-lg bg-navy-800 hover:bg-navy-700 text-white border border-slate-700 transition"
                 >
-                  Kayıt Ol
+                  Kayıt ol
                 </Link>
               </div>
             )}
@@ -340,10 +322,10 @@ export default function Header() {
             {/* Post Ad Button */}
             <Link
               href={profile?.role === 'company' ? '/firma-paneli/yeni-ilan' : '/giris?redirect=/firma-paneli/yeni-ilan'}
-              className="flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-bold rounded-lg bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/25 transition active:scale-95"
+              className="flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-bold rounded-lg bg-orange-500 hover:bg-orange-600 text-white transition-colors"
             >
               <PlusCircle className="w-4 h-4" />
-              <span>İlan Ver</span>
+              <span>İlan ver</span>
             </Link>
           </div>
 
@@ -360,10 +342,10 @@ export default function Header() {
             </Link>
             <Link
               href={profile?.role === 'company' ? '/firma-paneli/yeni-ilan' : '/firma-paneli'}
-              className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-lg bg-orange-500 text-white"
+              className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-orange-500 text-white whitespace-nowrap"
             >
               <PlusCircle className="w-3.5 h-3.5" />
-              İlan Ver
+              İlan ver
             </Link>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
