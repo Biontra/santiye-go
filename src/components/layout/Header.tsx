@@ -17,6 +17,7 @@ import {
   CheckCheck,
   LogOut,
   Calculator,
+  Recycle,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Profile, Notification } from '@/types/database';
@@ -136,7 +137,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-5 text-sm font-semibold text-slate-200">
+          <nav className="hidden lg:flex items-center gap-2.5 text-[13px] font-semibold text-slate-200">
             <Link
               href="/ilanlar?category=is-makineleri"
               className="hover:text-orange-500 transition-colors"
@@ -157,6 +158,13 @@ export default function Header() {
             </Link>
             <Link href="/operatorler" className="hover:text-orange-500 transition-colors">Operatör Havuzu</Link>
             <Link href="/kesif-yukle" className="hover:text-orange-500 transition-colors">Keşif / BOQ Yükle</Link>
+            <Link
+              href="/santiyeden-santiyeye"
+              className="hover:text-orange-500 transition-colors flex items-center gap-1.5 leading-tight"
+            >
+              <Recycle className="w-3.5 h-3.5" />
+              Şantiyeden Şantiyeye
+            </Link>
             <Link
               href="/hesaplayici"
               className="hover:text-emerald-400 text-emerald-400 font-bold transition-colors flex items-center gap-1.5"
@@ -381,6 +389,14 @@ export default function Header() {
             </Link>
             <Link href="/operatorler" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 rounded-md hover:bg-navy-800 text-slate-200">Operatör Havuzu</Link>
             <Link href="/kesif-yukle" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 rounded-md hover:bg-navy-800 text-slate-200">Keşif / BOQ Yükle</Link>
+            <Link
+              href="/santiyeden-santiyeye"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 rounded-md hover:bg-navy-800 text-slate-200 flex items-center gap-1.5"
+            >
+              <Recycle className="w-3.5 h-3.5 text-orange-500" />
+              Şantiyeden Şantiyeye
+            </Link>
             <Link
               href="/hesaplayici"
               onClick={() => setMobileMenuOpen(false)}
