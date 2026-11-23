@@ -16,6 +16,7 @@ import {
   Send,
   CheckCheck,
   LogOut,
+  Calculator,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Profile, Notification } from '@/types/database';
@@ -153,6 +154,14 @@ export default function Header() {
               className="hover:text-orange-500 transition-colors"
             >
               Nakliye
+            </Link>
+            <Link href="/operatorler" className="hover:text-orange-500 transition-colors">Operatör Havuzu</Link>
+            <Link
+              href="/hesaplayici"
+              className="hover:text-emerald-400 text-emerald-400 font-bold transition-colors flex items-center gap-1.5"
+            >
+              <Calculator className="w-3.5 h-3.5" />
+              Hesaplayıcı
             </Link>
             <Link
               href="/teklif-iste"
@@ -368,6 +377,15 @@ export default function Header() {
               className="px-3 py-2 rounded-md bg-orange-500/20 text-orange-400 font-bold"
             >
               ⚡ Çoklu Teklif Talebi Oluştur
+            </Link>
+            <Link href="/operatorler" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 rounded-md hover:bg-navy-800 text-slate-200">Operatör Havuzu</Link>
+            <Link
+              href="/hesaplayici"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 rounded-md bg-emerald-500/10 text-emerald-400 font-bold flex items-center gap-1.5"
+            >
+              <Calculator className="w-3.5 h-3.5" />
+              Metraj Hesaplayıcı
             </Link>
             <Link
               href={profile ? '/alici-paneli/taleplerim' : '/giris?redirect=/alici-paneli/taleplerim'}

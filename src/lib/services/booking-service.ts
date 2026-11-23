@@ -151,7 +151,17 @@ export async function createBookingRequest(data: {
   return { success: true, booking: newBooking };
 }
 
-export async function getBuyerBookings(buyerId: string): Promise<BookingWithDetails[]> {
+export async function getBuyerBookings(buyerId?: string): Promise<BookingWithDetails[]> {
+  if (!buyerId) {
+    const db = createClient();
+    const { data: { user } } = await db.auth.getUser();
+    if (!user) return [];
+    const { data, error } = await db.from('bookings')
+      .select('*,listing:listings(*),company:companies(name)').eq('buyer_id',user.id)
+      .order('created_at',{ascending:false});
+    if (error) throw new Error(error.message);
+    return (data || []).map(row=>({...row,company_name:row.company?.name}));
+  }
   checkAutoExpiration();
   return DEMO_BOOKINGS.filter((b) => b.buyer_id === buyerId);
 }

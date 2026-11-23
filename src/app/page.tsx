@@ -12,6 +12,7 @@ import {
   MapPin,
   PlusCircle,
   FileText,
+  Calculator,
 } from 'lucide-react';
 import HeroSearch from '@/components/search/HeroSearch';
 import ListingCard from '@/components/listings/ListingCard';
@@ -212,7 +213,50 @@ export default async function HomePage() {
           )}
         </section>
 
-        {/* 4. Yeni Eklenen İlanlar */}
+        {/* 4. Saha Metraj & Malzeme Hesaplayıcı CTA */}
+        <section className="bg-gradient-to-r from-navy-900 via-navy-950 to-slate-900 rounded-3xl p-6 sm:p-10 text-white relative overflow-hidden shadow-2xl border border-navy-800">
+          <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+            <div className="space-y-3 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/20 text-orange-400 text-xs font-black uppercase tracking-wider border border-orange-500/30">
+                <Calculator className="w-4 h-4" />
+                <span>Akıllı Saha Araçları</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-snug">
+                Şantiye Metraj & Malzeme Hesaplayıcı
+              </h2>
+              <p className="text-sm text-slate-300 leading-relaxed">
+                Hazır beton, inşaat demiri tonajı, duvar malzemeleri (tuğla, bims, gazbeton) ve iskele-mantolama metrajını saniyeler içinde hesaplayın.
+                Tek tıkla civardaki onaylı tedarikçilerden toplu teklif toplayın.
+              </p>
+              <div className="flex flex-wrap gap-2 pt-1 text-xs text-slate-300">
+                <span className="px-2.5 py-1 rounded-lg bg-navy-800/80 border border-slate-700">🧱 Beton & Mikser Sayısı</span>
+                <span className="px-2.5 py-1 rounded-lg bg-navy-800/80 border border-slate-700">🏗️ Demir Tonajı</span>
+                <span className="px-2.5 py-1 rounded-lg bg-navy-800/80 border border-slate-700">🏠 Duvar & Harç</span>
+                <span className="px-2.5 py-1 rounded-lg bg-navy-800/80 border border-slate-700">🪜 İskele & Mantolama</span>
+              </div>
+            </div>
+
+            <div className="shrink-0 flex flex-col sm:flex-row lg:flex-col gap-3">
+              <Link
+                href="/hesaplayici"
+                className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm shadow-lg shadow-orange-500/30 transition active:scale-95 text-center"
+              >
+                <Calculator className="w-4 h-4" />
+                <span>HESAPLAYICIYI BAŞLAT</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/teklif-iste"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-navy-800 hover:bg-navy-700 text-slate-200 border border-slate-700 font-bold text-xs transition text-center"
+              >
+                <span>Doğrudan Teklif İste</span>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* 5. Yeni Eklenen İlanlar */}
         <section className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-200 pb-4">
             <div>

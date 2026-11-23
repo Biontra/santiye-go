@@ -68,6 +68,16 @@ export default function Footer() {
                   Hafriyat & Ağır Nakliyat
                 </Link>
               </li>
+              <li className="pt-1.5 border-t border-navy-800">
+                <Link href="/hesaplayici" className="hover:text-orange-300 text-orange-400 transition font-bold flex items-center gap-1">
+                  📐 Metraj & Malzeme Hesaplayıcı
+                </Link>
+              </li>
+              <li>
+                <Link href="/teklif-iste" className="hover:text-orange-400 transition">
+                  ⚡ Çoklu Teklif Talebi İste
+                </Link>
+              </li>
             </ul>
           </div>
 

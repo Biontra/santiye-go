@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import TripCounter from '@/components/TripCounter';
 import {
   Calendar,
   Clock,
@@ -15,6 +16,9 @@ import {
   X,
   MessageSquare,
   Layers,
+  QrCode,
+  Truck,
+  FileCheck2,
 } from 'lucide-react';
 import {
   BookingWithDetails,
@@ -22,11 +26,24 @@ import {
   approveBooking,
   rejectBooking,
 } from '@/lib/services/booking-service';
+import {
+  getOrCreateWaybillForBooking,
+  DeliveryWaybill,
+} from '@/lib/services/delivery-service';
+import DigitalWaybillCard from '@/components/delivery/DigitalWaybillCard';
 
 export default function CompanyBookingsPage() {
   const [bookings, setBookings] = useState<BookingWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionNotice, setActionNotice] = useState('');
+  const [waybillModalOpen, setWaybillModalOpen] = useState(false);
+  const [activeWaybill, setActiveWaybill] = useState<DeliveryWaybill | null>(null);
+
+  const handleOpenWaybill = (booking: BookingWithDetails) => {
+    const wb = getOrCreateWaybillForBooking(booking.id);
+    setActiveWaybill(wb);
+    setWaybillModalOpen(true);
+  };
 
   const loadData = async () => {
     setLoading(true);
@@ -172,6 +189,7 @@ export default function CompanyBookingsPage() {
                       <h3 className="text-base sm:text-lg font-black text-navy-900">
                         {b.listing?.title}
                       </h3>
+                      <TripCounter id={b.id} driver={b.status === 'approved' || b.status === 'confirmed'} />
 
                       <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-slate-600">
                         <span className="flex items-center gap-1 bg-slate-100 px-2.5 py-1 rounded-md font-semibold text-navy-900">
@@ -203,6 +221,17 @@ export default function CompanyBookingsPage() {
                       </div>
 
                       <div className="flex items-center gap-2 pt-3 w-full justify-end">
+                        {/* Dijital İrsaliye & QR Kod Butonu (Satıcı/Şoför İçin) */}
+                        <button
+                          type="button"
+                          onClick={() => handleOpenWaybill(b)}
+                          className="px-3.5 py-1.5 rounded-lg bg-navy-900 hover:bg-navy-800 text-white font-black text-xs shadow-sm transition flex items-center gap-1.5"
+                          title="Şantiyede teslimat için QR kod ve PIN göster"
+                        >
+                          <QrCode className="w-3.5 h-3.5 text-orange-400" />
+                          <span>Dijital İrsaliye / QR</span>
+                        </button>
+
                         <Link
                           href={`/mesajlar?buyerId=${b.buyer_id || ''}&companyId=${b.company_id || ''}&listingId=${b.listing_id || ''}&listingTitle=${encodeURIComponent(b.listing?.title || 'Rezervasyon')}&buyerName=${encodeURIComponent(b.buyer_name || 'Alıcı Müşteri')}`}
                           className="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 font-bold text-xs transition flex items-center gap-1"
@@ -236,6 +265,16 @@ export default function CompanyBookingsPage() {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* Dijital İrsaliye & QR Modal (Satıcı / Sevkiyat Ekranı) */}
+        {waybillModalOpen && activeWaybill && (
+          <div className="fixed inset-0 z-50 bg-navy-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+            <DigitalWaybillCard
+              waybill={activeWaybill}
+              onClose={() => setWaybillModalOpen(false)}
+            />
           </div>
         )}
       </div>

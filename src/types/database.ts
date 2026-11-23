@@ -290,6 +290,11 @@ export interface QuoteRequest {
   is_demo: boolean;
   created_at: string;
   updated_at: string;
+  delivery_token?: string | null;
+  delivery_pin?: string | null;
+  delivered_at?: string | null;
+  delivery_note?: string | null;
+  delivery_confirmed_by?: string | null;
   
   // Relations
   buyer?: Profile;
@@ -408,6 +413,11 @@ export interface Booking {
   is_demo: boolean;
   created_at: string;
   updated_at: string;
+  delivery_token?: string | null;
+  delivery_pin?: string | null;
+  delivered_at?: string | null;
+  delivery_note?: string | null;
+  delivery_confirmed_by?: string | null;
 
   // Relations
   buyer?: Profile;
@@ -623,6 +633,10 @@ export interface PaymentTransaction {
   payment_mode?: 'external' | 'platform';
   escrow_status?: string | null;
   buyer_confirmed_at?: string | null;
+  delivery_token?: string | null;
+  delivery_pin?: string | null;
+  delivered_at?: string | null;
+  delivery_note?: string | null;
   auto_release_at?: string | null;
   disputed_at?: string | null;
   dispute_status?: 'none' | 'opened' | 'under_review' | 'resolved_transferred' | 'resolved_refunded' | 'resolved_split';

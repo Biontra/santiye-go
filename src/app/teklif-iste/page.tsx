@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   Send,
@@ -17,21 +17,31 @@ import {
   Info,
   Clock,
   Layers,
+  Calculator,
 } from 'lucide-react';
 import { CATEGORIES, CITIES, DISTRICTS } from '@/lib/mock-data';
 import { createQuoteRequest } from '@/lib/services/quote-service';
 import { getActiveProfile } from '@/lib/services/auth-service';
 
-export default function MultiVendorQuotePage() {
+function MultiVendorQuoteForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // ── Hesaplayıcıdan gelen parametreler (from_calc=1) ──────
+  const fromCalc = searchParams.get('from_calc') === '1';
+  const calcTitle = searchParams.get('title') ? decodeURIComponent(searchParams.get('title')!) : '';
+  const calcDescription = searchParams.get('description')
+    ? decodeURIComponent(searchParams.get('description')!)
+    : '';
+  const calcQty = searchParams.get('qty') ? parseInt(searchParams.get('qty')!, 10) : 1;
 
   const [selectedMainCat, setSelectedMainCat] = useState(CATEGORIES[0].id);
   const currentCategory = CATEGORIES.find((c) => c.id === selectedMainCat) || CATEGORIES[0];
   const [selectedSubCat, setSelectedSubCat] = useState(currentCategory.subcategories?.[0]?.id || '');
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [quantity, setQuantity] = useState(1);
+  const [title, setTitle] = useState(calcTitle || '');
+  const [description, setDescription] = useState(calcDescription || '');
+  const [quantity, setQuantity] = useState(calcQty || 1);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
@@ -135,6 +145,22 @@ export default function MultiVendorQuotePage() {
           </Link>
         </div>
 
+        {/* Hesaplayıcıdan Geldi Bildirimi */}
+        {fromCalc && (
+          <div className="mb-6 p-4 bg-orange-50 border border-orange-300 rounded-2xl flex items-start gap-3">
+            <Calculator className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-black text-navy-900">
+                ✅ Metraj Hesaplayıcı&apos;dan Otomatik Dolduruldu
+              </p>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Başlık, açıklama ve miktar alanları hesaplama sonucunuzdan aktarıldı.
+                Konumunuzu belirleyip doğrudan gönderebilirsiniz.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Header Hero Banner */}
         <div className="bg-navy-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl mb-8 relative overflow-hidden">
           <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-64 h-64 bg-orange-500/10 rounded-full blur-2xl pointer-events-none" />
@@ -150,6 +176,7 @@ export default function MultiVendorQuotePage() {
               yarıçaptaki en fazla 10 onaylı firmaya talebinizi otomatik iletsin. Gelen teklifleri
               karşılaştırıp en uygun olanı seçin.
             </p>
+            <Link href="/operatorler" className="mt-3 inline-block font-bold text-orange-400 hover:underline">Makineniz için operatör bulun →</Link>
           </div>
         </div>
 
@@ -455,5 +482,13 @@ export default function MultiVendorQuotePage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function MultiVendorQuotePage() {
+  return (
+    <Suspense fallback={<div className="bg-slate-50 min-h-screen py-12 flex items-center justify-center"><div className="text-slate-400 text-sm">Yükleniyor…</div></div>}>
+      <MultiVendorQuoteForm />
+    </Suspense>
   );
 }

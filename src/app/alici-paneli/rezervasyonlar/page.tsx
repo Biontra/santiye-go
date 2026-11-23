@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import TripCounter from '@/components/TripCounter';
 import {
   Calendar,
   Clock,
@@ -18,10 +19,14 @@ import {
   ShieldCheck,
   AlertTriangle,
   Lock,
+  QrCode,
+  FileCheck2,
 } from 'lucide-react';
 import { BookingWithDetails, getBuyerBookings, cancelBooking } from '@/lib/services/booking-service';
 import { DEMO_TRANSACTIONS } from '@/lib/services/payment-service';
 import { buyerConfirmAndReleaseEscrow, openEscrowDispute } from '@/lib/services/escrow-service';
+import { getOrCreateWaybillForBooking, DeliveryWaybill } from '@/lib/services/delivery-service';
+import DeliveryConfirmModal from '@/components/delivery/DeliveryConfirmModal';
 
 export default function BuyerBookingsPage() {
   const [bookings, setBookings] = useState<BookingWithDetails[]>([]);
@@ -32,12 +37,20 @@ export default function BuyerBookingsPage() {
   const [disputeReason, setDisputeReason] = useState('Makine sahaya gelmedi veya taahhüt edilen zamanda ulaşmadı');
   const [disputeNotes, setDisputeNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deliveryModalOpen, setDeliveryModalOpen] = useState(false);
+  const [selectedWaybill, setSelectedWaybill] = useState<DeliveryWaybill | null>(null);
+
+  const handleOpenDeliveryModal = (booking: BookingWithDetails) => {
+    const wb = getOrCreateWaybillForBooking(booking.id);
+    setSelectedWaybill(wb);
+    setDeliveryModalOpen(true);
+  };
 
   const loadData = async () => {
     setLoading(true);
-    const data = await getBuyerBookings('buyer-demo-001');
-    setBookings(data);
-    setLoading(false);
+    try { setBookings(await getBuyerBookings()); }
+    catch { setActionNotice('Rezervasyonlar yüklenemedi.'); }
+    finally { setLoading(false); }
   };
 
   useEffect(() => {
@@ -132,6 +145,14 @@ export default function BuyerBookingsPage() {
               İlanlardan oluşturduğunuz iş rezervasyonları, emanet havuz ödemeleri ve iş onay süreçleri.
             </p>
           </div>
+
+          <Link
+            href="/teslimat-onay"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md transition shrink-0"
+          >
+            <QrCode className="w-4 h-4" />
+            <span>PIN / QR İle Teslim Al</span>
+          </Link>
         </div>
 
         {actionNotice && (
@@ -206,6 +227,7 @@ export default function BuyerBookingsPage() {
                       <h3 className="text-base sm:text-lg font-black text-navy-900">
                         {b.listing?.title || 'İş Makinesi Kiralama'}
                       </h3>
+                      <TripCounter id={b.id} />
                       <div className="text-xs font-bold text-slate-600">
                         Firma: {b.company_name}
                       </div>
@@ -265,11 +287,11 @@ export default function BuyerBookingsPage() {
                           <>
                             <button
                               type="button"
-                              onClick={() => handleConfirmAndRelease(b)}
-                              className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-sm transition flex items-center gap-1"
+                              onClick={() => handleOpenDeliveryModal(b)}
+                              className="px-3.5 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md transition flex items-center gap-1.5"
                             >
-                              <CheckCircle2 className="w-3.5 h-3.5" />
-                              İşi Onayla & Serbest Bırak
+                              <QrCode className="w-3.5 h-3.5" />
+                              Malzemeyi Teslim Al (QR / PIN)
                             </button>
 
                             <button
@@ -281,6 +303,18 @@ export default function BuyerBookingsPage() {
                               Sorun Bildir
                             </button>
                           </>
+                        )}
+
+                        {/* Teslim Edildi İrsaliye Butonu */}
+                        {isTransferred && (
+                          <button
+                            type="button"
+                            onClick={() => handleOpenDeliveryModal(b)}
+                            className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold text-xs transition flex items-center gap-1"
+                          >
+                            <FileCheck2 className="w-3.5 h-3.5 text-emerald-600" />
+                            Dijital İrsaliye
+                          </button>
                         )}
 
                         <Link
@@ -367,6 +401,21 @@ export default function BuyerBookingsPage() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* QR Kodlu Teslimat Onay Modalı */}
+        {deliveryModalOpen && selectedWaybill && (
+          <DeliveryConfirmModal
+            initialWaybill={selectedWaybill}
+            initialTokenOrPin={selectedWaybill.delivery_pin}
+            actorUserId="buyer-demo-001"
+            onSuccess={() => {
+              setActionNotice('Dijital irsaliye onaylandı! Emanet ödeme satıcıya serbest bırakıldı.');
+              loadData();
+              setTimeout(() => setActionNotice(''), 4000);
+            }}
+            onClose={() => setDeliveryModalOpen(false)}
+          />
         )}
       </div>
     </div>
