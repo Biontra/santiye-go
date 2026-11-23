@@ -5,7 +5,15 @@ export type Route = {
   dest_lat: number; dest_lng: number; dest_radius: number; plate: string; target: number;
 };
 export type Receipt = { departed: string; arrived: string; plate: string; origin: Point; destination: Point };
-export type Trip = Route & { phase: Phase; revision: number; receipts: Receipt[]; departed?: string; origin?: Point };
+// SQL (24+27_geofence_trips*.sql) ile 1:1: origin jsonb / departed / phase_at sütunları ilk fazlarda NULL gelir.
+export type Trip = Route & {
+  phase: Phase;
+  revision: number;
+  receipts: Receipt[];
+  departed?: string | null;
+  origin?: Point | null;
+  phase_at?: string | null;
+};
 
 export function distance(a: Point, b: Point) {
   const rad = Math.PI / 180;

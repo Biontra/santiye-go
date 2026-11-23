@@ -23,21 +23,43 @@ import { CATEGORIES, CITIES, DISTRICTS } from '@/lib/mock-data';
 import { createQuoteRequest } from '@/lib/services/quote-service';
 import { getActiveProfile } from '@/lib/services/auth-service';
 
+const MAX_TITLE_LEN = 250; // quote_requests.title VARCHAR(250)
+const MAX_DESC_LEN = 5000;
+const MAX_QTY = 1_000_000; // quote_requests.quantity INT; makul üst sınır
+
+function clampQty(n: number): number {
+  if (!Number.isFinite(n)) return 1;
+  return Math.min(Math.max(Math.floor(n), 1), MAX_QTY);
+}
+
+/** Hesaplayıcının gönderdiği kategori slug'ını (alt kategori) form kategorisine çevirir. */
+function resolveCategoryBySlug(slug: string | null): { mainId: string; subId: string } | null {
+  if (!slug) return null;
+  for (const cat of CATEGORIES) {
+    const sub = cat.subcategories?.find((sc) => sc.slug === slug);
+    if (sub) return { mainId: cat.id, subId: sub.id };
+  }
+  return null;
+}
+
 function MultiVendorQuoteForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   // ── Hesaplayıcıdan gelen parametreler (from_calc=1) ──────
+  // searchParams.get() değeri zaten çözer; ikinci kez decodeURIComponent çağrılmaz
+  // (kalan '%' karakterinde URIError fırlatıp sayfayı çökertirdi).
   const fromCalc = searchParams.get('from_calc') === '1';
-  const calcTitle = searchParams.get('title') ? decodeURIComponent(searchParams.get('title')!) : '';
-  const calcDescription = searchParams.get('description')
-    ? decodeURIComponent(searchParams.get('description')!)
-    : '';
-  const calcQty = searchParams.get('qty') ? parseInt(searchParams.get('qty')!, 10) : 1;
+  const calcTitle = fromCalc ? (searchParams.get('title') ?? '').slice(0, MAX_TITLE_LEN) : '';
+  const calcDescription = fromCalc ? (searchParams.get('description') ?? '').slice(0, MAX_DESC_LEN) : '';
+  const calcQty = fromCalc ? clampQty(parseInt(searchParams.get('qty') ?? '1', 10)) : 1;
+  const calcCat = fromCalc ? resolveCategoryBySlug(searchParams.get('cat')) : null;
 
-  const [selectedMainCat, setSelectedMainCat] = useState(CATEGORIES[0].id);
+  const [selectedMainCat, setSelectedMainCat] = useState(calcCat?.mainId ?? CATEGORIES[0].id);
   const currentCategory = CATEGORIES.find((c) => c.id === selectedMainCat) || CATEGORIES[0];
-  const [selectedSubCat, setSelectedSubCat] = useState(currentCategory.subcategories?.[0]?.id || '');
+  const [selectedSubCat, setSelectedSubCat] = useState(
+    calcCat?.subId ?? currentCategory.subcategories?.[0]?.id ?? ''
+  );
 
   const [title, setTitle] = useState(calcTitle || '');
   const [description, setDescription] = useState(calcDescription || '');
@@ -82,6 +104,14 @@ function MultiVendorQuoteForm() {
       setErrorMessage('Lütfen talep başlığı ve açıklama alanlarını doldurun.');
       return;
     }
+    if (title.trim().length > MAX_TITLE_LEN) {
+      setErrorMessage(`Talep başlığı en fazla ${MAX_TITLE_LEN} karakter olabilir.`);
+      return;
+    }
+    if (description.trim().length > MAX_DESC_LEN) {
+      setErrorMessage(`İş açıklaması en fazla ${MAX_DESC_LEN} karakter olabilir.`);
+      return;
+    }
 
     setLoading(true);
     setErrorMessage('');
@@ -90,7 +120,9 @@ function MultiVendorQuoteForm() {
     if (!profile) {
       setErrorMessage('Teklif talebi oluşturabilmek için lütfen giriş yapınız.');
       setLoading(false);
-      router.push('/giris?redirect=/teklif-iste');
+      // Hesaplayıcıdan gelen parametreler giriş sonrası kaybolmasın
+      const qs = searchParams.toString();
+      router.push(`/giris?redirect=${encodeURIComponent(qs ? `/teklif-iste?${qs}` : '/teklif-iste')}`);
       return;
     }
 
@@ -104,7 +136,7 @@ function MultiVendorQuoteForm() {
       category_id: selectedSubCat || selectedMainCat,
       title: title.trim(),
       description: description.trim(),
-      quantity: Number(quantity) || 1,
+      quantity: clampQty(Number(quantity)),
       start_date: startDate || new Date().toISOString().split('T')[0],
       end_date: endDate || null,
       city_id: Number(cityId),
@@ -146,6 +178,9 @@ function MultiVendorQuoteForm() {
         </div>
 
         {/* Hesaplayıcıdan Geldi Bildirimi */}
+        <Link href="/kesif-yukle" className="mb-6 block rounded-2xl border border-orange-300 bg-orange-50 p-4 text-sm font-bold text-navy-900 hover:border-orange-500">
+          Elinizde 10’dan fazla kalemlik Excel veya malzeme listesi mi var? Tek tek girmeyin, Keşif Okuyucu ile toplu yükleyin. →
+        </Link>
         {fromCalc && (
           <div className="mb-6 p-4 bg-orange-50 border border-orange-300 rounded-2xl flex items-start gap-3">
             <Calculator className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
@@ -277,6 +312,7 @@ function MultiVendorQuoteForm() {
               <input
                 type="text"
                 value={title}
+                maxLength={MAX_TITLE_LEN}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="İhtiyacınızı özetleyen net bir başlık yazın"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -292,8 +328,9 @@ function MultiVendorQuoteForm() {
                 <input
                   type="number"
                   min="1"
+                  max={MAX_QTY}
                   value={quantity}
-                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                  onChange={(e) => setQuantity(clampQty(parseInt(e.target.value, 10)))}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                   required
                 />
@@ -332,6 +369,7 @@ function MultiVendorQuoteForm() {
               <textarea
                 rows={4}
                 value={description}
+                maxLength={MAX_DESC_LEN}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Zemin yapısı, çalışma koşulları, varsa şantiye kural ve gereksinimlerinizi detaylandırın..."
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"

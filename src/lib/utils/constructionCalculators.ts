@@ -195,7 +195,7 @@ export function iskeleToQuoteDescription(r: IskeleMantResult, input: IskeleMantI
   return (
     `İskele & Dış Cephe Mantolama Talebi\n` +
     `• Brüt Cephe Alanı: ${input.cepheAlani} m²\n` +
-    `• İskele Kurulum Alanı (%%10 pay): ${r.iskeleMkare} m²\n` +
+    `• İskele Kurulum Alanı (%10 pay): ${r.iskeleMkare} m²\n` +
     `• Yalıtım Levhası Paketi (60×100 cm, 6'lı): ${r.yalitimPaket} paket\n` +
     `• Dış Cephe Boyası (15 kg, 2 kat): ${r.boyaKova} kova\n` +
     `• Fiber Taşıyıcı File: ${r.mantolameKmetre} rulo\n\n` +

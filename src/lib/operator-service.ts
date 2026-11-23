@@ -28,5 +28,9 @@ export async function sendRequest(id:string,values:Omit<OperatorRequest,'id'>){
   const db=createClient();
   if(!(await db.auth.getUser()).data.user)throw new Error('Talep göndermek için giriş yapın.');
   const {error}=await db.from('operator_requests').insert({...values,operator_id:id});
-  if(error)throw new Error('Talep kaydedilemedi. Operatörün müsaitliğini ve tarihi kontrol edin.');
+  if(error){
+    // 28_operator_pool_hardening.sql'in kendi (Türkçe) sınır mesajlarını göster; diğer DB ayrıntılarını sızdırma.
+    const own=error.code==='23514' && !/violates check constraint/i.test(error.message);
+    throw new Error(own?error.message:'Talep kaydedilemedi. Operatörün müsaitliğini ve tarihi kontrol edin.');
+  }
 }

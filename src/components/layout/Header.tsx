@@ -156,6 +156,7 @@ export default function Header() {
               Nakliye
             </Link>
             <Link href="/operatorler" className="hover:text-orange-500 transition-colors">Operatör Havuzu</Link>
+            <Link href="/kesif-yukle" className="hover:text-orange-500 transition-colors">Keşif / BOQ Yükle</Link>
             <Link
               href="/hesaplayici"
               className="hover:text-emerald-400 text-emerald-400 font-bold transition-colors flex items-center gap-1.5"
@@ -379,6 +380,7 @@ export default function Header() {
               ⚡ Çoklu Teklif Talebi Oluştur
             </Link>
             <Link href="/operatorler" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 rounded-md hover:bg-navy-800 text-slate-200">Operatör Havuzu</Link>
+            <Link href="/kesif-yukle" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 rounded-md hover:bg-navy-800 text-slate-200">Keşif / BOQ Yükle</Link>
             <Link
               href="/hesaplayici"
               onClick={() => setMobileMenuOpen(false)}

@@ -128,34 +128,86 @@ function saveWaybill(wb: DeliveryWaybill) {
   }
 }
 
-/**
- * 6 haneli rastgele PIN üretir
- */
-export function generateDeliveryPin(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+// ── Kriptografik rastgelelik (Math.random tahmin edilebilir; PIN/token escrow'u açar) ──
+function secureRandomInt(maxExclusive: number): number {
+  const c: Crypto | undefined = typeof globalThis !== 'undefined' ? (globalThis as any).crypto : undefined;
+  if (!c || typeof c.getRandomValues !== 'function') {
+    // Güvenli RNG yoksa (çok eski ortam) sessizce zayıf üretme: hata fırlat.
+    throw new Error('Güvenli rastgele sayı üreteci (crypto.getRandomValues) bulunamadı.');
+  }
+  // Rejection sampling: modulo bias olmadan
+  const limit = Math.floor(0x100000000 / maxExclusive) * maxExclusive;
+  const buf = new Uint32Array(1);
+  do {
+    c.getRandomValues(buf);
+  } while (buf[0] >= limit);
+  return buf[0] % maxExclusive;
+}
+
+function secureRandomHex(bytes: number): string {
+  const c: Crypto = (globalThis as any).crypto;
+  const buf = new Uint8Array(bytes);
+  c.getRandomValues(buf);
+  return Array.from(buf, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 /**
- * Benzersiz delivery_token üretir
+ * 6 haneli rastgele PIN üretir (crypto tabanlı).
+ * `taken` verilirse çakışmayan bir PIN seçilir (aynı PIN iki farklı irsaliyede bulunmaz).
+ */
+export function generateDeliveryPin(taken?: Set<string>): string {
+  for (let i = 0; i < 50; i++) {
+    const pin = String(100000 + secureRandomInt(900000));
+    if (!taken || !taken.has(pin)) return pin;
+  }
+  throw new Error('Benzersiz teslimat PIN kodu üretilemedi.');
+}
+
+/**
+ * Benzersiz delivery_token üretir (64 bit crypto rastgelelik; tahmin edilemez).
+ * Biçim: <prefix>-tok-<16 hex>-<zaman> (en fazla 32 karakter, modal inputuna sığar)
  */
 export function generateDeliveryToken(prefix: string = 'dlv'): string {
-  const rand = Math.random().toString(36).substring(2, 9);
-  const time = Date.now().toString(36).substring(4);
+  const rand = secureRandomHex(8);
+  const time = Date.now().toString(36).slice(-4);
   return `${prefix}-tok-${rand}-${time}`;
+}
+
+// ── Alıcı kimliği ────────────────────────────────────────────
+// Demo veri seti alıcıyı 'buyer-demo-001' olarak tutar; demo giriş hesabı ise
+// 'demo-buyer-user-001' kimliğini kullanır. Gerçek (Supabase/UUID) kimlikler birebir karşılaştırılır.
+const BUYER_ID_ALIASES: Record<string, string> = {
+  'demo-buyer-user-001': 'buyer-demo-001',
+};
+
+export function canonicalBuyerId(id?: string | null): string {
+  const v = (id ?? '').trim();
+  return BUYER_ID_ALIASES[v] ?? v;
+}
+
+function isWaybillBuyer(actorUserId: string | undefined | null, buyerId: string): boolean {
+  const actor = canonicalBuyerId(actorUserId);
+  return actor !== '' && actor === canonicalBuyerId(buyerId);
 }
 
 /**
  * Sipariş/Rezervasyon için Dijital İrsaliyeyi Getir veya Otomatik Oluştur
  */
-export function getOrCreateWaybillForBooking(bookingId: string): DeliveryWaybill {
+export function getOrCreateWaybillForBooking(
+  bookingId: string,
+  bookingHint?: (typeof DEMO_BOOKINGS)[number]
+): DeliveryWaybill {
   const waybills = getStoredWaybills();
   const existing = waybills.find((w) => w.booking_id === bookingId);
   if (existing) return existing;
 
-  const booking = DEMO_BOOKINGS.find((b) => b.id === bookingId);
+  // Demo kayıt yoksa (gerçek Supabase rezervasyonu) çağıranın verdiği kaydı kullan:
+  // alıcı kimliği asla 'demo' değerine düşmemeli, yoksa gerçek alıcı hiçbir zaman onaylayamaz.
+  const booking = DEMO_BOOKINGS.find((b) => b.id === bookingId) ?? bookingHint;
   const tx = DEMO_TRANSACTIONS.find((t) => t.booking_id === bookingId);
 
-  const pin = booking?.delivery_pin || tx?.delivery_pin || generateDeliveryPin();
+  const takenPins = new Set(waybills.map((w) => w.delivery_pin));
+  const pin = booking?.delivery_pin || tx?.delivery_pin || generateDeliveryPin(takenPins);
   const token = booking?.delivery_token || tx?.delivery_token || generateDeliveryToken();
 
   const newWaybill: DeliveryWaybill = {
@@ -164,7 +216,7 @@ export function getOrCreateWaybillForBooking(bookingId: string): DeliveryWaybill
     payment_id: tx?.id,
     delivery_token: token,
     delivery_pin: pin,
-    buyer_id: booking?.buyer_id || tx?.buyer_id || 'buyer-demo-001',
+    buyer_id: booking?.buyer_id || tx?.buyer_id || '',
     buyer_name: booking?.buyer_name || tx?.buyer?.full_name || 'Alıcı / Şantiye Yetkilisi',
     buyer_phone: tx?.buyer?.phone || '+90 532 111 2233',
     company_id: booking?.company_id || tx?.company_id || 'f0000000-0000-0000-0000-000000000001',
@@ -203,29 +255,43 @@ export function getOrCreateWaybillForBooking(bookingId: string): DeliveryWaybill
 
 /**
  * Token ile Dijital İrsaliye Bul (QR kod okutulduğunda yönlendirilen sayfa için)
+ * `buyerId` verilirse yalnızca o alıcıya ait irsaliye döner (başkasının irsaliyesi sızmaz).
  */
-export function getWaybillByToken(token: string): DeliveryWaybill | null {
-  const clean = token.trim();
+export function getWaybillByToken(token: string, buyerId?: string | null): DeliveryWaybill | null {
+  const clean = (token ?? '').trim().toLowerCase();
+  if (!clean || clean.length > 64) return null;
   const list = getStoredWaybills();
-  return list.find((w) => w.delivery_token.toLowerCase() === clean.toLowerCase()) || null;
+  const found = list.find((w) => w.delivery_token.toLowerCase() === clean);
+  if (!found) return null;
+  if (buyerId !== undefined && !isWaybillBuyer(buyerId, found.buyer_id)) return null;
+  return found;
 }
 
 /**
  * 6 Haneli PIN ile Dijital İrsaliye Bul (Şantiye şefi sahada manuel girdiğinde)
+ * PIN 1M'lik küçük bir uzay olduğundan arama MUTLAKA alıcıya göre daraltılmalıdır:
+ * `buyerId` verilirse yalnızca o alıcının irsaliyeleri taranır (bekleyenler öncelikli).
  */
-export function getWaybillByPin(pin: string): DeliveryWaybill | null {
-  const clean = pin.trim().replace(/\D/g, '');
+export function getWaybillByPin(pin: string, buyerId?: string | null): DeliveryWaybill | null {
+  const clean = (pin ?? '').trim().replace(/\D/g, '');
   if (clean.length !== 6) return null;
-  const list = getStoredWaybills();
-  return list.find((w) => w.delivery_pin === clean) || null;
+  const matches = getStoredWaybills().filter(
+    (w) => w.delivery_pin === clean && (buyerId === undefined || isWaybillBuyer(buyerId, w.buyer_id))
+  );
+  return matches.find((w) => w.status === 'PENDING_DELIVERY') || matches[0] || null;
 }
+
+// Aynı irsaliye için eşzamanlı onay istekleri (çift tıklama / replay) tek geçsin
+const inFlightWaybills = new Set<string>();
 
 /**
  * ŞANTİYE TESLİMATINI ONAYLA VE ESCROW'U SERBEST BIRAK
- * Alıcı/Şantiye Şefi QR veya PIN ile doğrular:
- * 1. İrsaliye durumunu DELIVERED yapar.
- * 2. `buyerConfirmAndReleaseEscrow` çağırarak emanet parayı satıcıya aktarır.
- * 3. Booking durumunu 'completed' yapar.
+ * YALNIZCA oturum açmış ALICI çağırabilir: QR/PIN'i şoför (satıcı tarafı) taşıdığı için
+ * kod tek başına yetki sayılmaz; `actorUserId` doğrulanmış oturumdan gelmelidir.
+ * 1. Alıcı kimliği irsaliye alıcısıyla eşleşmeli (aksi halde 'Yetkisiz').
+ * 2. Aynı irsaliyede eşzamanlı/tekrarlı çağrılar engellenir (replay / çift serbest bırakma).
+ * 3. `buyerConfirmAndReleaseEscrow` GERÇEK aktörle çağrılır (escrow katmanı da kontrol eder).
+ * 4. Bağlı escrow kaydı yoksa onay verilmez (para akışı olmadan "teslim edildi" işaretlenmez).
  */
 export async function confirmDeliveryAndReleaseEscrow(params: {
   tokenOrPin: string;
@@ -238,13 +304,36 @@ export async function confirmDeliveryAndReleaseEscrow(params: {
   transaction?: PaymentTransaction;
   error?: string;
 }> {
-  const input = params.tokenOrPin.trim();
-  let waybill = getWaybillByPin(input) || getWaybillByToken(input);
-
-  if (!waybill) {
+  const actorId = canonicalBuyerId(params.actorUserId);
+  if (!actorId) {
     return {
       success: false,
-      error: 'Geçersiz QR Kod veya 6 haneli Teslimat Kodu. Lütfen şoförün ekranındaki kodu kontrol ediniz.',
+      error: 'Teslimatı onaylamak için alıcı hesabınızla giriş yapmanız gerekir.',
+    };
+  }
+
+  if (params.quantityConfirmed === false) {
+    return {
+      success: false,
+      error: 'Teslimatı onaylamak için malzemenin eksiksiz teslim alındığını doğrulamalısınız.',
+    };
+  }
+
+  const input = (params.tokenOrPin ?? '').trim();
+  const invalid = {
+    success: false,
+    error: 'Geçersiz QR Kod veya 6 haneli Teslimat Kodu. Lütfen şoförün ekranındaki kodu kontrol ediniz.',
+  };
+  if (!input || input.length > 64) return invalid;
+
+  // Arama alıcıya göre daraltılır: başka alıcıya ait kod "bulunamadı" gibi davranır (oracle yok).
+  const waybill = getWaybillByPin(input, actorId) || getWaybillByToken(input, actorId);
+  if (!waybill) return invalid;
+
+  if (!isWaybillBuyer(actorId, waybill.buyer_id)) {
+    return {
+      success: false,
+      error: 'Yetkisiz İşlem: Teslimatı yalnızca siparişin alıcısı onaylayabilir.',
     };
   }
 
@@ -255,46 +344,72 @@ export async function confirmDeliveryAndReleaseEscrow(params: {
       waybill,
     };
   }
+  if (waybill.status === 'DISPUTED') {
+    return {
+      success: false,
+      error: 'Bu teslimat için itiraz açılmış; onay yönetici hakem kararından sonra verilebilir.',
+      waybill,
+    };
+  }
 
-  // Escrow Serbest Bırakma
-  let tx = DEMO_TRANSACTIONS.find(
-    (t) => t.booking_id === waybill?.booking_id || t.id === waybill?.payment_id
-  );
+  if (inFlightWaybills.has(waybill.id)) {
+    return {
+      success: false,
+      error: 'Bu teslimat için onay işlemi zaten sürüyor. Lütfen birkaç saniye bekleyiniz.',
+    };
+  }
+  inFlightWaybills.add(waybill.id);
 
-  if (tx) {
-    const actorId = params.actorUserId || waybill.buyer_id;
-    const releaseRes = await buyerConfirmAndReleaseEscrow(tx.id, tx.buyer_id || actorId);
-    if (!releaseRes.success && releaseRes.error && !releaseRes.error.includes('zaten serbest bırakılmış')) {
+  try {
+    // Kilidi aldıktan sonra güncel durumu tekrar oku (beklerken başka istek bitirmiş olabilir)
+    const fresh = getStoredWaybills().find((w) => w.id === waybill.id) ?? waybill;
+    if (fresh.status !== 'PENDING_DELIVERY') {
       return {
         success: false,
-        error: `Escrow serbest bırakılamadı: ${releaseRes.error}`,
+        error: 'Bu teslimat zaten daha önce onaylanmış ve emanet ödeme serbest bırakılmıştır.',
+        waybill: fresh,
       };
     }
+
+    const tx = DEMO_TRANSACTIONS.find(
+      (t) => t.booking_id === fresh.booking_id || t.id === fresh.payment_id
+    );
+    if (!tx) {
+      return {
+        success: false,
+        error: 'Bu irsaliyeye bağlı emanet ödeme kaydı bulunamadı; teslimat onaylanamadı.',
+      };
+    }
+
+    // Escrow: GERÇEK aktör ile (escrow-service alıcı/firma ayrımını ayrıca doğrular)
+    const releaseRes = await buyerConfirmAndReleaseEscrow(tx.id, actorId);
+    if (!releaseRes.success) {
+      // Ödeme başka bir yoldan (ör. alıcı paneli) zaten serbest bırakılmışsa irsaliyeyi tamamla.
+      // Başka hiçbir hata (yetki, iade, itiraz, sağlayıcı) onayı geçirmez.
+      if (tx.status !== 'transferred') {
+        return { success: false, error: `Escrow serbest bırakılamadı: ${releaseRes.error}` };
+      }
+    }
+
+    const now = new Date().toISOString();
+    const note = (params.deliveryNote ?? '').trim().slice(0, 500);
+    fresh.status = 'DELIVERED';
+    fresh.delivered_at = now;
+    fresh.delivery_note =
+      note || 'Sipariş şantiyede eksiksiz ve sağlam teslim alındı. Dijital onay verildi.';
+    fresh.delivered_by_user_id = actorId;
+    fresh.updated_at = now;
+    saveWaybill(fresh);
+
+    const booking = DEMO_BOOKINGS.find((b) => b.id === fresh.booking_id);
+    if (booking) {
+      booking.status = 'completed';
+      booking.delivered_at = now;
+      booking.delivery_note = fresh.delivery_note;
+    }
+
+    return { success: true, waybill: fresh, transaction: tx };
+  } finally {
+    inFlightWaybills.delete(waybill.id);
   }
-
-  // İrsaliye kaydını güncelle
-  const now = new Date().toISOString();
-  waybill.status = 'DELIVERED';
-  waybill.delivered_at = now;
-  waybill.delivery_note =
-    params.deliveryNote?.trim() ||
-    'Sipariş şantiyede eksiksiz ve sağlam teslim alındı. Dijital onay verildi.';
-  waybill.delivered_by_user_id = params.actorUserId;
-  waybill.updated_at = now;
-
-  saveWaybill(waybill);
-
-  // İlgili booking'i tamamlandı yap
-  const booking = DEMO_BOOKINGS.find((b) => b.id === waybill?.booking_id);
-  if (booking) {
-    booking.status = 'completed';
-    booking.delivered_at = now;
-    booking.delivery_note = waybill.delivery_note;
-  }
-
-  return {
-    success: true,
-    waybill,
-    transaction: tx,
-  };
 }

@@ -40,7 +40,7 @@ export default function CompanyBookingsPage() {
   const [activeWaybill, setActiveWaybill] = useState<DeliveryWaybill | null>(null);
 
   const handleOpenWaybill = (booking: BookingWithDetails) => {
-    const wb = getOrCreateWaybillForBooking(booking.id);
+    const wb = getOrCreateWaybillForBooking(booking.id, booking);
     setActiveWaybill(wb);
     setWaybillModalOpen(true);
   };

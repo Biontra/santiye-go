@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   FileCheck2,
@@ -20,8 +20,11 @@ import {
   getWaybillByToken,
   confirmDeliveryAndReleaseEscrow,
 } from '@/lib/services/delivery-service';
+import { getActiveProfile } from '@/lib/services/auth-service';
 
 export default function TeslimatOnayPage() {
+  // undefined = oturum yükleniyor, null = giriş yapılmamış, string = oturumdaki kullanıcı
+  const [actorId, setActorId] = useState<string | null | undefined>(undefined);
   const [pinOrToken, setPinOrToken] = useState('');
   const [waybill, setWaybill] = useState<DeliveryWaybill | null>(null);
   const [qtyConfirmed, setQtyConfirmed] = useState(true);
@@ -30,15 +33,30 @@ export default function TeslimatOnayPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [completedWaybill, setCompletedWaybill] = useState<DeliveryWaybill | null>(null);
 
+  useEffect(() => {
+    let alive = true;
+    getActiveProfile()
+      .then((p) => alive && setActorId(p?.id ?? null))
+      .catch(() => alive && setActorId(null));
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   const handleLookup = () => {
     setErrorMessage('');
+    if (!actorId) {
+      setErrorMessage('Teslimat kodunu sorgulamak için alıcı hesabınızla giriş yapmalısınız.');
+      return;
+    }
     const clean = pinOrToken.trim();
     if (!clean) {
       setErrorMessage('Lütfen 6 haneli teslimat kodunu veya QR token bilgisini giriniz.');
       return;
     }
 
-    const found = getWaybillByPin(clean) || getWaybillByToken(clean);
+    // Yalnızca oturumdaki alıcının irsaliyeleri taranır (PIN tahmini ile başkasının siparişi görülemez)
+    const found = getWaybillByPin(clean, actorId) || getWaybillByToken(clean, actorId);
     if (!found) {
       setErrorMessage('Bu koda ait aktif bir teslimat irsaliyesi bulunamadı. Lütfen şoförün ekranındaki kodu kontrol ediniz.');
       setWaybill(null);
@@ -52,7 +70,7 @@ export default function TeslimatOnayPage() {
   };
 
   const handleConfirm = async () => {
-    if (!waybill) return;
+    if (!waybill || !actorId) return;
 
     if (!qtyConfirmed) {
       setErrorMessage('Teslimatı onaylamak için malzeme doğrulama onay kutucuğunu işaretleyiniz.');
@@ -64,7 +82,7 @@ export default function TeslimatOnayPage() {
 
     const res = await confirmDeliveryAndReleaseEscrow({
       tokenOrPin: waybill.delivery_pin,
-      actorUserId: waybill.buyer_id,
+      actorUserId: actorId,
       deliveryNote: deliveryNote.trim() || undefined,
       quantityConfirmed: qtyConfirmed,
     });
@@ -177,6 +195,17 @@ export default function TeslimatOnayPage() {
         ) : (
           /* Kod Giriş ve Onay Kartı */
           <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
+            {actorId === null && (
+              <div className="p-4 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-900 flex items-center justify-between gap-3">
+                <span>Teslimatı yalnızca siparişin alıcısı onaylayabilir. Lütfen alıcı hesabınızla giriş yapın.</span>
+                <Link
+                  href={`/giris?redirect=${encodeURIComponent('/teslimat-onay')}`}
+                  className="shrink-0 px-3 py-1.5 rounded-lg bg-navy-900 text-white font-bold"
+                >
+                  Giriş Yap
+                </Link>
+              </div>
+            )}
             {errorMessage && (
               <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2 text-xs text-red-700">
                 <AlertCircle className="w-4 h-4 shrink-0" />

@@ -32,10 +32,16 @@ export default function DigitalWaybillCard({ waybill, onClose }: Props) {
   const origin = typeof window !== 'undefined' ? window.location.origin : 'https://santiyego.com';
   const confirmUrl = `${origin}/teslimat-onay/${waybill.delivery_token}`;
 
-  // SVG QR Matrisi
-  const matrix = generateQRMatrix(confirmUrl);
-  const pathData = generateQRSvgPath(matrix);
-  const matrixSize = matrix.length + 8; // padding ile
+  // SVG QR Matrisi (hata olursa kart çökmez; PIN ile teslimat yine mümkün)
+  let pathData = '';
+  let matrixSize = 0;
+  try {
+    const matrix = generateQRMatrix(confirmUrl);
+    pathData = generateQRSvgPath(matrix);
+    matrixSize = matrix.length + 8; // 4 modül sessiz bölge, her yanda
+  } catch {
+    pathData = '';
+  }
 
   const handleCopyPin = () => {
     if (typeof navigator !== 'undefined') {
@@ -137,14 +143,22 @@ export default function DigitalWaybillCard({ waybill, onClose }: Props) {
           {/* SVG QR KOD (Sıfır bağımlılık, anında yüklenir) */}
           <div className="flex justify-center">
             <div className="p-3 bg-white rounded-2xl border-2 border-slate-900 shadow-md inline-block">
-              <svg
-                viewBox={`0 0 ${matrixSize} ${matrixSize}`}
-                className="w-44 h-44 sm:w-48 sm:h-48"
-                shapeRendering="crispEdges"
-              >
-                <rect width="100%" height="100%" fill="#ffffff" />
-                <path d={pathData} fill="#0f172a" />
-              </svg>
+              {pathData ? (
+                <svg
+                  viewBox={`0 0 ${matrixSize} ${matrixSize}`}
+                  className="w-44 h-44 sm:w-48 sm:h-48"
+                  shapeRendering="crispEdges"
+                  role="img"
+                  aria-label="Teslimat doğrulama QR kodu"
+                >
+                  <rect width="100%" height="100%" fill="#ffffff" />
+                  <path d={pathData} fill="#0f172a" />
+                </svg>
+              ) : (
+                <div className="w-44 h-44 sm:w-48 sm:h-48 flex items-center justify-center text-[11px] text-slate-500 text-center px-3">
+                  QR oluşturulamadı. Alıcı aşağıdaki 6 haneli kodu girerek onaylayabilir.
+                </div>
+              )}
             </div>
           </div>
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import {
   X,
   CheckCircle2,
@@ -20,11 +21,11 @@ import {
   getWaybillByToken,
   confirmDeliveryAndReleaseEscrow,
 } from '@/lib/services/delivery-service';
+import { getActiveProfile } from '@/lib/services/auth-service';
 
 interface Props {
   initialTokenOrPin?: string;
   initialWaybill?: DeliveryWaybill | null;
-  actorUserId?: string;
   onSuccess?: (waybill: DeliveryWaybill) => void;
   onClose: () => void;
 }
@@ -32,10 +33,12 @@ interface Props {
 export default function DeliveryConfirmModal({
   initialTokenOrPin = '',
   initialWaybill = null,
-  actorUserId = 'buyer-demo-001',
   onSuccess,
   onClose,
 }: Props) {
+  // Onaylayan kimlik DAİMA doğrulanmış oturumdan gelir (prop ile aktör verilemez).
+  // undefined = oturum yükleniyor, null = giriş yapılmamış
+  const [actorId, setActorId] = useState<string | null | undefined>(undefined);
   const [pinOrToken, setPinOrToken] = useState(initialTokenOrPin);
   const [waybill, setWaybill] = useState<DeliveryWaybill | null>(initialWaybill);
   const [qtyConfirmed, setQtyConfirmed] = useState(true);
@@ -46,16 +49,27 @@ export default function DeliveryConfirmModal({
     initialWaybill?.status === 'DELIVERED' ? initialWaybill : null
   );
 
-  // Eğer token/PIN baştan verildiyse irsaliyeyi bul
   useEffect(() => {
-    if (initialTokenOrPin && !waybill) {
-      const found = getWaybillByPin(initialTokenOrPin) || getWaybillByToken(initialTokenOrPin);
+    let alive = true;
+    getActiveProfile()
+      .then((p) => alive && setActorId(p?.id ?? null))
+      .catch(() => alive && setActorId(null));
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  // Eğer token/PIN baştan verildiyse irsaliyeyi bul (yalnızca oturumdaki alıcının irsaliyeleri)
+  useEffect(() => {
+    if (initialTokenOrPin && !waybill && actorId) {
+      const found =
+        getWaybillByPin(initialTokenOrPin, actorId) || getWaybillByToken(initialTokenOrPin, actorId);
       if (found) {
         setWaybill(found);
         if (found.status === 'DELIVERED') setCompletedWaybill(found);
       }
     }
-  }, [initialTokenOrPin, waybill]);
+  }, [initialTokenOrPin, waybill, actorId]);
 
   // PIN değiştikçe otomatik bul
   const handlePinChange = (val: string) => {
@@ -63,7 +77,7 @@ export default function DeliveryConfirmModal({
     setErrorMessage('');
     const cleanPin = val.trim().replace(/\D/g, '');
     if (cleanPin.length === 6) {
-      const found = getWaybillByPin(cleanPin);
+      const found = getWaybillByPin(cleanPin, actorId ?? null);
       if (found) {
         setWaybill(found);
         if (found.status === 'DELIVERED') setCompletedWaybill(found);
@@ -71,7 +85,7 @@ export default function DeliveryConfirmModal({
         setErrorMessage('Bu PIN koduna ait aktif bir sevkiyat bulunamadı.');
       }
     } else if (val.includes('-tok-')) {
-      const found = getWaybillByToken(val.trim());
+      const found = getWaybillByToken(val.trim(), actorId ?? null);
       if (found) {
         setWaybill(found);
         if (found.status === 'DELIVERED') setCompletedWaybill(found);
@@ -80,6 +94,10 @@ export default function DeliveryConfirmModal({
   };
 
   const handleConfirm = async () => {
+    if (!actorId) {
+      setErrorMessage('Teslimatı onaylamak için alıcı hesabınızla giriş yapmalısınız.');
+      return;
+    }
     const code = pinOrToken.trim() || waybill?.delivery_pin || waybill?.delivery_token;
     if (!code) {
       setErrorMessage('Lütfen 6 haneli teslimat kodunu giriniz.');
@@ -96,7 +114,7 @@ export default function DeliveryConfirmModal({
 
     const res = await confirmDeliveryAndReleaseEscrow({
       tokenOrPin: code,
-      actorUserId,
+      actorUserId: actorId,
       deliveryNote: deliveryNote.trim() || undefined,
       quantityConfirmed: qtyConfirmed,
     });
@@ -201,6 +219,17 @@ export default function DeliveryConfirmModal({
         ) : (
           /* Onay Formu */
           <div className="p-6 space-y-5">
+            {actorId === null && (
+              <div className="p-3.5 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-900 flex items-center justify-between gap-3">
+                <span>Teslimatı yalnızca siparişin alıcısı onaylayabilir. Lütfen alıcı hesabınızla giriş yapın.</span>
+                <Link
+                  href={`/giris?redirect=${encodeURIComponent('/alici-paneli/rezervasyonlar')}`}
+                  className="shrink-0 px-3 py-1.5 rounded-lg bg-navy-900 text-white font-bold"
+                >
+                  Giriş Yap
+                </Link>
+              </div>
+            )}
             {errorMessage && (
               <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2 text-xs text-red-700">
                 <AlertCircle className="w-4 h-4 shrink-0" />
@@ -310,7 +339,7 @@ export default function DeliveryConfirmModal({
             {/* Onay Aksiyon Butonu */}
             <button
               type="button"
-              disabled={loading}
+              disabled={loading || !actorId}
               onClick={handleConfirm}
               className="w-full py-4 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm tracking-wide shadow-lg shadow-orange-500/30 transition active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
             >

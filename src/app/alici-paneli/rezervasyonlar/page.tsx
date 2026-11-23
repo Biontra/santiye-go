@@ -24,8 +24,13 @@ import {
 } from 'lucide-react';
 import { BookingWithDetails, getBuyerBookings, cancelBooking } from '@/lib/services/booking-service';
 import { DEMO_TRANSACTIONS } from '@/lib/services/payment-service';
-import { buyerConfirmAndReleaseEscrow, openEscrowDispute } from '@/lib/services/escrow-service';
-import { getOrCreateWaybillForBooking, DeliveryWaybill } from '@/lib/services/delivery-service';
+import { openEscrowDispute } from '@/lib/services/escrow-service';
+import {
+  getOrCreateWaybillForBooking,
+  canonicalBuyerId,
+  DeliveryWaybill,
+} from '@/lib/services/delivery-service';
+import { getActiveProfile } from '@/lib/services/auth-service';
 import DeliveryConfirmModal from '@/components/delivery/DeliveryConfirmModal';
 
 export default function BuyerBookingsPage() {
@@ -39,9 +44,21 @@ export default function BuyerBookingsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deliveryModalOpen, setDeliveryModalOpen] = useState(false);
   const [selectedWaybill, setSelectedWaybill] = useState<DeliveryWaybill | null>(null);
+  // Oturumdaki alıcı kimliği (sabit 'buyer-demo-001' yerine doğrulanmış oturum)
+  const [buyerId, setBuyerId] = useState<string | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    getActiveProfile()
+      .then((p) => alive && setBuyerId(p?.id ?? null))
+      .catch(() => alive && setBuyerId(null));
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const handleOpenDeliveryModal = (booking: BookingWithDetails) => {
-    const wb = getOrCreateWaybillForBooking(booking.id);
+    const wb = getOrCreateWaybillForBooking(booking.id, booking);
     setSelectedWaybill(wb);
     setDeliveryModalOpen(true);
   };
@@ -66,24 +83,6 @@ export default function BuyerBookingsPage() {
     }
   };
 
-  const handleConfirmAndRelease = async (booking: BookingWithDetails) => {
-    if (!confirm('İşin sahada eksiksiz tamamlandığını ve hakedişin firmaya serbest bırakılmasını onaylıyor musunuz?')) {
-      return;
-    }
-
-    const tx = DEMO_TRANSACTIONS.find((t) => t.booking_id === booking.id) || DEMO_TRANSACTIONS[0];
-    if (tx) {
-      const res = await buyerConfirmAndReleaseEscrow(tx.id, 'buyer-demo-001');
-      if (res.success) {
-        setActionNotice('İş onaylandı! Ödeme başarıyla serbest bırakıldı ve firmaya aktarıldı.');
-        loadData();
-        setTimeout(() => setActionNotice(''), 4000);
-      } else {
-        alert(res.error || 'İşlem başarısız oldu.');
-      }
-    }
-  };
-
   const handleOpenDisputeModal = (booking: BookingWithDetails) => {
     setSelectedBookingForDispute(booking);
     setDisputeModalOpen(true);
@@ -93,9 +92,14 @@ export default function BuyerBookingsPage() {
     if (!selectedBookingForDispute) return;
     setIsSubmitting(true);
 
-    const tx = DEMO_TRANSACTIONS.find((t) => t.booking_id === selectedBookingForDispute.id) || DEMO_TRANSACTIONS[0];
-    if (tx) {
-      const res = await openEscrowDispute(tx.id, 'buyer-demo-001', disputeReason, disputeNotes);
+    // Başka bir rezervasyonun ödemesine düşmemek için yalnızca birebir eşleşen kayıt kullanılır
+    const tx = DEMO_TRANSACTIONS.find((t) => t.booking_id === selectedBookingForDispute.id);
+    if (!buyerId) {
+      alert('İtiraz açmak için alıcı hesabınızla giriş yapmalısınız.');
+    } else if (!tx) {
+      alert('Bu rezervasyona bağlı bir emanet ödeme kaydı bulunamadı.');
+    } else {
+      const res = await openEscrowDispute(tx.id, canonicalBuyerId(buyerId), disputeReason, disputeNotes);
       if (res.success) {
         setDisputeModalOpen(false);
         setActionNotice('İtiraz başarıyla açıldı! Ödeme transferi donduruldu ve yönetim hakem kuyruğuna iletildi.');
@@ -408,7 +412,6 @@ export default function BuyerBookingsPage() {
           <DeliveryConfirmModal
             initialWaybill={selectedWaybill}
             initialTokenOrPin={selectedWaybill.delivery_pin}
-            actorUserId="buyer-demo-001"
             onSuccess={() => {
               setActionNotice('Dijital irsaliye onaylandı! Emanet ödeme satıcıya serbest bırakıldı.');
               loadData();

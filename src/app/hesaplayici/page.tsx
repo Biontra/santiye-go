@@ -131,7 +131,7 @@ function QuoteButton({ onClick }: { onClick: () => void }) {
 
 // ─── SEKME 1: Hazır Beton ────────────────────────────────────
 
-function BetonTab({ onQuote }: { onQuote: (title: string, desc: string, qty: number) => void }) {
+function BetonTab({ onQuote }: { onQuote: (title: string, desc: string, qty: number, categorySlug?: string) => void }) {
   const [alan, setAlan] = useState<number>(0);
   const [kalinlik, setKalinlik] = useState<number>(20);
   const [sinif, setSinif] = useState<BetonSinifi>('C30');
@@ -144,7 +144,7 @@ function BetonTab({ onQuote }: { onQuote: (title: string, desc: string, qty: num
     if (!result) return;
     const title = `${result.toplamM3} m³ ${sinif} Hazır Beton Talebi`;
     const desc = betonToQuoteDescription(result, { alan, kalinlik, sinif });
-    onQuote(title, desc, result.toplamM3);
+    onQuote(title, desc, result.toplamM3, 'hazir-beton');
   };
 
   return (
@@ -198,7 +198,7 @@ function BetonTab({ onQuote }: { onQuote: (title: string, desc: string, qty: num
 
 // ─── SEKME 2: Demir Tonajı ───────────────────────────────────
 
-function DemirTab({ onQuote }: { onQuote: (title: string, desc: string, qty: number) => void }) {
+function DemirTab({ onQuote }: { onQuote: (title: string, desc: string, qty: number, categorySlug?: string) => void }) {
   const [alan, setAlan] = useState<number>(0);
   const [katSayisi, setKatSayisi] = useState<number>(1);
 
@@ -210,7 +210,7 @@ function DemirTab({ onQuote }: { onQuote: (title: string, desc: string, qty: num
     if (!result) return;
     const title = `${result.tahminiTonaj} Ton Nervürlü İnşaat Demiri Talebi`;
     const desc = demirToQuoteDescription(result, { alan, katSayisi });
-    onQuote(title, desc, result.tahminiTonaj);
+    onQuote(title, desc, result.tahminiTonaj, 'demir-donati');
   };
 
   return (
@@ -250,7 +250,7 @@ function DemirTab({ onQuote }: { onQuote: (title: string, desc: string, qty: num
 
 // ─── SEKME 3: Duvar Malzemesi ────────────────────────────────
 
-function DuvarTab({ onQuote }: { onQuote: (title: string, desc: string, qty: number) => void }) {
+function DuvarTab({ onQuote }: { onQuote: (title: string, desc: string, qty: number, categorySlug?: string) => void }) {
   const [duvarAlani, setDuvarAlani] = useState<number>(0);
   const [boslukAlani, setBoslukAlani] = useState<number>(0);
   const [malzeme, setMalzeme] = useState<DuvarMalzeme>('tugla');
@@ -263,7 +263,7 @@ function DuvarTab({ onQuote }: { onQuote: (title: string, desc: string, qty: num
     if (!result) return;
     const title = `${result.adet.toLocaleString('tr-TR')} Adet ${result.malzemeAdi} Talebi`;
     const desc = duvarToQuoteDescription(result, { duvarAlani, boslukAlani, malzeme });
-    onQuote(title, desc, result.adet);
+    onQuote(title, desc, result.adet, malzeme === 'gazbeton' ? 'gazbeton' : 'tugla-bims');
   };
 
   const malzemeLabels: Record<DuvarMalzeme, string> = {
@@ -318,7 +318,7 @@ function DuvarTab({ onQuote }: { onQuote: (title: string, desc: string, qty: num
 
 // ─── SEKME 4: İskele & Mantolama ─────────────────────────────
 
-function IskeleMantTab({ onQuote }: { onQuote: (title: string, desc: string, qty: number) => void }) {
+function IskeleMantTab({ onQuote }: { onQuote: (title: string, desc: string, qty: number, categorySlug?: string) => void }) {
   const [cepheAlani, setCepheAlani] = useState<number>(0);
 
   const result = cepheAlani > 0
@@ -329,7 +329,7 @@ function IskeleMantTab({ onQuote }: { onQuote: (title: string, desc: string, qty
     if (!result) return;
     const title = `${cepheAlani} m² Dış Cephe İskele & Mantolama Talebi`;
     const desc = iskeleToQuoteDescription(result, { cepheAlani });
-    onQuote(title, desc, cepheAlani);
+    onQuote(title, desc, cepheAlani, 'cephe-iskelesi');
   };
 
   return (
@@ -410,13 +410,15 @@ export default function HesaplayiciPage() {
   const [toastMsg, setToastMsg] = useState('');
 
   const handleQuote = useCallback(
-    (title: string, description: string, qty: number) => {
+    (title: string, description: string, qty: number, categorySlug?: string) => {
+      // URLSearchParams değerleri zaten kodlar; ayrıca encodeURIComponent çağrılmaz (çift kodlama olmaz).
       const params = new URLSearchParams({
         from_calc: '1',
-        title: encodeURIComponent(title),
-        description: encodeURIComponent(description),
-        qty: String(Math.ceil(qty)),
+        title,
+        description,
+        qty: String(Math.max(1, Math.ceil(Number.isFinite(qty) ? qty : 1))),
       });
+      if (categorySlug) params.set('cat', categorySlug);
       setToastMsg('Hesaplama formu dolduruluyor…');
       setTimeout(() => {
         router.push(`/teklif-iste?${params.toString()}`);

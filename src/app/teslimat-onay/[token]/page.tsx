@@ -19,12 +19,15 @@ import {
   getWaybillByToken,
   confirmDeliveryAndReleaseEscrow,
 } from '@/lib/services/delivery-service';
+import { getActiveProfile } from '@/lib/services/auth-service';
 
 export default function TokenDeliveryConfirmPage() {
   const router = useRouter();
   const params = useParams();
   const token = typeof params?.token === 'string' ? params.token : '';
 
+  // undefined = oturum yükleniyor, null = giriş yapılmamış, string = oturumdaki kullanıcı
+  const [actorId, setActorId] = useState<string | null | undefined>(undefined);
   const [waybill, setWaybill] = useState<DeliveryWaybill | null>(null);
   const [qtyConfirmed, setQtyConfirmed] = useState(true);
   const [deliveryNote, setDeliveryNote] = useState('');
@@ -33,21 +36,32 @@ export default function TokenDeliveryConfirmPage() {
   const [completedWaybill, setCompletedWaybill] = useState<DeliveryWaybill | null>(null);
 
   useEffect(() => {
-    if (token) {
-      const found = getWaybillByToken(token);
-      if (found) {
-        setWaybill(found);
-        if (found.status === 'DELIVERED') {
-          setCompletedWaybill(found);
-        }
-      } else {
-        setErrorMessage('Geçersiz veya süresi dolmuş teslimat QR kodu.');
+    let alive = true;
+    getActiveProfile()
+      .then((p) => alive && setActorId(p?.id ?? null))
+      .catch(() => alive && setActorId(null));
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  // İrsaliye bilgisi yalnızca oturumdaki ALICI için gösterilir (QR'ı gören herkes detay/onay göremez)
+  useEffect(() => {
+    if (!token || !actorId) return;
+    const found = getWaybillByToken(token, actorId);
+    if (found) {
+      setWaybill(found);
+      if (found.status === 'DELIVERED') {
+        setCompletedWaybill(found);
       }
+    } else {
+      setWaybill(null);
+      setErrorMessage('Geçersiz teslimat QR kodu veya bu teslimat hesabınıza ait değil.');
     }
-  }, [token]);
+  }, [token, actorId]);
 
   const handleConfirm = async () => {
-    if (!waybill) return;
+    if (!waybill || !actorId) return;
 
     if (!qtyConfirmed) {
       setErrorMessage('Teslimatı onaylamak için malzeme doğrulama kutucuğunu işaretleyiniz.');
@@ -59,7 +73,7 @@ export default function TokenDeliveryConfirmPage() {
 
     const res = await confirmDeliveryAndReleaseEscrow({
       tokenOrPin: waybill.delivery_token,
-      actorUserId: waybill.buyer_id,
+      actorUserId: actorId,
       deliveryNote: deliveryNote.trim() || undefined,
       quantityConfirmed: qtyConfirmed,
     });
@@ -256,6 +270,24 @@ export default function TokenDeliveryConfirmPage() {
                 ? 'Teslimat Onaylanıyor...'
                 : 'TESLİMATI ONAYLA VE ÖDEMEYİ SERBEST BIRAK'}
             </button>
+          </div>
+        ) : actorId === null ? (
+          <div className="bg-white rounded-3xl border border-slate-200 p-8 text-center space-y-4">
+            <Lock className="w-12 h-12 text-slate-400 mx-auto" />
+            <h3 className="text-base font-bold text-navy-900">Alıcı Girişi Gerekli</h3>
+            <p className="text-xs text-slate-500">
+              Teslimatı yalnızca siparişin alıcısı onaylayabilir. Devam etmek için alıcı hesabınızla giriş yapın.
+            </p>
+            <Link
+              href={`/giris?redirect=${encodeURIComponent(`/teslimat-onay/${token}`)}`}
+              className="inline-flex px-5 py-2.5 rounded-xl bg-navy-900 text-white font-bold text-xs"
+            >
+              Giriş Yap
+            </Link>
+          </div>
+        ) : actorId === undefined ? (
+          <div className="bg-white rounded-3xl border border-slate-200 p-8 text-center text-xs text-slate-500">
+            Oturum doğrulanıyor...
           </div>
         ) : (
           <div className="bg-white rounded-3xl border border-slate-200 p-8 text-center space-y-4">
