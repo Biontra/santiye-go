@@ -3,13 +3,8 @@ import crypto from 'crypto';
 import { normalizeTurkishPhone } from '@/lib/services/sms-service';
 import { sendEmailOtp, isDisposableEmail } from '@/lib/services/email-service';
 import { createClient } from '@/lib/supabase/server';
-
-function createSignedOtpToken(phone: string, email: string, code: string, expiresAt: number): string {
-  const secret = process.env.RESEND_API_KEY || 'santiye-go-secret-otp-signing-key';
-  const payload = JSON.stringify({ phone, email, codeHash: crypto.createHash('sha256').update(code.trim()).digest('hex'), expiresAt });
-  const signature = crypto.createHmac('sha256', secret).update(payload).digest('hex');
-  return Buffer.from(JSON.stringify({ payload, signature })).toString('base64');
-}
+import { createSignedOtpToken, getOtpSecret } from '@/lib/security/otp-token';
+import { checkRateLimit } from '@/lib/security/rate-limiter';
 
 export async function POST(req: NextRequest) {
   try {
@@ -37,8 +32,31 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // İmza anahtarı yoksa kod üretme (koda gömülü yedek anahtar kullanılmaz)
+    let otpSecret: string;
+    try {
+      otpSecret = getOtpSecret();
+    } catch {
+      return NextResponse.json(
+        { success: false, message: 'Doğrulama servisi yapılandırılmamış.' },
+        { status: 503 }
+      );
+    }
+
+    // Aynı numaraya / aynı adresten kod yağdırmayı sınırla
+    const ip = (req.headers.get('x-forwarded-for') || 'unknown').split(',')[0].trim();
+    if (
+      !checkRateLimit(`otp-send:${formatted}`, 3, 10 * 60 * 1000).allowed ||
+      !checkRateLimit(`otp-send-ip:${ip}`, 10, 10 * 60 * 1000).allowed
+    ) {
+      return NextResponse.json(
+        { success: false, message: 'Çok fazla kod istendi. Lütfen birkaç dakika sonra tekrar deneyin.' },
+        { status: 429 }
+      );
+    }
+
     // 6 Haneli Rastgele Güvenlik Kodu
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const code = crypto.randomInt(100000, 1000000).toString();
     const expiresAt = Date.now() + 5 * 60 * 1000; // 5 dakika
 
     // 1. Resend Üzerinden E-posta Gönderimi
@@ -63,7 +81,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. İmzalı Güvenli Oturum Tokenı Oluştur
-    const signedToken = createSignedOtpToken(formatted, email.trim().toLowerCase(), code, expiresAt);
+    const signedToken = createSignedOtpToken(formatted, email.trim().toLowerCase(), code, expiresAt, otpSecret);
 
     const response = NextResponse.json({
       success: true,

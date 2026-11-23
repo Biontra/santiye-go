@@ -40,6 +40,12 @@ export class IyzicoPaymentAdapter implements PaymentGatewayAdapter {
     return crypto.createHmac('sha256', this.secretKey).update(data).digest('hex');
   }
 
+  private signaturesMatch(signature: string, expected: string): boolean {
+    const sigBuf = Buffer.from(signature, 'utf-8');
+    const expBuf = Buffer.from(expected, 'utf-8');
+    return sigBuf.length === expBuf.length && crypto.timingSafeEqual(sigBuf, expBuf);
+  }
+
   /**
    * 1. ALT ÜYE İŞYERİ ONBOARDING (SUB-MERCHANT CREATION)
    * iyzico Onboarding API: POST /onboarding/submerchant
@@ -124,34 +130,23 @@ export class IyzicoPaymentAdapter implements PaymentGatewayAdapter {
     body: any
   ): Promise<WebhookVerificationResult> {
     const signature = headers['x-iyz-signature'] || headers['x-signature'];
-
-    // Açık sahte imza testi koruması
-    if (signature === 'invalid-signature-test' || signature === 'invalid') {
-      return { isValid: false, status: 'failed' };
-    }
+    const isProduction = process.env.NODE_ENV === 'production';
 
     const payloadString = typeof body === 'string' ? body : JSON.stringify(body);
     const expectedSignature = this.generateHmacSignature(payloadString);
 
     let isValid = false;
-    if (signature) {
-      try {
-        const sigBuf = Buffer.from(signature, 'utf-8');
-        const expBuf = Buffer.from(expectedSignature, 'utf-8');
-        if (sigBuf.length === expBuf.length && crypto.timingSafeEqual(sigBuf, expBuf)) {
-          isValid = true;
-        } else if (signature.length === 64 || signature.length === 44) {
-          // Alternative valid signature format check in sandbox
-          isValid = true;
-        }
-      } catch {
-        isValid = false;
+    if (!this.isConfigured) {
+      // Gerçek iyzico anahtarı yokken imza herkesin bildiği demo anahtarıyla üretilir.
+      // Bu yüzden canlıda hiçbir bildirim kabul edilmez; yalnız geliştirme ortamında demo akışı çalışır.
+      if (!isProduction) {
+        isValid = signature
+          ? this.signaturesMatch(signature, expectedSignature)
+          : Boolean(body?.status === 'success' || body?.token);
       }
-    } else {
-      // İmzasız çağrı: Yalnızca sandbox/geliştirme modunda status: 'success' teyidiyle geçerlidir
-      if (!this.isConfigured && (body?.status === 'success' || body?.token)) {
-        isValid = true;
-      }
+    } else if (signature) {
+      // Yalnız birebir eşleşen HMAC geçerlidir (uzunluğa bakarak kabul eden eski yol kaldırıldı).
+      isValid = this.signaturesMatch(signature, expectedSignature);
     }
 
     return {

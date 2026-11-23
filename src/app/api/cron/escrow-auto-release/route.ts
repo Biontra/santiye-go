@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/service-role';
+import { isCronAuthorized } from '@/lib/security/cron-auth';
 import { cronCheckAutoReleaseEscrow } from '@/lib/services/escrow-service';
 
 export async function GET(req: NextRequest) {
@@ -16,14 +17,11 @@ async function handleCronExecution(req: NextRequest) {
   const authHeader = req.headers.get('authorization');
   const customHeader = req.headers.get('x-cron-secret');
 
-  if (cronSecret) {
-    const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
-    if (bearerToken !== cronSecret && customHeader !== cronSecret) {
-      return NextResponse.json(
-        { error: 'Yetkisiz erişim: Geçersiz veya eksik CRON_SECRET anahtarı.' },
-        { status: 401 }
-      );
-    }
+  if (!isCronAuthorized(cronSecret, authHeader, customHeader)) {
+    return NextResponse.json(
+      { error: 'Yetkisiz erişim: Geçersiz veya eksik CRON_SECRET anahtarı.' },
+      { status: 401 }
+    );
   }
 
   try {

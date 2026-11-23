@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { adminRouteDecision } from '@/lib/security/admin-guard';
 
 interface CookieToSet {
   name: string;
@@ -18,6 +19,7 @@ export async function updateSession(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
   let user = null;
+  let profileRole: string | null = null;
 
   if (supabaseUrl && supabaseAnonKey && !supabaseUrl.includes('placeholder')) {
     try {
@@ -40,6 +42,15 @@ export async function updateSession(request: NextRequest) {
 
       const { data } = await supabase.auth.getUser();
       user = data?.user || null;
+
+      if (user && request.nextUrl.pathname.startsWith('/admin')) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .maybeSingle();
+        profileRole = profile?.role ?? null;
+      }
     } catch {
       user = null;
     }
@@ -68,7 +79,8 @@ export async function updateSession(request: NextRequest) {
       url.searchParams.set('redirect', path);
       return NextResponse.redirect(url);
     }
-    if (userRole && userRole !== 'super_admin' && userRole !== 'admin') {
+    // Rol, kullanıcının değiştirebildiği user_metadata'dan değil veritabanındaki profilden okunur
+    if (adminRouteDecision(true, profileRole) !== 'allow') {
       url.pathname = '/yetkisiz';
       return NextResponse.redirect(url);
     }

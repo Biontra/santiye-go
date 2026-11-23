@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/service-role';
 import crypto from 'crypto';
+import { verifyTotpCode } from '@/lib/security/totp';
 
 /**
  * SHA-256 Hash Helper for Replay Attack Prevention
@@ -9,36 +10,10 @@ function hashTwoFactorCode(adminId: string, code: string): string {
   return crypto.createHash('sha256').update(`${adminId}:${code.trim()}`).digest('hex');
 }
 
-/**
- * Server-Side TOTP Code Verification
- * Verifies 30-second time-step window (current, -1 step, +1 step).
- */
-function verifyTotpCode(code: string, secret: string): boolean {
-  if (!code || !secret) return false;
-  const cleanCode = code.trim();
-
-  // 1. Direct secret match (e.g. emergency static pin if configured)
-  if (cleanCode === secret.trim()) return true;
-
-  // 2. RFC 6238 Standard Time-based One Time Password (TOTP)
-  const epochStep = Math.floor(Date.now() / 30000);
-  for (const offset of [-1, 0, 1]) {
-    const step = epochStep + offset;
-    const stepBuffer = Buffer.alloc(8);
-    stepBuffer.writeBigInt64BE(BigInt(step));
-    const hmac = crypto.createHmac('sha1', Buffer.from(secret, 'utf-8')).update(stepBuffer).digest();
-    const codeInt = (hmac.readUInt32BE(hmac[hmac.length - 1] & 0x0f) & 0x7fffffff) % 1000000;
-    const expectedTotp = codeInt.toString().padStart(6, '0');
-    if (cleanCode === expectedTotp) return true;
-  }
-
-  return false;
-}
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { disputeId, action, notes, twoFactorCode, adminId: requestedAdminId } = body;
+    const { disputeId, action, notes, twoFactorCode } = body;
 
     if (!disputeId || !action || !notes || !twoFactorCode) {
       return NextResponse.json(
@@ -58,7 +33,8 @@ export async function POST(req: NextRequest) {
     const authHeader = req.headers.get('authorization');
     const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
 
-    let authenticatedAdminId = requestedAdminId;
+    // Yönetici kimliği YALNIZ doğrulanmış oturum jetonundan alınır (istek gövdesinden değil)
+    let authenticatedAdminId: string | null = null;
     let isAal2Verified = false;
 
     // 1. Sunucu Tarafı Yönetici Oturumu ve Rol Kontrolü
@@ -107,8 +83,9 @@ export async function POST(req: NextRequest) {
 
     // Veritabanı tabanlı yanlış deneme sınırı ve replay kontrolü
     // Yöneticiye özel secret (varsa profile/metadata, yoksa güvenli admin totp secret)
-    const adminSecret = process.env.ADMIN_2FA_SECRET || `admin-sec-${authenticatedAdminId.slice(0, 8)}`;
-    const isCodeMatch = isAal2Verified || verifyTotpCode(twoFactorCode, adminSecret);
+    // Tahmin edilebilir yedek anahtar yok: ADMIN_2FA_SECRET tanımlı değilse yalnız AAL2 oturumu geçerlidir
+    const adminSecret = process.env.ADMIN_2FA_SECRET;
+    const isCodeMatch = isAal2Verified || (!!adminSecret && verifyTotpCode(twoFactorCode, adminSecret));
 
     const { data: rateCheck, error: rateErr } = await serviceClient.rpc('check_and_record_admin_2fa', {
       p_admin_id: authenticatedAdminId,

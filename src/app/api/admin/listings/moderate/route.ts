@@ -1,10 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/server';
+import { createServiceRoleClient } from '@/lib/supabase/service-role';
+import { isAdminRole } from '@/lib/security/admin-guard';
 
 export async function POST(req: NextRequest) {
   try {
+    // 1. Kimlik: oturum çerezinden gerçek kullanıcı
+    const sessionClient = await createClient();
+    const {
+      data: { user },
+    } = await sessionClient.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Giriş yapılmamış.' }, { status: 401 });
+    }
+
+    // 2. Yetki: rol veritabanındaki profilden okunur (user_metadata'ya güvenilmez)
+    const serviceClient = createServiceRoleClient();
+    const { data: profile } = await serviceClient
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (!isAdminRole(profile?.role)) {
+      return NextResponse.json({ error: 'Bu işlem yalnız yöneticiler içindir.' }, { status: 403 });
+    }
+
     const body = await req.json();
-    const { listingId, action, reason } = body;
+    const { listingId, action } = body;
 
     if (!listingId || !action) {
       return NextResponse.json({ error: 'listingId ve action zorunludur' }, { status: 400 });
@@ -12,26 +36,13 @@ export async function POST(req: NextRequest) {
 
     const newStatus = action === 'approve' ? 'active' : 'inactive';
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+    const { error } = await serviceClient
+      .from('listings')
+      .update({ status: newStatus })
+      .eq('id', listingId);
 
-    // Service role key varsa en yüksek yetkiyle, yoksa anon key ile güncelle
-    const keyToUse = serviceRoleKey || anonKey;
-    if (supabaseUrl && keyToUse) {
-      const supabase = createClient(supabaseUrl, keyToUse, {
-        auth: { persistSession: false, autoRefreshToken: false },
-      });
-
-      const { data, error } = await supabase
-        .from('listings')
-        .update({ status: newStatus })
-        .eq('id', listingId)
-        .select('id, status');
-
-      if (error) {
-        console.warn('[api/admin/listings/moderate] DB Update error:', error.message);
-      }
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json({ success: true, status: newStatus });

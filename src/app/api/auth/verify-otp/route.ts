@@ -2,37 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { normalizeTurkishPhone } from '@/lib/services/sms-service';
 import { createClient } from '@/lib/supabase/server';
-
-function verifySignedOtpToken(
-  token: string,
-  enteredCode: string,
-  phone: string
-): { valid: boolean; reason?: string } {
-  try {
-    const secret = process.env.RESEND_API_KEY || 'santiye-go-secret-otp-signing-key';
-    const decoded = JSON.parse(Buffer.from(token, 'base64').toString('utf-8'));
-    const { payload, signature } = decoded;
-
-    const expectedSig = crypto.createHmac('sha256', secret).update(payload).digest('hex');
-    if (signature !== expectedSig) {
-      return { valid: false, reason: 'Geçersiz güvenlik imzası.' };
-    }
-
-    const data = JSON.parse(payload);
-    if (Date.now() > data.expiresAt) {
-      return { valid: false, reason: 'Doğrulama kodunun 5 dakikalık süresi doldu. Lütfen yeni kod isteyin.' };
-    }
-
-    const enteredHash = crypto.createHash('sha256').update(enteredCode.trim()).digest('hex');
-    if (enteredHash !== data.codeHash) {
-      return { valid: false, reason: 'Girdiğiniz 6 haneli kod hatalı.' };
-    }
-
-    return { valid: true };
-  } catch {
-    return { valid: false, reason: 'Doğrulama bilgisi okunamadı.' };
-  }
-}
+import { verifySignedOtpToken, getOtpSecret } from '@/lib/security/otp-token';
+import { checkRateLimit } from '@/lib/security/rate-limiter';
 
 export async function POST(req: NextRequest) {
   try {
@@ -59,13 +30,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Kod deneme sınırı: 6 haneli kodu deneyerek bulmayı engeller
+    const ip = (req.headers.get('x-forwarded-for') || 'unknown').split(',')[0].trim();
+    if (
+      !checkRateLimit(`otp-verify:${formatted}`, 5, 10 * 60 * 1000).allowed ||
+      !checkRateLimit(`otp-verify-ip:${ip}`, 20, 10 * 60 * 1000).allowed
+    ) {
+      return NextResponse.json(
+        { success: false, message: 'Çok fazla hatalı deneme. Lütfen yeni kod isteyin ve birkaç dakika bekleyin.' },
+        { status: 429 }
+      );
+    }
+
     let isVerified = false;
 
     // 1. İmzalı Token ile Doğrulama
     if (otpToken) {
-      const tokenCheck = verifySignedOtpToken(otpToken, code, formatted);
-      if (tokenCheck.valid) {
-        isVerified = true;
+      try {
+        const tokenCheck = verifySignedOtpToken(otpToken, code, formatted, getOtpSecret());
+        if (tokenCheck.valid) {
+          isVerified = true;
+        }
+      } catch {
+        // İmza anahtarı tanımlı değilse jetonla doğrulama yapılmaz
       }
     }
 
