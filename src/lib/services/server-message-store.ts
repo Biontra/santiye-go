@@ -54,10 +54,22 @@ export async function serverGetConversations(userId?: string): Promise<ServerCon
       .order('created_at', { ascending: false });
 
     if (fallbackQuery.error) {
-      console.error('[serverGetConversations] Fallback query error:', fallbackQuery.error);
-      throw new Error(`Konuşmalar yüklenirken veritabanı hatası oluştu: ${fallbackQuery.error.message}`);
+      // quote_request_id de yoksa (migration 03 uygulanmamışsa), en temel kolonlarla son yedek sorgu
+      console.warn('[serverGetConversations] quote_request_id ile sorgu da başarısız, minimum kolonlarla deneniyor:', fallbackQuery.error.message);
+      const finalFallbackQuery = await supabase
+        .from('conversations')
+        .select('id, buyer_id, company_id, listing_id, last_message_at, created_at, updated_at')
+        .eq('buyer_id', currentUserId)
+        .order('created_at', { ascending: false });
+
+      if (finalFallbackQuery.error) {
+        console.error('[serverGetConversations] Final fallback query error:', finalFallbackQuery.error);
+        throw new Error(`Konuşmalar yüklenirken veritabanı hatası oluştu: ${finalFallbackQuery.error.message}`);
+      }
+      convRows = finalFallbackQuery.data || [];
+    } else {
+      convRows = fallbackQuery.data || [];
     }
-    convRows = fallbackQuery.data || [];
   } else {
     convRows = queryWithSeller.data || [];
   }

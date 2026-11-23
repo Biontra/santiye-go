@@ -208,27 +208,30 @@ export default function MessagesClient() {
 
   // Load messages and check contact reveal status whenever active conversation changes
   useEffect(() => {
-    if (selectedConvId && activeConv && currentUserId) {
+    if (selectedConvId && currentUserId) {
       getMessages(selectedConvId).then((msgs) => {
         setMessages(msgs);
         markConversationAsRead(selectedConvId, currentUserId);
       });
 
-      setCheckingReveal(true);
-      checkRevealStatus(activeConv.buyer_id, activeConv.company_id).then((status) => {
-        if (status.revealed && status.details) {
-          setRevealedDetails(status.details);
-        } else {
-          setRevealedDetails(null);
-        }
-        setCheckingReveal(false);
-      });
+      const currentConv = conversations.find((c) => c.id === selectedConvId);
+      if (currentConv) {
+        setCheckingReveal(true);
+        checkRevealStatus(currentConv.buyer_id, currentConv.company_id).then((status) => {
+          if (status.revealed && status.details) {
+            setRevealedDetails(status.details);
+          } else {
+            setRevealedDetails(null);
+          }
+          setCheckingReveal(false);
+        });
+      }
 
       canRevealByPhoneNumber(currentUserId).then((res) => {
         setSoftQuota({ allowed: res.allowed, remaining: res.remainingDaily });
       });
     }
-  }, [selectedConvId, activeConv, currentUserId]);
+  }, [selectedConvId, currentUserId]);
 
   // Canlı Realtime ve bağlantı durumu izleme
   useEffect(() => {
@@ -888,6 +891,23 @@ export default function MessagesClient() {
                       className="p-1 rounded-lg text-slate-400 hover:text-red-600"
                     >
                       <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
+                {/* Inline Action Notice (Hata / Bilgilendirme) */}
+                {actionNotice && (
+                  <div className="px-4 py-2 bg-amber-50 border-t border-amber-200 text-amber-900 text-xs font-semibold flex items-center justify-between gap-2 animate-fade-in">
+                    <div className="flex items-center gap-1.5">
+                      <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                      <span>{actionNotice}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setActionNotice('')}
+                      className="text-amber-700 hover:text-amber-900 text-xs font-bold"
+                    >
+                      ✕
                     </button>
                   </div>
                 )}
