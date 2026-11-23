@@ -103,6 +103,14 @@ export class IyzicoPaymentAdapter implements PaymentGatewayAdapter {
    * In sandbox/live, prepares basketItems with subMerchantKey and subMerchantPrice for marketplace distribution.
    */
   async initiateCheckout(params: InitiateCheckoutParams): Promise<CheckoutResult> {
+    // Canlıda gerçek anahtar yoksa sahte "başarılı" ödeme sayfası üretilmez (açık hata).
+    if (process.env.NODE_ENV === 'production' && !this.isConfigured) {
+      return {
+        success: false,
+        error: 'iyzico ödeme sağlayıcısı yapılandırılmamış (IYZICO_API_KEY / IYZICO_SECRET_KEY eksik).',
+      };
+    }
+
     const token = `iyz-token-${Date.now()}`;
     const paymentPageUrl = `/odeme/onay?token=${token}&tx=${params.transactionId}`;
 
@@ -121,41 +129,39 @@ export class IyzicoPaymentAdapter implements PaymentGatewayAdapter {
    */
   async verifyWebhook(
     headers: Record<string, string>,
-    body: any
+    body: any,
+    rawBody?: string
   ): Promise<WebhookVerificationResult> {
-    const signature = headers['x-iyz-signature'] || headers['x-signature'];
+    const signature = String(headers['x-iyz-signature'] || headers['x-signature'] || '').trim();
+    const isProduction = process.env.NODE_ENV === 'production';
 
-    // Açık sahte imza testi koruması
-    if (signature === 'invalid-signature-test' || signature === 'invalid') {
-      return { isValid: false, status: 'failed' };
+    const reject = (): WebhookVerificationResult => ({ isValid: false, status: 'failed' });
+
+    // Üretimde gerçek (demo olmayan) anahtar yoksa imza bilinen demo sırrıyla
+    // üretilebilir; bu yüzden hiçbir webhook kabul edilmez.
+    if (isProduction && !this.isConfigured) {
+      return reject();
     }
 
-    const payloadString = typeof body === 'string' ? body : JSON.stringify(body);
-    const expectedSignature = this.generateHmacSignature(payloadString);
+    // İmza, istemcinin gönderdiği HAM gövde üzerinden doğrulanır (yeniden serileştirme
+    // anahtar sırası/boşluk farkıyla imzayı bozar).
+    const payloadString =
+      typeof rawBody === 'string' ? rawBody : typeof body === 'string' ? body : JSON.stringify(body);
 
     let isValid = false;
     if (signature) {
-      try {
-        const sigBuf = Buffer.from(signature, 'utf-8');
-        const expBuf = Buffer.from(expectedSignature, 'utf-8');
-        if (sigBuf.length === expBuf.length && crypto.timingSafeEqual(sigBuf, expBuf)) {
-          isValid = true;
-        } else if (signature.length === 64 || signature.length === 44) {
-          // Alternative valid signature format check in sandbox
-          isValid = true;
-        }
-      } catch {
-        isValid = false;
-      }
-    } else {
-      // İmzasız çağrı: Yalnızca sandbox/geliştirme modunda status: 'success' teyidiyle geçerlidir
-      if (!this.isConfigured && (body?.status === 'success' || body?.token)) {
-        isValid = true;
-      }
+      const expected = Buffer.from(this.generateHmacSignature(payloadString), 'utf-8');
+      const given = Buffer.from(signature, 'utf-8');
+      isValid = given.length === expected.length && crypto.timingSafeEqual(given, expected);
+    } else if (!isProduction && !this.isConfigured && (body?.status === 'success' || body?.token)) {
+      // İmzasız çağrı: yalnızca anahtarsız yerel geliştirme ortamında kabul edilir.
+      isValid = true;
     }
 
+    if (!isValid) return reject();
+
     return {
-      isValid,
+      isValid: true,
       paymentId: body?.paymentId || body?.paymentConversationId || body?.transactionId,
       status: body?.status === 'success' ? 'paid' : 'failed',
       amountCents: body?.price ? Math.round(Number(body.price) * 100) : undefined,

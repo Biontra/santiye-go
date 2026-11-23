@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Phone, ShieldCheck, AlertCircle, CheckCircle2, RotateCw, ArrowRight } from 'lucide-react';
-import { sendPhoneOtp, verifyPhoneOtp } from '@/lib/services/sms-service';
+import { sendPhoneOtp } from '@/lib/services/sms-service';
 import { markPhoneVerified } from '@/lib/services/auth-service';
 
 function PhoneVerificationForm() {
@@ -99,11 +99,8 @@ function PhoneVerificationForm() {
       const data = await res.json();
 
       if (!data.success) {
-        // Yedek RPC denemesi
-        const fallback = await verifyPhoneOtp(rawPhone, fullCode);
-        if (!fallback.success) {
-          throw new Error(data.message || fallback.message || 'Girdiğiniz onay kodu hatalı veya süresi dolmuş.');
-        }
+        // Doğrulama yalnızca sunucuda yapılır; tarayıcıdan RPC çağrısı artık yapılmaz.
+        throw new Error(data.message || 'Girdiğiniz onay kodu hatalı veya süresi dolmuş.');
       }
 
       await markPhoneVerified(rawPhone);

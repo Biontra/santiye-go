@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { createServiceRoleClient } from '@/lib/supabase/service-role';
 import { cronCheckAutoReleaseEscrow } from '@/lib/services/escrow-service';
+
+function safeEqual(a: string | null | undefined, b: string): boolean {
+  if (!a) return false;
+  const ab = Buffer.from(a, 'utf-8');
+  const bb = Buffer.from(b, 'utf-8');
+  return ab.length === bb.length && crypto.timingSafeEqual(ab, bb);
+}
 
 export async function GET(req: NextRequest) {
   return handleCronExecution(req);
@@ -16,9 +24,16 @@ async function handleCronExecution(req: NextRequest) {
   const authHeader = req.headers.get('authorization');
   const customHeader = req.headers.get('x-cron-secret');
 
-  if (cronSecret) {
+  // Gizli anahtar tanımlı değilse ÜRETİMDE istek reddedilir (fail-closed): aksi halde
+  // uç nokta herkese açık olur ve herkes escrow serbest bırakmayı tetikleyebilirdi.
+  if (!cronSecret) {
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[cron/escrow-auto-release] CRON_SECRET tanımlı değil; istek reddedildi.');
+      return NextResponse.json({ error: 'Cron yapılandırması eksik.' }, { status: 503 });
+    }
+  } else {
     const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
-    if (bearerToken !== cronSecret && customHeader !== cronSecret) {
+    if (!safeEqual(bearerToken, cronSecret) && !safeEqual(customHeader, cronSecret)) {
       return NextResponse.json(
         { error: 'Yetkisiz erişim: Geçersiz veya eksik CRON_SECRET anahtarı.' },
         { status: 401 }
@@ -64,6 +79,7 @@ async function handleCronExecution(req: NextRequest) {
       released_count: res.releasedCount || 0,
     });
   } catch (err: any) {
+    console.error('[cron/escrow-auto-release] error:', err);
     // 3. Hata durumunda admin uyarısı oluştur
     try {
       const supabase = createServiceRoleClient();
@@ -80,9 +96,6 @@ async function handleCronExecution(req: NextRequest) {
       // Silent error handler
     }
 
-    return NextResponse.json(
-      { error: err.message || 'Zamanlanmış Escrow görevi yürütülemedi.' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Zamanlanmış Escrow görevi yürütülemedi.' }, { status: 500 });
   }
 }

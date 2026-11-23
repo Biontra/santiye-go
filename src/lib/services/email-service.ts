@@ -27,6 +27,16 @@ const DISPOSABLE_EMAIL_DOMAINS = new Set([
   'mohmal.com',
 ]);
 
+/** Kullanıcı kaynaklı metni e-posta HTML'ine güvenle gömmek için kaçışlar. */
+export function escapeHtml(value: string): string {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 /**
  * Tek kullanımlık geçici e-posta alan adı denetimi
  */
@@ -247,7 +257,7 @@ export async function sendEmailOtp(
 ): Promise<EmailSendResult> {
   const title = `Doğrulama Kodunuz: ${code}`;
   const body = `
-    <p>Merhaba <strong>${name || 'Kullanıcımız'}</strong>,</p>
+    <p>Merhaba <strong>${escapeHtml((name || 'Kullanıcımız').slice(0, 80))}</strong>,</p>
     <p>Şantiye GO hesabınızı doğrulamak ve güvenle kullanmaya başlamak için aşağıdaki 6 haneli güvenlik kodunu kullanınız:</p>
     <div style="text-align: center; margin: 28px 0;">
       <span style="font-size: 32px; font-weight: 900; letter-spacing: 8px; color: #f97316; background: #fff7ed; padding: 14px 28px; border-radius: 12px; border: 2px dashed #f97316; display: inline-block;">

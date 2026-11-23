@@ -100,7 +100,7 @@ export interface PaymentGatewayAdapter {
   readonly providerName: string;
 
   initiateCheckout(params: InitiateCheckoutParams): Promise<CheckoutResult>;
-  verifyWebhook(headers: Record<string, string>, body: any): Promise<WebhookVerificationResult>;
+  verifyWebhook(headers: Record<string, string>, body: any, rawBody?: string): Promise<WebhookVerificationResult>;
   createSubMerchant(params: SubMerchantCreationParams): Promise<SubMerchantCreationResult>;
   approveTransferToSubMerchant(params: {
     paymentTransactionId: string;

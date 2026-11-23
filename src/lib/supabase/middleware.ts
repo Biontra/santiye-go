@@ -18,10 +18,11 @@ export async function updateSession(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
   let user = null;
+  let supabase: ReturnType<typeof createServerClient> | null = null;
 
   if (supabaseUrl && supabaseAnonKey && !supabaseUrl.includes('placeholder')) {
     try {
-      const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+      supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
         cookies: {
           getAll() {
             return request.cookies.getAll();
@@ -48,10 +49,15 @@ export async function updateSession(request: NextRequest) {
   const url = request.nextUrl.clone();
   const path = url.pathname;
 
-  // Security Headers Injection (permit iframe embedding in AI Studio preview)
+  // Security Headers Injection.
+  // Clickjacking koruması: üretimde yalnızca kendi alan adı çerçeveleyebilir. AI Studio gibi
+  // bir önizleme ortamında gömme gerekiyorsa CSP_FRAME_ANCESTORS ortam değişkeniyle
+  // (ör. "https://*.aistudio.google.com 'self'") açıkça izin verilir.
+  const frameAncestors =
+    process.env.CSP_FRAME_ANCESTORS || (process.env.NODE_ENV === 'production' ? "'self'" : '*');
   supabaseResponse.headers.set(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org; frame-ancestors *;"
+    `default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org; frame-ancestors ${frameAncestors};`
   );
   supabaseResponse.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
   supabaseResponse.headers.set('X-Content-Type-Options', 'nosniff');
@@ -59,7 +65,30 @@ export async function updateSession(request: NextRequest) {
   supabaseResponse.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)');
 
   const isAuthenticated = !!user;
-  const userRole = user?.user_metadata?.role as string | undefined;
+
+  // Rol YETKİ kararı için veritabanından okunur. user_metadata kullanıcı tarafından
+  // düzenlenebilir olduğundan (ör. supabase.auth.updateUser) güvenlik sınırı değildir.
+  const needsRole =
+    isAuthenticated &&
+    (path.startsWith('/admin') || path.startsWith('/firma-paneli') || path.startsWith('/alici-paneli'));
+  let userRole: string | undefined;
+  let isAdminUser = false;
+  if (needsRole && supabase && user) {
+    try {
+      const { data: adminFlag, error: adminErr } = await supabase.rpc('is_admin');
+      if (!adminErr) isAdminUser = adminFlag === true;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .maybeSingle();
+      userRole = (profile?.role as string | undefined) ?? undefined;
+      if (userRole === 'admin' || userRole === 'super_admin') isAdminUser = true;
+    } catch {
+      // Rol okunamazsa yönetici yetkisi VERİLMEZ (fail-closed).
+    }
+  }
 
   // Protect admin routes
   if (path.startsWith('/admin')) {
@@ -68,7 +97,7 @@ export async function updateSession(request: NextRequest) {
       url.searchParams.set('redirect', path);
       return NextResponse.redirect(url);
     }
-    if (userRole && userRole !== 'super_admin' && userRole !== 'admin') {
+    if (!isAdminUser) {
       url.pathname = '/yetkisiz';
       return NextResponse.redirect(url);
     }
