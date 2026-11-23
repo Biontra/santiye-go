@@ -58,12 +58,8 @@ export async function updateSession(request: NextRequest) {
   supabaseResponse.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   supabaseResponse.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)');
 
-  const hasAuthCookie =
-    request.cookies.get('santiyego_auth')?.value === 'true' ||
-    request.cookies.getAll().some((c) => c.name.includes('sb-') && c.name.includes('-auth-token'));
-
-  const isAuthenticated = !!user || hasAuthCookie;
-  const userRole = request.cookies.get('santiyego_role')?.value || user?.user_metadata?.role;
+  const isAuthenticated = !!user;
+  const userRole = user?.user_metadata?.role as string | undefined;
 
   // Protect admin routes
   if (path.startsWith('/admin')) {
