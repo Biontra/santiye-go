@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import PushNotificationManager from '@/components/pwa/PushNotificationManager';
 import {
   Coins,
   ShieldCheck,
@@ -12,7 +13,6 @@ import {
   TrendingUp,
   Receipt,
   FileQuestion,
-  Bell,
   RefreshCw,
   Sparkles,
   Zap,
@@ -45,12 +45,6 @@ export default function CompanyCreditsPage() {
   const [purchasing, setPurchasing] = useState(false);
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
   const [purchaseError, setPurchaseError] = useState('');
-
-  // Notification Preferences State
-  const [notifEmail, setNotifEmail] = useState(true);
-  const [notifPush, setNotifPush] = useState(true);
-  const [quietHours, setQuietHours] = useState(false);
-  const [notifSaved, setNotifSaved] = useState(false);
 
   const DEMO_COMPANY_ID = 'f0000000-0000-0000-0000-000000000001';
 
@@ -102,12 +96,6 @@ export default function CompanyCreditsPage() {
     } else {
       setPurchaseError(res.error || 'Ödeme tamamlanamadı.');
     }
-  };
-
-  const handleSaveNotifs = (e: React.FormEvent) => {
-    e.preventDefault();
-    setNotifSaved(true);
-    setTimeout(() => setNotifSaved(false), 3000);
   };
 
   return (
@@ -466,70 +454,8 @@ export default function CompanyCreditsPage() {
           )}
         </div>
 
-        {/* Notification Preferences */}
-        <form
-          onSubmit={handleSaveNotifs}
-          className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4"
-        >
-          <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
-            <div>
-              <h2 className="text-base font-black text-navy-900 flex items-center gap-2">
-                <Bell className="w-4 h-4 text-orange-500" />
-                Yeni Talep Bildirim Tercihleri
-              </h2>
-              <p className="text-xs text-slate-500">
-                Bölgenizde yeni bir iş makinesi talebi açıldığında anında haberdar olun (hızlı teklif verip slot kapın).
-              </p>
-            </div>
-            {notifSaved && (
-              <span className="text-xs text-emerald-600 font-bold flex items-center gap-1">
-                <CheckCircle2 className="w-4 h-4" />
-                Tercihler Kaydedildi
-              </span>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-            <label className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={notifEmail}
-                onChange={(e) => setNotifEmail(e.target.checked)}
-                className="rounded text-orange-600 w-4 h-4"
-              />
-              <span className="font-bold text-slate-800">E-Posta Bildirimi</span>
-            </label>
-
-            <label className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={notifPush}
-                onChange={(e) => setNotifPush(e.target.checked)}
-                className="rounded text-orange-600 w-4 h-4"
-              />
-              <span className="font-bold text-slate-800">Uygulama / Tarayıcı Bildirimi</span>
-            </label>
-
-            <label className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={quietHours}
-                onChange={(e) => setQuietHours(e.target.checked)}
-                className="rounded text-orange-600 w-4 h-4"
-              />
-              <span className="font-bold text-slate-800">Gece Sessiz Saatler (22:00 - 08:00)</span>
-            </label>
-          </div>
-
-          <div className="flex justify-end pt-2">
-            <button
-              type="submit"
-              className="px-5 py-2 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-bold text-xs transition"
-            >
-              Tercihleri Kaydet
-            </button>
-          </div>
-        </form>
+        {/* Bildirim tercihleri: gerçek web push aboneliği */}
+        <PushNotificationManager />
 
         {/* Purchase Confirmation Modal (Test / Sandbox iyzico) */}
         {selectedPkg && (

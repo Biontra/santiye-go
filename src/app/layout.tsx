@@ -24,7 +24,12 @@ export const metadata: Metadata = {
   },
   manifest: '/manifest.json',
   icons: {
-    icon: '/favicon.ico',
+    icon: [
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-192.svg', type: 'image/svg+xml' },
+    ],
+    // iOS ana ekran simgesi SVG'yi desteklemez; push bildirimleri için uygulamanın ana ekrana eklenmesi gerekir
+    apple: '/apple-touch-icon.png',
   },
 };
 

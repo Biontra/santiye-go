@@ -24,9 +24,14 @@ import { Profile, Notification } from '@/types/database';
 import { getActiveProfile, logoutUser } from '@/lib/services/auth-service';
 import {
   getUserNotifications,
+  getUnreadNotificationCount,
   markNotificationAsRead,
   markAllNotificationsAsRead,
+  subscribeToNotifications,
+  onNotificationsChanged,
 } from '@/lib/services/notification-service';
+import { disablePush } from '@/lib/push/client';
+import { safeInternalPath } from '@/lib/push/shared';
 import { getConversations } from '@/lib/services/message-service';
 
 export default function Header() {
@@ -34,6 +39,7 @@ export default function Header() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
   const [unreadMessagesCount, setUnreadMessagesCount] = useState<number>(0);
   const [notifDropdownOpen, setNotifDropdownOpen] = useState(false);
 
@@ -45,8 +51,10 @@ export default function Header() {
         const activeProfile = await getActiveProfile();
         if (activeProfile) {
           setProfile(activeProfile);
-          const userNotifs = await getUserNotifications(activeProfile.id);
+          const userNotifs = await getUserNotifications(activeProfile.id, 15);
           setNotifications(userNotifs);
+          const initialUnread = await getUnreadNotificationCount(activeProfile.id);
+          if (initialUnread !== null) setUnreadCount(initialUnread);
 
           // Okunmamış mesaj sayısını getir
           try {
@@ -57,37 +65,65 @@ export default function Header() {
         } else {
           setProfile(null);
           setNotifications([]);
+          setUnreadCount(0);
           setUnreadMessagesCount(0);
         }
       } catch {
         setProfile(null);
         setNotifications([]);
+        setUnreadCount(0);
         setUnreadMessagesCount(0);
       }
     }
     checkAuth();
   }, []);
 
-  // Periyodik okunmamış mesaj ve bildirim sayacı senkronizasyonu (30 sn)
+  // Bildirim + mesaj sayaçlarını yenile
   useEffect(() => {
     if (!profile?.id) return;
-    const interval = setInterval(async () => {
-      try {
-        const convs = await getConversations(profile.id);
-        const totalUnread = convs.reduce((acc, c) => acc + (c.unread_count || 0), 0);
-        setUnreadMessagesCount(totalUnread);
-        const notifs = await getUserNotifications(profile.id);
-        setNotifications(notifs);
-      } catch {}
-    }, 30000);
-    return () => clearInterval(interval);
+    const userId = profile.id;
+    let cancelled = false;
+
+    // Üç kaynak birbirinden bağımsız: konuşmalar uç noktası hata verse bile bildirimler güncellenir
+    const refresh = async () => {
+      const [convs, notifs, unread] = await Promise.allSettled([
+        getConversations(userId),
+        getUserNotifications(userId, 15),
+        getUnreadNotificationCount(userId),
+      ]);
+      if (cancelled) return;
+      if (convs.status === 'fulfilled') {
+        setUnreadMessagesCount(convs.value.reduce((acc, c) => acc + (c.unread_count || 0), 0));
+      }
+      if (notifs.status === 'fulfilled') setNotifications(notifs.value);
+      if (unread.status === 'fulfilled' && unread.value !== null) setUnreadCount(unread.value);
+    };
+
+    // Canlı: yeni bildirim / okundu değişikliği anında yansır
+    const unsubscribe = subscribeToNotifications(userId, refresh);
+    // Aynı sekmede (örn. /bildirimler sayfasında) okundu yapılınca zil de hemen güncellensin
+    const stopLocal = onNotificationsChanged(refresh);
+    // Yedek: realtime kopsa bile 60 sn'de bir yenile; sekmeye dönünce hemen yenile
+    const interval = setInterval(refresh, 60000);
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') refresh();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+
+    return () => {
+      cancelled = true;
+      unsubscribe();
+      stopLocal();
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
   }, [profile?.id]);
 
-  const unreadNotifsCount = profile ? notifications.filter((n) => !n.is_read).length : 0;
+  const unreadNotifsCount = profile ? unreadCount : 0;
 
   const handleNotifClick = () => {
     if (!profile) {
-      router.push('/giris?redirect=/alici-paneli');
+      router.push('/giris?redirect=/bildirimler');
       return;
     }
     setNotifDropdownOpen(!notifDropdownOpen);
@@ -97,11 +133,13 @@ export default function Header() {
     if (profile?.id) {
       await markAllNotificationsAsRead(profile.id);
       setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
+      setUnreadCount(0);
     }
   };
 
   const handleNotificationClick = async (notif: Notification) => {
     await markNotificationAsRead(notif.id);
+    if (!notif.is_read) setUnreadCount((c) => Math.max(0, c - 1));
     setNotifications((prev) =>
       prev.map((n) => (n.id === notif.id ? { ...n, is_read: true } : n))
     );
@@ -109,6 +147,8 @@ export default function Header() {
   };
 
   const handleSignOut = async () => {
+    // Oturum kapanmadan önce bu cihazın push aboneliğini kaldır (en fazla 2,5 sn beklenir)
+    await Promise.race([disablePush(), new Promise((resolve) => setTimeout(resolve, 2500))]);
     await logoutUser();
     setProfile(null);
     window.location.href = '/';
@@ -208,14 +248,14 @@ export default function Header() {
                 <Bell className="w-5 h-5" />
                 {unreadNotifsCount > 0 && (
                   <span className="absolute top-1 right-1 px-1.5 py-0.2 rounded-full bg-orange-500 text-white text-[9px] font-black">
-                    {unreadNotifsCount}
+                    {unreadNotifsCount > 9 ? '9+' : unreadNotifsCount}
                   </span>
                 )}
               </button>
 
               {/* Notification Popover */}
               {profile && notifDropdownOpen && (
-                <div className="absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden text-navy-900 z-50 animate-in fade-in zoom-in-95">
+                <div className="absolute right-0 top-12 w-80 max-w-[calc(100vw-1.5rem)] bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden text-navy-900 z-50 animate-in fade-in zoom-in-95">
                   <div className="p-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
                     <span className="text-xs font-black uppercase text-navy-900">
                       Bildirimler ({unreadNotifsCount} Yeni)
@@ -241,7 +281,7 @@ export default function Header() {
                       notifications.map((n) => (
                         <Link
                           key={n.id}
-                          href={n.link_url || '#'}
+                          href={safeInternalPath(n.link_url)}
                           onClick={() => handleNotificationClick(n)}
                           className={`block p-3 hover:bg-slate-50 transition text-xs ${
                             !n.is_read ? 'bg-orange-50/50' : ''
@@ -263,6 +303,13 @@ export default function Header() {
                       ))
                     )}
                   </div>
+                  <Link
+                    href="/bildirimler"
+                    onClick={() => setNotifDropdownOpen(false)}
+                    className="block p-2.5 text-center text-[11px] font-bold text-orange-600 hover:bg-slate-50 border-t border-slate-100"
+                  >
+                    Tüm bildirimleri gör
+                  </Link>
                 </div>
               )}
             </div>
