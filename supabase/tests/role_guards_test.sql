@@ -25,7 +25,7 @@ CREATE TABLE public.admin_users (id uuid PRIMARY KEY, is_active boolean DEFAULT 
 CREATE TABLE public.companies (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid, name text,
   is_verified boolean DEFAULT false, verification_status public.verification_status DEFAULT 'unverified',
-  verified_at timestamptz, verified_by uuid);
+  verified_at timestamptz, verified_by uuid, credit_balance int DEFAULT 0);
 
 CREATE OR REPLACE FUNCTION public.is_admin() RETURNS boolean LANGUAGE sql SECURITY DEFINER SET search_path = public STABLE AS $$
   SELECT EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid() AND is_active = true)
@@ -114,5 +114,37 @@ UPDATE public.companies SET is_verified = false, verification_status = 'pending'
 RESET ROLE;
 SELECT public.t_assert((SELECT is_verified AND verification_status = 'approved' FROM public.companies WHERE id = '00000000-0000-0000-0000-0000000000c1'),
   'onayli firmanin onay alanlari tarayicidan degismez');
+
+-- 7) Firma tarayıcıdan kendi kredi bakiyesini artıramaz
+SET test.uid = '00000000-0000-0000-0000-000000000002';
+SET ROLE authenticated;
+UPDATE public.companies SET credit_balance = 9999 WHERE id = '00000000-0000-0000-0000-0000000000c1';
+RESET ROLE;
+SELECT public.t_assert((SELECT credit_balance = 0 FROM public.companies WHERE id = '00000000-0000-0000-0000-0000000000c1'),
+  'firma kredi bakiyesini artiramaz');
+
+-- 8) Yönetici kredi yükleyebilir; firma harcayabilir (bakiye düşer) ama geri yükseltemez
+SET test.uid = '00000000-0000-0000-0000-0000000000aa';
+SET ROLE authenticated;
+UPDATE public.companies SET credit_balance = 10 WHERE id = '00000000-0000-0000-0000-0000000000c1';
+RESET ROLE;
+SELECT public.t_assert((SELECT credit_balance = 10 FROM public.companies WHERE id = '00000000-0000-0000-0000-0000000000c1'),
+  'yonetici kredi yukleyebilir');
+
+SET test.uid = '00000000-0000-0000-0000-000000000002';
+SET ROLE authenticated;
+UPDATE public.companies SET credit_balance = 9 WHERE id = '00000000-0000-0000-0000-0000000000c1';
+UPDATE public.companies SET credit_balance = 10 WHERE id = '00000000-0000-0000-0000-0000000000c1';
+RESET ROLE;
+SELECT public.t_assert((SELECT credit_balance = 9 FROM public.companies WHERE id = '00000000-0000-0000-0000-0000000000c1'),
+  'firma kredi harcayabilir ama geri yukseltemez');
+
+-- 9) Yeni firma krediyle açılamaz
+SET ROLE authenticated;
+INSERT INTO public.companies (id, user_id, name, credit_balance)
+  VALUES ('00000000-0000-0000-0000-0000000000c2', '00000000-0000-0000-0000-000000000002', 'Firma 2', 500);
+RESET ROLE;
+SELECT public.t_assert((SELECT credit_balance = 0 FROM public.companies WHERE id = '00000000-0000-0000-0000-0000000000c2'),
+  'yeni firma krediyle acilamaz');
 
 SELECT 'TUM TESTLER GECTI' AS sonuc;

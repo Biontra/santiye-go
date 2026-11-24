@@ -4,6 +4,7 @@
 --   1) Kayıt olurken gönderilen veriyle (user_metadata.role) admin/super_admin olunabiliyordu.
 --   2) Kullanıcı kendi profil satırında role alanını değiştirebiliyordu.
 --   3) Firma sahibi kendi firmasını is_verified / verification_status ile "onaylı" yapabiliyordu.
+--   4) Firma sahibi kendi kredi bakiyesini (credit_balance) istediği sayıya çekebiliyordu.
 --
 -- Kural: bu alanları yalnız şunlar değiştirebilir
 --   - service_role (sunucu, scripts/setup-admin.ts),
@@ -88,8 +89,46 @@ CREATE TRIGGER trg_guard_company_verification
   BEFORE INSERT OR UPDATE ON public.companies
   FOR EACH ROW EXECUTE FUNCTION public.guard_company_verification();
 
+-- ---------- companies: kredi bakiyesi ----------
+-- Firma sahibi kendi satırını güncelleyebildiği için bakiyesini de istediği sayıya çekebiliyordu.
+-- Tarayıcıdan gelen istek bakiyeyi ARTIRAMAZ; düşürebilir (teklif verirken kredi harcama bozulmasın diye).
+-- Kredi yüklemeyi yalnız sunucu (service_role), SQL editörü ya da oturumu açık yönetici yapar.
+-- credit_balance sütunu yoksa (12 numaralı migration çalışmamışsa) bu bölüm atlanır.
+DO $do$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns
+             WHERE table_schema = 'public' AND table_name = 'companies' AND column_name = 'credit_balance') THEN
+    CREATE OR REPLACE FUNCTION public.guard_company_credit()
+    RETURNS trigger
+    LANGUAGE plpgsql
+    AS $fn$
+    BEGIN
+      IF NOT public.is_untrusted_client() THEN
+        RETURN NEW;
+      END IF;
+      IF TG_OP = 'INSERT' THEN
+        NEW.credit_balance := 0;
+      ELSIF COALESCE(NEW.credit_balance, 0) > COALESCE(OLD.credit_balance, 0) THEN
+        NEW.credit_balance := OLD.credit_balance;
+      END IF;
+      RETURN NEW;
+    END;
+    $fn$;
+
+    DROP TRIGGER IF EXISTS trg_guard_company_credit ON public.companies;
+    CREATE TRIGGER trg_guard_company_credit
+      BEFORE INSERT OR UPDATE ON public.companies
+      FOR EACH ROW EXECUTE FUNCTION public.guard_company_credit();
+  END IF;
+END
+$do$;
+
 -- ---------- Denetim sorgusu (elle çalıştırın) ----------
 -- Açık kapanmadan önce kendini yönetici yapmış hesap var mı diye bakın:
 --   SELECT p.id, u.email, p.role, p.created_at
 --   FROM public.profiles p JOIN auth.users u ON u.id = p.id
 --   WHERE p.role IN ('admin', 'super_admin') ORDER BY p.created_at;
+-- Bakiyesi şüpheli firmalar (defterdeki toplamla uyuşmayanlar):
+--   SELECT c.id, c.name, c.credit_balance, COALESCE(SUM(l.amount), 0) AS defter_toplami
+--   FROM public.companies c LEFT JOIN public.company_credit_ledgers l ON l.company_id = c.id
+--   GROUP BY c.id HAVING c.credit_balance <> COALESCE(SUM(l.amount), 0);
