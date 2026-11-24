@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { serverSendMessage } from '@/lib/services/server-message-store';
 import { sendMessageNotificationEmail } from '@/lib/services/email-service';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceRoleClient } from '@/lib/supabase/service-role';
 
 export async function POST(request: NextRequest) {
   try {
@@ -46,7 +47,9 @@ export async function POST(request: NextRequest) {
 
         // Alıcının e-posta adresini profiles / auth tablosundan çek
         if (recipientUserId) {
-          const { data: recProfile } = await supabase
+          // Karşı tarafın profili ve e-postası yalnızca sunucuda (service_role) okunur.
+          const admin = createServiceRoleClient();
+          const { data: recProfile } = await admin
             .from('profiles')
             .select('id, full_name, is_email_verified')
             .eq('id', recipientUserId)
@@ -55,7 +58,7 @@ export async function POST(request: NextRequest) {
           const recipientName = recProfile?.full_name || 'Kullanıcımız';
 
           // Eğer auth'tan e-posta varsa gönder
-          const { data: authUser } = await supabase.auth.admin.getUserById(recipientUserId).catch(() => ({ data: { user: null } }));
+          const { data: authUser } = await admin.auth.admin.getUserById(recipientUserId).catch(() => ({ data: { user: null } }));
           const targetEmail = authUser?.user?.email;
 
           if (targetEmail && recProfile?.is_email_verified) {

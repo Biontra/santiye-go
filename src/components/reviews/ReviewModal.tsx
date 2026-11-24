@@ -45,7 +45,6 @@ export default function ReviewModal({
     const res = await addReview({
       company_id: companyId,
       listing_id: listingId,
-      buyer_id: 'buyer-demo-001',
       rating_quality: qualityRating,
       rating_timing: timingRating,
       rating_communication: commRating,

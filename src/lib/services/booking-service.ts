@@ -1,9 +1,9 @@
 import { createClient } from '@/lib/supabase/client';
 import { Booking, Listing } from '@/types/database';
 import { DEMO_LISTINGS } from '@/lib/mock-data';
-import { checkDateRangeAvailable, setBatchAvailability } from './calendar-service';
+import { checkDateRangeAvailable } from './calendar-service';
 import { sanitizeContent } from '@/lib/security/contact-masker';
-import { triggerControlledReveal } from './reveal-service';
+import { isDemoFallbackAllowed, isSupabaseConfigured } from '@/lib/config/runtime';
 
 export interface BookingWithDetails extends Booking {
   listing?: Listing;
@@ -63,6 +63,31 @@ export const DEMO_BOOKINGS: BookingWithDetails[] = [
   },
 ];
 
+type BookingResult = { success: boolean; error?: string };
+
+/** Veritabanı satırını ekranların beklediği alanlarla zenginleştirir. */
+function mapBookingRow(row: any): BookingWithDetails {
+  const totalDays = Number(row.total_days) || 1;
+  const agreed = Number(row.agreed_price) || 0;
+  return {
+    ...row,
+    total_price: agreed,
+    daily_price_applied: totalDays > 0 ? Math.round(agreed / totalDays) : agreed,
+    operator_included: row.is_operator_included ?? false,
+    fuel_included: row.is_fuel_included ?? false,
+    transport_included: row.is_transport_included ?? false,
+    buyer_name: row.buyer?.full_name || row.buyer_name || undefined,
+    company_name: row.company?.name || row.company_name || undefined,
+  };
+}
+
+function friendlyDbError(message?: string): string {
+  if (!message) return 'İşlem gerçekleştirilemedi. Lütfen tekrar deneyin.';
+  // Veritabanı korumalarının Türkçe mesajlarını olduğu gibi göster.
+  if (/[ğüşıöçĞÜŞİÖÇ]/.test(message)) return message;
+  return 'İşlem gerçekleştirilemedi. Lütfen tekrar deneyin.';
+}
+
 export async function createBookingRequest(data: {
   listing_id: string;
   buyer_id?: string;
@@ -78,22 +103,65 @@ export async function createBookingRequest(data: {
   site_address: string;
   notes?: string;
 }): Promise<{ success: boolean; booking?: BookingWithDetails; error?: string }> {
-  // 1. Conflict Check
-  const conflict = await checkDateRangeAvailable(
-    data.listing_id,
-    data.start_date,
-    data.end_date,
-    data.quantity || 1
-  );
+  if (!data.start_date || !data.end_date || data.end_date < data.start_date) {
+    return { success: false, error: 'Lütfen geçerli bir başlangıç ve bitiş tarihi seçiniz.' };
+  }
 
+  const sanitizedNotes = data.notes ? sanitizeContent(data.notes).maskedText : null;
+  const sanitizedAddress = data.site_address ? sanitizeContent(data.site_address).maskedText : null;
+  const totalDays =
+    Math.round(
+      (new Date(data.end_date).getTime() - new Date(data.start_date).getTime()) / 86400000
+    ) + 1;
+
+  if (isSupabaseConfigured()) {
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      // Çakışma ve kapalı gün kontrolü veritabanında (bookings_guard tetikleyicisi) da yapılır.
+      const { data: dbData, error } = await supabase
+        .from('bookings')
+        .insert({
+          buyer_id: user.id,
+          company_id: data.company_id,
+          listing_id: data.listing_id,
+          start_date: data.start_date,
+          end_date: data.end_date,
+          total_days: totalDays,
+          quantity: data.quantity || 1,
+          agreed_price: data.total_price,
+          currency: 'TRY',
+          is_operator_included: data.operator_included,
+          is_fuel_included: data.fuel_included,
+          is_transport_included: data.transport_included,
+          site_address: sanitizedAddress,
+          notes: sanitizedNotes,
+        })
+        .select()
+        .single();
+
+      if (error || !dbData) {
+        return { success: false, error: friendlyDbError(error?.message) };
+      }
+      return { success: true, booking: mapBookingRow(dbData) };
+    }
+
+    if (!isDemoFallbackAllowed()) {
+      return { success: false, error: 'Rezervasyon talebi göndermek için giriş yapmalısınız.' };
+    }
+  }
+
+  // ---------------- YEREL DEMO MODU ----------------
+  const conflict = await checkDateRangeAvailable(data.listing_id, data.start_date, data.end_date);
   if (!conflict.available) {
     return {
       success: false,
       error: `Seçilen tarihler arasında (${conflict.conflictDate}) makine müsait değildir. Lütfen takvimdeki müsait günleri seçiniz.`,
     };
   }
-
-  const sanitizedNotes = data.notes ? sanitizeContent(data.notes).maskedText : null;
 
   const newBooking: BookingWithDetails = {
     id: `book-${Date.now()}`,
@@ -103,16 +171,18 @@ export async function createBookingRequest(data: {
     start_date: data.start_date,
     end_date: data.end_date,
     quantity: data.quantity || 1,
+    total_days: totalDays,
     daily_price_applied: data.daily_price_applied,
     total_price: data.total_price,
+    agreed_price: data.total_price,
     currency: 'TRY',
     status: 'pending',
     operator_included: data.operator_included,
     fuel_included: data.fuel_included,
     transport_included: data.transport_included,
-    site_address: data.site_address,
+    site_address: sanitizedAddress,
     notes: sanitizedNotes,
-    expires_at: new Date(Date.now() + 48 * 3600000).toISOString(), // 48 hours auto-expiration
+    expires_at: new Date(Date.now() + 48 * 3600000).toISOString(),
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     is_demo: true,
@@ -120,165 +190,103 @@ export async function createBookingRequest(data: {
     buyer_name: 'Ahmet Yılmaz (Müteahhit)',
     company_name: '[DEMO] Anadolu İş Makineleri Parkı',
   };
-
-  try {
-    const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-    if (isSupabaseConfigured) {
-      const { data: dbData, error } = await supabase
-        .from('bookings')
-        .insert({
-          ...newBooking,
-          listing: undefined,
-          buyer_name: undefined,
-          company_name: undefined,
-        })
-        .select()
-        .single();
-
-      if (!error && dbData) {
-        return { success: true, booking: dbData as any };
-      }
-    }
-  } catch {
-    // fallback
-  }
-
   DEMO_BOOKINGS.unshift(newBooking);
   return { success: true, booking: newBooking };
 }
 
 export async function getBuyerBookings(buyerId?: string): Promise<BookingWithDetails[]> {
-  if (!buyerId) {
+  if (isSupabaseConfigured()) {
     const db = createClient();
-    const { data: { user } } = await db.auth.getUser();
-    if (!user) return [];
-    const { data, error } = await db.from('bookings')
-      .select('*,listing:listings(*),company:companies(name)').eq('buyer_id',user.id)
-      .order('created_at',{ascending:false});
-    if (error) throw new Error(error.message);
-    return (data || []).map(row=>({...row,company_name:row.company?.name}));
+    const {
+      data: { user },
+    } = await db.auth.getUser();
+    if (user) {
+      const { data, error } = await db
+        .from('bookings')
+        .select('*, listing:listings(*), company:companies(name)')
+        .eq('buyer_id', user.id)
+        .order('created_at', { ascending: false });
+      if (error) throw new Error(error.message);
+      return (data || []).map(mapBookingRow);
+    }
+    if (!isDemoFallbackAllowed()) return [];
   }
   checkAutoExpiration();
-  return DEMO_BOOKINGS.filter((b) => b.buyer_id === buyerId);
+  return buyerId ? DEMO_BOOKINGS.filter((b) => b.buyer_id === buyerId) : DEMO_BOOKINGS;
 }
 
 export async function getCompanyBookings(companyId: string): Promise<BookingWithDetails[]> {
-  try {
+  if (isSupabaseConfigured()) {
     const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
+    const { data, error } = await supabase
+      .from('bookings')
+      .select('*, listing:listings(*)')
+      .eq('company_id', companyId)
+      .order('created_at', { ascending: false });
 
-    if (isSupabaseConfigured) {
-      const { data, error } = await supabase
-        .from('bookings')
-        .select(`
-          *,
-          listing:listings(*),
-          buyer:profiles!bookings_buyer_id_fkey(full_name, phone)
-        `)
-        .eq('company_id', companyId)
-        .order('created_at', { ascending: false });
-
-      if (!error && data) {
-        return data.map((b: any) => ({
-          ...b,
-          buyer_name: b.buyer?.full_name || 'Alıcı / Müteahhit',
-        })) as BookingWithDetails[];
-      }
+    if (error) throw new Error(error.message);
+    const buyerIds = Array.from(new Set((data || []).map((b: any) => b.buyer_id).filter(Boolean)));
+    const names = new Map<string, string>();
+    if (buyerIds.length > 0) {
+      const { data: nameRows } = await supabase.rpc('get_profile_names', { p_ids: buyerIds });
+      (nameRows || []).forEach((r: any) => names.set(r.id, r.full_name));
     }
-  } catch {
-    // fallback
+    return (data || []).map((b: any) => ({
+      ...mapBookingRow(b),
+      buyer_name: names.get(b.buyer_id) || 'Alıcı / Müteahhit',
+    }));
   }
 
-  return [];
+  checkAutoExpiration();
+  return DEMO_BOOKINGS.filter((b) => b.company_id === companyId);
 }
 
-export async function approveBooking(bookingId: string): Promise<{ success: boolean }> {
-  try {
+/**
+ * Durum değişikliği. Yetki ve geçiş kuralları veritabanında (bookings_guard) uygulanır;
+ * onayda takvim doldurma ve iletişim açılışı da veritabanı tetikleyicileriyle yapılır.
+ */
+async function updateBookingStatus(
+  bookingId: string,
+  status: 'approved' | 'rejected' | 'cancelled',
+  rejectionReason?: string
+): Promise<BookingResult> {
+  if (isSupabaseConfigured()) {
     const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-    if (isSupabaseConfigured) {
-      const { data: dbBooking } = await supabase
-        .from('bookings')
-        .select('*')
-        .eq('id', bookingId)
-        .maybeSingle();
-
-      if (dbBooking) {
-        await supabase
-          .from('bookings')
-          .update({ status: 'approved', updated_at: new Date().toISOString() })
-          .eq('id', bookingId);
-
-        // Prompt 9A: Trigger controlled contact reveal on offer/booking approval
-        await triggerControlledReveal({
-          buyerId: dbBooking.buyer_id,
-          companyId: dbBooking.company_id,
-          bookingId: dbBooking.id,
-          triggerType: 'teklif_kabul',
-        });
-      }
+    const patch: Record<string, unknown> = { status };
+    if (status === 'rejected' && rejectionReason) {
+      patch.rejection_reason = sanitizeContent(rejectionReason).maskedText;
     }
-  } catch {
-    // fallback
+    const { data, error } = await supabase
+      .from('bookings')
+      .update(patch)
+      .eq('id', bookingId)
+      .select('id')
+      .maybeSingle();
+
+    if (error) return { success: false, error: friendlyDbError(error.message) };
+    if (data) return { success: true };
+    if (!isDemoFallbackAllowed()) {
+      return { success: false, error: 'Rezervasyon bulunamadı veya bu işlem için yetkiniz yok.' };
+    }
   }
 
   const booking = DEMO_BOOKINGS.find((b) => b.id === bookingId);
-  if (booking) {
-    booking.status = 'approved';
-    booking.updated_at = new Date().toISOString();
-
-    // Trigger controlled reveal for demo / in-memory store
-    await triggerControlledReveal({
-      buyerId: booking.buyer_id,
-      companyId: booking.company_id,
-      bookingId: booking.id,
-      triggerType: 'teklif_kabul',
-    });
-
-    // Automatically fill the availability calendar for the booked dates
-    const start = new Date(booking.start_date);
-    const end = new Date(booking.end_date);
-    const dates: string[] = [];
-    const curr = new Date(start);
-    while (curr <= end) {
-      dates.push(curr.toISOString().split('T')[0]);
-      curr.setDate(curr.getDate() + 1);
-    }
-    await setBatchAvailability(
-      booking.listing_id,
-      dates,
-      'booked',
-      `Rezervasyon: ${booking.buyer_name}`
-    );
-  }
+  if (!booking) return { success: false, error: 'Rezervasyon bulunamadı.' };
+  booking.status = status;
+  booking.updated_at = new Date().toISOString();
   return { success: true };
 }
 
-export async function rejectBooking(bookingId: string): Promise<{ success: boolean }> {
-  const booking = DEMO_BOOKINGS.find((b) => b.id === bookingId);
-  if (booking) {
-    booking.status = 'rejected';
-    booking.updated_at = new Date().toISOString();
-  }
-  return { success: true };
+export function approveBooking(bookingId: string): Promise<BookingResult> {
+  return updateBookingStatus(bookingId, 'approved');
 }
 
-export async function cancelBooking(bookingId: string): Promise<{ success: boolean }> {
-  const booking = DEMO_BOOKINGS.find((b) => b.id === bookingId);
-  if (booking) {
-    booking.status = 'cancelled';
-    booking.updated_at = new Date().toISOString();
-  }
-  return { success: true };
+export function rejectBooking(bookingId: string, reason?: string): Promise<BookingResult> {
+  return updateBookingStatus(bookingId, 'rejected', reason);
+}
+
+export function cancelBooking(bookingId: string): Promise<BookingResult> {
+  return updateBookingStatus(bookingId, 'cancelled');
 }
 
 function checkAutoExpiration(): void {

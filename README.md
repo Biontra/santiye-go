@@ -63,6 +63,25 @@ Proje veritabanı şeması ve tohum (seed) SQL betikleri `supabase/` dizinindedi
 
 ---
 
+## 🧱 Canlı Şema ve Demo Modu Kuralları
+
+- **Migration durumu (24.11.2026):** `supabase/migrations/34`–`40` canlı veritabanına uygulanmıştır.
+  Canlı DB elle kurulduğu için 12/13/17–20 numaralı dosyaların bir kısmı hiç uygulanmamıştı; kodun
+  gerçekten kullandığı eksik nesneler 34'te tamamlandı. Yeni şema değişikliklerini **yeni numaralı ve
+  idempotent** bir dosya olarak ekleyin; eski dosyaları canlıya toplu çalıştırmayın.
+- **Demo verisi kuralı:** `src/lib/config/runtime.ts` → `isDemoFallbackAllowed()`. Supabase bağlıyken
+  üretimde hiçbir servis sahte (bellek içi / localStorage) veriye düşmez ve sahte "başarılı" dönmez;
+  hata kullanıcıya gösterilir. Demo verisi yalnızca Supabase yokken veya geliştirmede
+  `NEXT_PUBLIC_SHOW_DEMO_DATA=true` iken kullanılır.
+- **Henüz veritabanına bağlı olmayan modüller** (Krediler, Kazançlarım, İstatistikler, Reklamlarım,
+  Öne Çıkar, admin Ödemeler/Reklamlar, Ödeme sayfası, escrow/teslimat irsaliyesi) üretimde
+  `withDemoModuleGate` ile "Yakında" ekranı gösterir.
+- **İş kuralları veritabanındadır:** rezervasyon (`bookings_guard`), teklif (`quote_requests_guard`,
+  `quotes_guard`, otomatik firma dağıtımı), değerlendirme (`reviews_guard`), profil doğrulama
+  bayrakları (`profiles_protect_role`). İstemci kodu bu kuralları atlayamaz.
+
+---
+
 ## 🎯 Tamamlanan Kapsam (MVP Özellikleri)
 
 1. **3 Ana Kategori ve Dinamik Alt Kategoriler:**

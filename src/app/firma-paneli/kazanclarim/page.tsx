@@ -1,5 +1,6 @@
 'use client';
 
+import { withDemoModuleGate } from '@/components/common/DemoModuleGate';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
@@ -23,7 +24,7 @@ import { formatCentsToTRY } from '@/lib/services/commission-service';
 import { DEMO_TRANSACTIONS } from '@/lib/services/payment-service';
 import { registerCompanySubMerchant } from '@/lib/services/escrow-service';
 
-export default function CompanyEarningsPage() {
+function CompanyEarningsPage() {
   const [loading, setLoading] = useState(true);
   const [companyTransactions, setCompanyTransactions] = useState<any[]>([]);
   const [onboardingModalOpen, setOnboardingModalOpen] = useState(false);
@@ -496,3 +497,9 @@ export default function CompanyEarningsPage() {
     </div>
   );
 }
+
+export default withDemoModuleGate(CompanyEarningsPage, {
+  title: 'Kazançlarım',
+  backHref: '/firma-paneli',
+  backLabel: 'Firma Paneline Dön',
+});

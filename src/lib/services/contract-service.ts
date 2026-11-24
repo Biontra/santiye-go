@@ -1,4 +1,5 @@
 import { createClient } from '../supabase/client';
+import { isDemoFallbackAllowed, SERVICE_UNAVAILABLE_MESSAGE } from '@/lib/config/runtime';
 import {
   Contract,
   ContractSnapshot,
@@ -131,13 +132,14 @@ export async function getContractTemplates(type?: ContractType): Promise<Contrac
         query = query.eq('template_type', type);
       }
       const { data, error } = await query;
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
         return data as ContractTemplate[];
       }
     }
   } catch {
     // fallback
   }
+  if (!isDemoFallbackAllowed()) return [];
 
   if (type) {
     return DEMO_CONTRACT_TEMPLATES.filter((t) => t.template_type === type && t.is_active);
@@ -186,6 +188,7 @@ export async function createNewTemplateVersion(params: {
     // fallback
   }
 
+  if (!isDemoFallbackAllowed()) return { success: false, error: SERVICE_UNAVAILABLE_MESSAGE };
   DEMO_CONTRACT_TEMPLATES.unshift(newTemplate);
   await logAdminAction(params.adminId, 'TEMPLATE_VERSION_CREATED', 'setting', newTemplate.id, {
     templateType: params.templateType,
@@ -252,6 +255,7 @@ export async function createContract(params: {
     // fallback
   }
 
+  if (!isDemoFallbackAllowed()) return { success: false, error: SERVICE_UNAVAILABLE_MESSAGE };
   DEMO_CONTRACTS.unshift(contractRecord);
   return { success: true, contract: contractRecord };
 }
@@ -285,13 +289,14 @@ export async function getContracts(
       }
 
       const { data, error } = await query;
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
         return data as Contract[];
       }
     }
   } catch {
     // fallback
   }
+  if (!isDemoFallbackAllowed()) return [];
 
   // Demo fallback
   if (userRole === 'admin' || userRole === 'super_admin') {
@@ -327,7 +332,7 @@ export async function getContractById(
     // fallback
   }
 
-  if (!contract) {
+  if (!contract && isDemoFallbackAllowed()) {
     contract = DEMO_CONTRACTS.find((c) => c.id === contractId);
   }
 
@@ -395,7 +400,7 @@ export async function approveContract(
       !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
 
     if (isConfigured) {
-      await supabase
+      const { error: updateError } = await supabase
         .from('contracts')
         .update({
           buyer_approved_at: contract.buyer_approved_at,
@@ -406,11 +411,16 @@ export async function approveContract(
           updated_at: contract.updated_at,
         })
         .eq('id', contractId);
+      if (updateError) {
+        return { success: false, error: 'Sözleşme güncellenemedi: yetkiniz olmayabilir veya sözleşme değişmiş olabilir.' };
+      }
+      return { success: true, contract };
     }
   } catch {
     // fallback
   }
 
+  if (!isDemoFallbackAllowed()) return { success: false, error: SERVICE_UNAVAILABLE_MESSAGE };
   DEMO_CONTRACTS = DEMO_CONTRACTS.map((c) => (c.id === contractId ? contract : c));
   return { success: true, contract };
 }
@@ -443,7 +453,7 @@ export async function requestContractRevision(
       !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
 
     if (isConfigured) {
-      await supabase
+      const { error: updateError } = await supabase
         .from('contracts')
         .update({
           status: 'revision_requested',
@@ -453,11 +463,16 @@ export async function requestContractRevision(
           updated_at: now,
         })
         .eq('id', contractId);
+      if (updateError) {
+        return { success: false, error: 'Sözleşme güncellenemedi: yetkiniz olmayabilir veya sözleşme değişmiş olabilir.' };
+      }
+      return { success: true, contract };
     }
   } catch {
     // fallback
   }
 
+  if (!isDemoFallbackAllowed()) return { success: false, error: SERVICE_UNAVAILABLE_MESSAGE };
   DEMO_CONTRACTS = DEMO_CONTRACTS.map((c) => (c.id === contractId ? contract : c));
   return { success: true, contract };
 }
@@ -489,7 +504,7 @@ export async function uploadSignedContract(
       !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
 
     if (isConfigured) {
-      await supabase
+      const { error: updateError } = await supabase
         .from('contracts')
         .update({
           signed_copy_url: signedCopyUrl,
@@ -499,11 +514,16 @@ export async function uploadSignedContract(
           updated_at: now,
         })
         .eq('id', contractId);
+      if (updateError) {
+        return { success: false, error: 'Sözleşme güncellenemedi: yetkiniz olmayabilir veya sözleşme değişmiş olabilir.' };
+      }
+      return { success: true, contract };
     }
   } catch {
     // fallback
   }
 
+  if (!isDemoFallbackAllowed()) return { success: false, error: SERVICE_UNAVAILABLE_MESSAGE };
   DEMO_CONTRACTS = DEMO_CONTRACTS.map((c) => (c.id === contractId ? contract : c));
   return { success: true, contract };
 }

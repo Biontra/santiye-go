@@ -61,7 +61,7 @@ export function createOtpToken(
   return `${body}.${b64u(mac(secret, `otp-token|${body}`))}`;
 }
 
-export type OtpTokenCheck = { valid: boolean; reason?: string };
+export type OtpTokenCheck = { valid: boolean; reason?: string; email?: string };
 
 export function verifyOtpToken(
   secret: string,
@@ -93,7 +93,7 @@ export function verifyOtpToken(
       return { valid: false, reason: 'Girdiğiniz 6 haneli kod hatalı.' };
     }
 
-    return { valid: true };
+    return { valid: true, email: typeof data.email === 'string' ? data.email : undefined };
   } catch {
     return { valid: false, reason: 'Doğrulama bilgisi okunamadı.' };
   }

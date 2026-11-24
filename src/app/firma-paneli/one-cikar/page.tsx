@@ -1,5 +1,6 @@
 'use client';
 
+import { withDemoModuleGate } from '@/components/common/DemoModuleGate';
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -20,7 +21,7 @@ import { DEFAULT_AD_PRODUCTS, createAdCampaign, payAdCampaignWithSandbox } from 
 import { DEMO_LISTINGS } from '@/lib/services/listing-service';
 import { AdProductId, AdProduct } from '@/types/database';
 
-export default function PromoteListingPage() {
+function PromoteListingPage() {
   const router = useRouter();
   const companyId = 'f0000000-0000-0000-0000-000000000001';
   const myListings = DEMO_LISTINGS.filter((l) => l.company_id === companyId);
@@ -354,3 +355,9 @@ export default function PromoteListingPage() {
     </div>
   );
 }
+
+export default withDemoModuleGate(PromoteListingPage, {
+  title: 'İlanı Öne Çıkar',
+  backHref: '/firma-paneli',
+  backLabel: 'Firma Paneline Dön',
+});

@@ -37,6 +37,7 @@ export default function CompanyQuoteRequestsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [companyId, setCompanyId] = useState<string | null>(null);
 
   const loadRequests = async () => {
     setLoading(true);
@@ -53,6 +54,7 @@ export default function CompanyQuoteRequestsPage() {
           .maybeSingle();
 
         const activeCompanyId = comp?.id || user.id;
+        setCompanyId(comp?.id || null);
         const data = await getCompanyQuoteRequests(activeCompanyId);
         setRequests(data);
       } else {
@@ -89,12 +91,17 @@ export default function CompanyQuoteRequestsPage() {
       return;
     }
 
+    if (!companyId) {
+      setSubmitError('Teklif verebilmek için firma profilinizi tamamlamalısınız.');
+      return;
+    }
+
     setSubmitting(true);
     setSubmitError('');
 
     const res = await submitQuote({
       request_id: activeRequest.id,
-      company_id: 'f0000000-0000-0000-0000-000000000001',
+      company_id: companyId,
       listing_id: activeRequest.listing_id || null,
       price_total: Number(priceTotal),
       price_unit: priceUnit > 0 ? Number(priceUnit) : Math.round(Number(priceTotal) / (activeRequest.quantity || 1)),

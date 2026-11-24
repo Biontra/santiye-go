@@ -3,6 +3,7 @@ import { Review } from '@/types/database';
 import { DEMO_BOOKINGS } from './booking-service';
 import { DEMO_QUOTES } from './quote-service';
 import { sanitizeContent } from '@/lib/security/contact-masker';
+import { isDemoFallbackAllowed, isSupabaseConfigured } from '@/lib/config/runtime';
 
 export interface VerifiedReviewWithUser extends Review {
   buyer_name: string;
@@ -181,23 +182,93 @@ export function calculateBayesianRating(
   };
 }
 
+function mapReviewRow(row: any): VerifiedReviewWithUser {
+  const subs = [row.rating_quality, row.rating_timing, row.rating_communication].filter(
+    (v: unknown) => typeof v === 'number'
+  ) as number[];
+  const overall = subs.length === 3 ? Number((subs.reduce((a, b) => a + b, 0) / 3).toFixed(1)) : row.rating;
+  return {
+    ...row,
+    rating_overall: overall ?? row.rating,
+    rating_quality: row.rating_quality ?? row.rating,
+    rating_timing: row.rating_timing ?? row.rating,
+    rating_communication: row.rating_communication ?? row.rating,
+    company_reply_at: row.company_replied_at ?? row.company_reply_at ?? null,
+    is_verified: true,
+    buyer_name: row.buyer?.full_name || 'Doğrulanmış Alıcı',
+  };
+}
+
+async function withReviewerNames(
+  supabase: ReturnType<typeof createClient>,
+  reviews: VerifiedReviewWithUser[]
+): Promise<VerifiedReviewWithUser[]> {
+  const ids = Array.from(new Set(reviews.map((r) => r.buyer_id).filter(Boolean)));
+  if (ids.length === 0) return reviews;
+  const { data } = await supabase.rpc('get_reviewer_names', { p_ids: ids });
+  const names = new Map<string, string>((data || []).map((r: any) => [r.id, r.display_name]));
+  return reviews.map((r) => ({ ...r, buyer_name: names.get(r.buyer_id) || r.buyer_name }));
+}
+
+/** Alıcının bu firmayla değerlendirilebilir (tamamlanmış, henüz puanlanmamış) rezervasyonunu bulur. */
+async function findReviewableBooking(
+  companyId: string,
+  listingId?: string
+): Promise<{ bookingId?: string; listingId?: string; buyerId?: string; reason?: string }> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { reason: 'Değerlendirme yapmak için giriş yapmalısınız.' };
+
+  const today = new Date().toISOString().split('T')[0];
+  let query = supabase
+    .from('bookings')
+    .select('id, listing_id, status, end_date')
+    .eq('buyer_id', user.id)
+    .eq('company_id', companyId)
+    .or(`status.eq.completed,and(status.in.(approved,confirmed),end_date.lt.${today})`)
+    .order('end_date', { ascending: false });
+  if (listingId) query = query.eq('listing_id', listingId);
+
+  const { data: bookings, error } = await query;
+  if (error || !bookings || bookings.length === 0) {
+    return {
+      reason:
+        'Yalnızca bu firma ile tamamlanmış bir rezervasyonu olan kullanıcılar doğrulanmış puanlama yapabilir.',
+    };
+  }
+
+  const { data: existing } = await supabase
+    .from('reviews')
+    .select('booking_id')
+    .in(
+      'booking_id',
+      bookings.map((b) => b.id)
+    );
+  const reviewed = new Set((existing || []).map((r) => r.booking_id));
+  const candidate = bookings.find((b) => !reviewed.has(b.id));
+  if (!candidate) return { reason: 'Bu firmayla tamamlanan rezervasyonlarınızı zaten değerlendirdiniz.' };
+  return { bookingId: candidate.id, listingId: candidate.listing_id, buyerId: user.id };
+}
+
 export async function canUserReviewCompany(
   buyerId: string,
   companyId: string
 ): Promise<{ canReview: boolean; reason?: string }> {
-  // Check completed bookings
+  if (isSupabaseConfigured()) {
+    const res = await findReviewableBooking(companyId);
+    if (res.bookingId) return { canReview: true };
+    if (!isDemoFallbackAllowed()) return { canReview: false, reason: res.reason };
+  }
+
   const hasCompletedBooking = DEMO_BOOKINGS.some(
     (b) => b.buyer_id === buyerId && b.company_id === companyId && b.status === 'approved'
   );
-
-  // Check accepted quotes
   const hasAcceptedQuote = DEMO_QUOTES.some(
     (q) => q.company_id === companyId && q.status === 'accepted'
   );
-
-  if (hasCompletedBooking || hasAcceptedQuote) {
-    return { canReview: true };
-  }
+  if (hasCompletedBooking || hasAcceptedQuote) return { canReview: true };
 
   return {
     canReview: false,
@@ -207,31 +278,38 @@ export async function canUserReviewCompany(
 }
 
 export async function getCompanyReviews(companyId: string): Promise<VerifiedReviewWithUser[]> {
-  try {
-    const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-    if (isSupabaseConfigured) {
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = createClient();
       const { data, error } = await supabase
         .from('reviews')
         .select('*')
         .eq('company_id', companyId)
         .order('created_at', { ascending: false });
-
-      if (!error && data) {
-        return data as any;
-      }
+      if (!error && data) return withReviewerNames(supabase, data.map(mapReviewRow));
+    } catch {
+      // aşağıdaki karara düşer
     }
-  } catch {
-    // fallback
+    if (!isDemoFallbackAllowed()) return [];
   }
-
   return DEMO_REVIEWS.filter((r) => r.company_id === companyId);
 }
 
 export async function getListingReviews(listingId: string): Promise<VerifiedReviewWithUser[]> {
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('listing_id', listingId)
+        .order('created_at', { ascending: false });
+      if (!error && data) return withReviewerNames(supabase, data.map(mapReviewRow));
+    } catch {
+      // aşağıdaki karara düşer
+    }
+    if (!isDemoFallbackAllowed()) return [];
+  }
   return DEMO_REVIEWS.filter((r) => r.listing_id === listingId);
 }
 
@@ -239,29 +317,55 @@ export async function addReview(data: {
   company_id: string;
   listing_id?: string;
   booking_id?: string;
-  buyer_id: string;
+  buyer_id?: string;
   rating_quality: number;
   rating_timing: number;
   rating_communication: number;
   comment: string;
 }): Promise<{ success: boolean; review?: Review; error?: string }> {
-  const check = await canUserReviewCompany(data.buyer_id, data.company_id);
-  if (!check.canReview) {
-    return { success: false, error: check.reason };
+  const ratings = [data.rating_quality, data.rating_timing, data.rating_communication];
+  if (ratings.some((r) => !Number.isInteger(r) || r < 1 || r > 5)) {
+    return { success: false, error: 'Puanlar 1 ile 5 arasında olmalıdır.' };
+  }
+  const overall = Number((ratings.reduce((a, b) => a + b, 0) / 3).toFixed(1));
+  const sanitizedComment = data.comment ? sanitizeContent(data.comment).maskedText : '';
+
+  if (isSupabaseConfigured()) {
+    const target = await findReviewableBooking(data.company_id, data.listing_id);
+    if (target.bookingId && target.buyerId) {
+      const supabase = createClient();
+      const { data: row, error } = await supabase
+        .from('reviews')
+        .insert({
+          booking_id: data.booking_id || target.bookingId,
+          buyer_id: target.buyerId,
+          company_id: data.company_id,
+          listing_id: target.listingId || data.listing_id || null,
+          rating: Math.round(overall),
+          rating_quality: data.rating_quality,
+          rating_timing: data.rating_timing,
+          rating_communication: data.rating_communication,
+          comment: sanitizedComment,
+        })
+        .select()
+        .single();
+      if (error || !row) {
+        return { success: false, error: 'Değerlendirme kaydedilemedi. Lütfen tekrar deneyin.' };
+      }
+      return { success: true, review: mapReviewRow(row) };
+    }
+    if (!isDemoFallbackAllowed()) return { success: false, error: target.reason };
   }
 
-  const overall = Number(
-    ((data.rating_quality + data.rating_timing + data.rating_communication) / 3).toFixed(1)
-  );
-
-  const sanitizedComment = data.comment ? sanitizeContent(data.comment).maskedText : '';
+  const check = await canUserReviewCompany(data.buyer_id || 'buyer-demo-001', data.company_id);
+  if (!check.canReview) return { success: false, error: check.reason };
 
   const newReview: VerifiedReviewWithUser = {
     id: `rev-${Date.now()}`,
     company_id: data.company_id,
     listing_id: data.listing_id || null,
     booking_id: data.booking_id || null,
-    buyer_id: data.buyer_id,
+    buyer_id: data.buyer_id || 'buyer-demo-001',
     rating_overall: overall,
     rating_quality: data.rating_quality,
     rating_timing: data.rating_timing,
@@ -274,7 +378,6 @@ export async function addReview(data: {
     created_at: new Date().toISOString(),
     buyer_name: 'Ahmet Yılmaz (Müteahhit)',
   };
-
   DEMO_REVIEWS.unshift(newReview);
   return { success: true, review: newReview };
 }
@@ -283,15 +386,29 @@ export async function addCompanyReply(
   reviewId: string,
   replyText: string
 ): Promise<{ success: boolean; error?: string }> {
+  const sanitizedReply = replyText ? sanitizeContent(replyText).maskedText : '';
+  if (!sanitizedReply.trim()) return { success: false, error: 'Yanıt boş olamaz.' };
+
+  if (isSupabaseConfigured()) {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('reviews')
+      .update({ company_reply: sanitizedReply.slice(0, 2000) })
+      .eq('id', reviewId)
+      .is('company_reply', null)
+      .select('id')
+      .maybeSingle();
+    if (!error && data) return { success: true };
+    if (!isDemoFallbackAllowed()) {
+      return { success: false, error: 'Yanıt kaydedilemedi (daha önce yanıtlanmış olabilir).' };
+    }
+  }
+
   const review = DEMO_REVIEWS.find((r) => r.id === reviewId);
   if (!review) return { success: false, error: 'Değerlendirme bulunamadı.' };
-
   if (review.company_reply) {
     return { success: false, error: 'Bu değerlendirmeye zaten bir yanıt verilmiş.' };
   }
-
-  const sanitizedReply = replyText ? sanitizeContent(replyText).maskedText : '';
-
   review.company_reply = sanitizedReply;
   review.company_reply_at = new Date().toISOString();
   return { success: true };

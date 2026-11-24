@@ -86,7 +86,11 @@ export default function AdminCategoriesPage() {
       subcategories: editingCat?.subcategories || [],
     };
 
-    await saveCategory(payload, 'admin-super-001');
+    const res = await saveCategory(payload, 'admin-super-001');
+    if (!res.success) {
+      setNotice(res.error || 'Kategori kaydedilemedi.');
+      return;
+    }
     setModalOpen(false);
     setNotice('Kategori ve izin verilen ilan tipleri başarıyla kaydedildi!');
     loadData();

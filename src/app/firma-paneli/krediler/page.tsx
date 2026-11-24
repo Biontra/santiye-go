@@ -1,5 +1,6 @@
 'use client';
 
+import { withDemoModuleGate } from '@/components/common/DemoModuleGate';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import PushNotificationManager from '@/components/pwa/PushNotificationManager';
@@ -32,7 +33,7 @@ import {
   getQuoteDisputes,
 } from '@/lib/services/credit-service';
 
-export default function CompanyCreditsPage() {
+function CompanyCreditsPage() {
   const [balance, setBalance] = useState<number>(0);
   const [packages, setPackages] = useState<CreditPackage[]>([]);
   const [ledgers, setLedgers] = useState<CompanyCreditLedger[]>([]);
@@ -535,3 +536,9 @@ export default function CompanyCreditsPage() {
     </div>
   );
 }
+
+export default withDemoModuleGate(CompanyCreditsPage, {
+  title: 'Teklif Kredileri',
+  backHref: '/firma-paneli',
+  backLabel: 'Firma Paneline Dön',
+});

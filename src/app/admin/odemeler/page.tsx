@@ -1,5 +1,6 @@
 'use client';
 
+import { withDemoModuleGate } from '@/components/common/DemoModuleGate';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
@@ -30,7 +31,7 @@ import {
   DEMO_PAYMENT_DISPUTES,
 } from '@/lib/services/escrow-service';
 
-export default function AdminPaymentsPage() {
+function AdminPaymentsPage() {
   const [activeTab, setActiveTab] = useState<'payments' | 'disputes' | 'reconciliation' | 'settings'>('payments');
   const [transactions, setTransactions] = useState<PaymentTransaction[]>(DEMO_TRANSACTIONS);
   const [disputes, setDisputes] = useState<PaymentDispute[]>(DEMO_PAYMENT_DISPUTES);
@@ -718,3 +719,9 @@ export default function AdminPaymentsPage() {
     </div>
   );
 }
+
+export default withDemoModuleGate(AdminPaymentsPage, {
+  title: 'Ödeme ve Emanet Yönetimi',
+  backHref: '/admin',
+  backLabel: 'Yönetim Paneline Dön',
+});

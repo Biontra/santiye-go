@@ -1,5 +1,6 @@
 'use client';
 
+import { withDemoModuleGate } from '@/components/common/DemoModuleGate';
 import { useState } from 'react';
 import Link from 'next/link';
 import {
@@ -23,7 +24,7 @@ import { getCompanyPerformanceStats } from '@/lib/services/analytics-service';
 import { DEMO_LISTINGS } from '@/lib/services/listing-service';
 import { DEMO_CAMPAIGNS } from '@/lib/services/ad-service';
 
-export default function CompanyStatisticsPage() {
+function CompanyStatisticsPage() {
   const companyId = 'f0000000-0000-0000-0000-000000000001';
   const myListings = DEMO_LISTINGS.filter((l) => l.company_id === companyId);
   const myCampaigns = DEMO_CAMPAIGNS.filter((c) => c.company_id === companyId);
@@ -314,3 +315,9 @@ export default function CompanyStatisticsPage() {
     </div>
   );
 }
+
+export default withDemoModuleGate(CompanyStatisticsPage, {
+  title: 'İstatistikler',
+  backHref: '/firma-paneli',
+  backLabel: 'Firma Paneline Dön',
+});

@@ -70,6 +70,8 @@ export default function BuyerQuoteRequestsPage() {
       setActionSuccessMsg('Teklif başarıyla kabul edildi! Firma ile iletişime geçebilirsiniz.');
       loadRequests();
       setTimeout(() => setActionSuccessMsg(''), 4000);
+    } else {
+      alert(res.error || 'Teklif kabul edilemedi.');
     }
   };
 
@@ -79,6 +81,8 @@ export default function BuyerQuoteRequestsPage() {
       setActionSuccessMsg('Teklif reddedildi.');
       loadRequests();
       setTimeout(() => setActionSuccessMsg(''), 3000);
+    } else {
+      alert(res.error || 'Teklif reddedilemedi.');
     }
   };
 

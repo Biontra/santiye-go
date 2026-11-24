@@ -47,11 +47,14 @@ export async function POST(req: NextRequest) {
     }
 
     let isVerified = false;
+    let tokenEmail: string | undefined;
 
     // 1. İmzalı, telefona bağlı jeton ile doğrulama
     const secret = getOtpSecret();
     if (otpToken && secret) {
-      isVerified = verifyOtpToken(secret, otpToken, code, formatted).valid;
+      const check = verifyOtpToken(secret, otpToken, code, formatted);
+      isVerified = check.valid;
+      tokenEmail = check.email?.toLowerCase();
     }
 
     // 2. Veritabanı kaydı ile doğrulama (yedek; yalnızca service_role çağırabilir.
@@ -76,20 +79,43 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3. Oturumdaki kullanıcıyı doğrulanmış olarak işaretle (RLS: yalnızca kendi satırı)
+    // 3. Doğrulanmış bayraklarını SUNUCUDA işaretle (istemci bu alanları değiştiremez).
+    //    Hedef: oturumdaki kullanıcı ya da bu telefona kayıtlı ve e-postası jetondaki
+    //    e-postayla eşleşen hesap (kod o e-posta adresine gönderildi).
     try {
-      const supabase = await createClient();
-      await supabase
-        .from('profiles')
-        .update({
-          is_phone_verified: true,
-          is_email_verified: true,
-          phone_verified_at: new Date().toISOString(),
-          email_verified_at: new Date().toISOString(),
-        })
-        .eq('phone', formatted);
-    } catch {
-      // Profil güncelleme başarısız olsa bile oturum devam eder
+      const admin = createServiceRoleClient();
+      const session = await createClient();
+      const {
+        data: { user: sessionUser },
+      } = await session.auth.getUser();
+
+      const { data: candidates } = await admin.from('profiles').select('id, phone').eq('phone', formatted);
+      const targetIds: string[] = [];
+      for (const cand of candidates || []) {
+        if (sessionUser && cand.id === sessionUser.id) {
+          targetIds.push(cand.id);
+          continue;
+        }
+        if (tokenEmail) {
+          const { data: authUser } = await admin.auth.admin.getUserById(cand.id);
+          if (authUser?.user?.email?.toLowerCase() === tokenEmail) targetIds.push(cand.id);
+        }
+      }
+
+      const nowIso = new Date().toISOString();
+      for (const id of targetIds) {
+        await admin
+          .from('profiles')
+          .update({
+            is_phone_verified: true,
+            phone_verified_at: nowIso,
+            ...(tokenEmail ? { is_email_verified: true, email_verified_at: nowIso } : {}),
+          })
+          .eq('id', id);
+      }
+    } catch (markErr) {
+      // Profil güncelleme başarısız olsa bile kod doğrulaması geçerlidir.
+      console.warn('[verify-otp] profil işaretlenemedi:', markErr);
     }
 
     const response = NextResponse.json({

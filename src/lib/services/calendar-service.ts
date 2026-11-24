@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/client';
-import { AvailabilityCalendar } from '@/types/database';
+import { isDemoFallbackAllowed, isSupabaseConfigured } from '@/lib/config/runtime';
 
 export interface CalendarDayStatus {
   date: string; // YYYY-MM-DD
@@ -23,36 +23,50 @@ export const DEMO_CALENDAR_ENTRIES: Record<string, CalendarDayStatus[]> = {
   ],
 };
 
+type AvailabilityRow = {
+  date: string;
+  status: CalendarDayStatus['status'];
+  booked_quantity: number | null;
+  notes: string | null;
+};
+
+function monthRange(year: number, month: number) {
+  const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+  const endMonth = month === 12 ? 1 : month + 1;
+  const endYear = month === 12 ? year + 1 : year;
+  const endDate = `${endYear}-${String(endMonth).padStart(2, '0')}-01`;
+  return { startDate, endDate };
+}
+
 export async function getListingAvailability(
   listingId: string,
   year: number,
   month: number // 1-12
 ): Promise<CalendarDayStatus[]> {
-  try {
+  if (isSupabaseConfigured()) {
     const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-    if (isSupabaseConfigured) {
-      const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
-      const endMonth = month === 12 ? 1 : month + 1;
-      const endYear = month === 12 ? year + 1 : year;
-      const endDate = `${endYear}-${String(endMonth).padStart(2, '0')}-01`;
-
-      const { data, error } = await supabase
-        .from('availability_calendar')
-        .select('*')
+    const { startDate, endDate } = monthRange(year, month);
+    const [{ data, error }, { data: listing }] = await Promise.all([
+      supabase
+        .from('listing_availability')
+        .select('date, status, booked_quantity, notes')
         .eq('listing_id', listingId)
         .gte('date', startDate)
-        .lt('date', endDate);
+        .lt('date', endDate),
+      supabase.from('listings').select('stock_quantity').eq('id', listingId).maybeSingle(),
+    ]);
 
-      if (!error && data) {
-        return data as any;
-      }
+    if (!error && data) {
+      const stock = Number(listing?.stock_quantity) || 1;
+      return (data as AvailabilityRow[]).map((row) => ({
+        date: row.date,
+        status: row.status,
+        stock_booked: row.booked_quantity ?? 0,
+        stock_total: stock,
+        notes: row.notes ?? undefined,
+      }));
     }
-  } catch {
-    // fallback
+    if (!isDemoFallbackAllowed()) return [];
   }
 
   return DEMO_CALENDAR_ENTRIES[listingId] || [];
@@ -64,36 +78,40 @@ export async function setBatchAvailability(
   status: 'available' | 'booked' | 'maintenance',
   notes?: string
 ): Promise<{ success: boolean; error?: string }> {
-  try {
+  if (dates.length === 0) return { success: true };
+
+  if (isSupabaseConfigured()) {
     const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
+    // Elle "dolu" işaretlenen gün tüm stok için kapanır.
+    const { data: listing } = await supabase
+      .from('listings')
+      .select('stock_quantity')
+      .eq('id', listingId)
+      .maybeSingle();
+    const stock = Number(listing?.stock_quantity) || 1;
 
-    if (isSupabaseConfigured) {
-      const rows = dates.map((date) => ({
-        listing_id: listingId,
-        date,
-        status,
-        notes: notes || null,
-        stock_booked: status === 'available' ? 0 : 1,
-      }));
+    const rows = dates.map((date) => ({
+      listing_id: listingId,
+      date,
+      status,
+      notes: notes ? notes.slice(0, 200) : null,
+      booked_quantity: status === 'booked' ? stock : 0,
+    }));
 
-      const { error } = await supabase
-        .from('availability_calendar')
-        .upsert(rows, { onConflict: 'listing_id,date' });
+    const { error } = await supabase
+      .from('listing_availability')
+      .upsert(rows, { onConflict: 'listing_id,date' });
 
-      if (!error) return { success: true };
+    if (!error) return { success: true };
+    if (!isDemoFallbackAllowed()) {
+      return { success: false, error: 'Takvim kaydedilemedi. Bu ilan için yetkiniz olmayabilir.' };
     }
-  } catch {
-    // fallback
   }
 
-  // Update in-memory demo store
+  // Yerel demo deposu
   if (!DEMO_CALENDAR_ENTRIES[listingId]) {
     DEMO_CALENDAR_ENTRIES[listingId] = [];
   }
-
   dates.forEach((d) => {
     const existingIdx = DEMO_CALENDAR_ENTRIES[listingId].findIndex((entry) => entry.date === d);
     const updatedEntry: CalendarDayStatus = {
@@ -103,7 +121,6 @@ export async function setBatchAvailability(
       stock_total: 1,
       notes,
     };
-
     if (existingIdx >= 0) {
       DEMO_CALENDAR_ENTRIES[listingId][existingIdx] = updatedEntry;
     } else {
@@ -117,14 +134,24 @@ export async function setBatchAvailability(
 export async function checkDateRangeAvailable(
   listingId: string,
   startDateStr: string,
-  endDateStr: string,
-  requestedQuantity: number = 1
+  endDateStr: string
 ): Promise<{ available: boolean; conflictDate?: string }> {
-  const start = new Date(startDateStr);
-  const end = new Date(endDateStr);
-  const entries = DEMO_CALENDAR_ENTRIES[listingId] || [];
+  if (isSupabaseConfigured()) {
+    const supabase = createClient();
+    const { data, error } = await supabase.rpc('check_booking_overlap', {
+      p_listing_id: listingId,
+      p_start_date: startDateStr,
+      p_end_date: endDateStr,
+    });
+    if (!error && typeof data === 'boolean') {
+      return data ? { available: true } : { available: false, conflictDate: `${startDateStr} – ${endDateStr}` };
+    }
+    if (!isDemoFallbackAllowed()) return { available: false };
+  }
 
-  const curr = new Date(start);
+  const entries = DEMO_CALENDAR_ENTRIES[listingId] || [];
+  const curr = new Date(startDateStr);
+  const end = new Date(endDateStr);
   while (curr <= end) {
     const dateFormatted = curr.toISOString().split('T')[0];
     const match = entries.find((e) => e.date === dateFormatted);
@@ -133,6 +160,5 @@ export async function checkDateRangeAvailable(
     }
     curr.setDate(curr.getDate() + 1);
   }
-
   return { available: true };
 }

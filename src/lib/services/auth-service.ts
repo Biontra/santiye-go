@@ -164,11 +164,7 @@ export async function registerUser({
 
       // 1. Telefon mükerrerlik kontrolü (Aynı telefonla ikinci hesap açılamaz)
       if (phone) {
-        const { data: existingPhone } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('phone', phone)
-          .maybeSingle();
+        const { data: existingPhone } = await supabase.rpc('is_phone_registered', { p_phone: phone });
 
         if (existingPhone) {
           return {
@@ -594,22 +590,10 @@ export async function markPhoneVerified(phone: string): Promise<void> {
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
     !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
 
-  if (isSupabaseConfigured) {
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (user) {
-        await supabase
-          .from('profiles')
-          .update({ is_phone_verified: true, phone_verified_at: new Date().toISOString() })
-          .eq('id', user.id);
-      }
-    } catch {
-      // ignore
-    }
-  }
+  // Veritabanındaki doğrulama bayrağı yalnızca sunucuda (/api/auth/verify-otp, service_role)
+  // işaretlenir; istemci bu alanı değiştiremez (profiles_protect_role tetikleyicisi).
+  void supabase;
+  void isSupabaseConfigured;
 
   if (typeof window !== 'undefined') {
     const raw = localStorage.getItem(STORAGE_CURRENT_USER_KEY);

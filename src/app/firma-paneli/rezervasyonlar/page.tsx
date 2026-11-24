@@ -77,17 +77,19 @@ export default function CompanyBookingsPage() {
   }, []);
 
   const handleApprove = async (id: string) => {
-    await approveBooking(id);
-    setActionNotice('Rezervasyon onaylandı ve takvime otomatik işlendi!');
+    const res = await approveBooking(id);
+    setActionNotice(
+      res.success ? 'Rezervasyon onaylandı ve takvime otomatik işlendi!' : res.error || 'Rezervasyon onaylanamadı.'
+    );
     loadData();
-    setTimeout(() => setActionNotice(''), 3000);
+    setTimeout(() => setActionNotice(''), 4000);
   };
 
   const handleReject = async (id: string) => {
-    await rejectBooking(id);
-    setActionNotice('Rezervasyon talebi reddedildi.');
+    const res = await rejectBooking(id);
+    setActionNotice(res.success ? 'Rezervasyon talebi reddedildi.' : res.error || 'Rezervasyon reddedilemedi.');
     loadData();
-    setTimeout(() => setActionNotice(''), 3000);
+    setTimeout(() => setActionNotice(''), 4000);
   };
 
   return (

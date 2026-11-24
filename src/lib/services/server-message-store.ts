@@ -85,7 +85,7 @@ export async function serverGetConversations(userId?: string): Promise<ServerCon
 
   const [profilesRes, companiesRes, listingsRes] = await Promise.all([
     userIds.length > 0
-      ? supabase.from('profiles').select('id, full_name, role').in('id', userIds)
+      ? supabase.rpc('get_profile_names', { p_ids: userIds })
       : Promise.resolve({ data: [] }),
     companyIds.length > 0
       ? supabase.from('companies').select('id, name, logo_url, user_id').in('id', companyIds)

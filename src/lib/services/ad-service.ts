@@ -1,6 +1,7 @@
 import { AdProduct, AdCampaign, AdProductId, Listing } from '@/types/database';
 import { DEMO_LISTINGS } from '@/lib/mock-data';
 import { recordAnalyticsEvent } from './analytics-service';
+import { isDemoFallbackAllowed } from '@/lib/config/runtime';
 
 export const DEFAULT_AD_PRODUCTS: AdProduct[] = [
   {
@@ -181,6 +182,9 @@ export async function createAdCampaign(params: {
   durationDays: number;
   discountPercent?: number;
 }): Promise<{ success: boolean; campaign?: AdCampaign; error?: string }> {
+  if (!isDemoFallbackAllowed()) {
+    return { success: false, error: 'Reklam satın alma şu anda kullanıma kapalıdır.' };
+  }
   const product = DEFAULT_AD_PRODUCTS.find((p) => p.id === params.productId);
   if (!product) {
     return { success: false, error: 'Geçersiz reklam ürünü seçildi.' };
@@ -270,6 +274,8 @@ export function getActiveAdsForSlot(params: {
   userCoords?: { lat: number; lng: number } | null;
   limit?: number;
 }): { campaigns: AdCampaign[]; listings: Listing[] } {
+  // Reklam kampanyaları henüz veritabanına bağlı değil: üretimde sahte sponsorlu ilan gösterilmez.
+  if (!isDemoFallbackAllowed()) return { campaigns: [], listings: [] };
   const now = new Date();
 
   // 1. Find all active and non-expired campaigns for product

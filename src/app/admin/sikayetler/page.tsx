@@ -37,8 +37,12 @@ export default function AdminReportsPage() {
 
   const handleResolve = async (status: 'resolved' | 'dismissed') => {
     if (!activeReport) return;
-    await resolveReport(activeReport.id, status, adminNotes, 'admin-super-001');
-    setNotice(`Şikayet ${status === 'resolved' ? 'çözüldü' : 'reddedildi'} olarak işaretlendi.`);
+    const res = await resolveReport(activeReport.id, status, adminNotes, 'admin-super-001');
+    setNotice(
+      res.success
+        ? `Şikayet ${status === 'resolved' ? 'çözüldü' : 'reddedildi'} olarak işaretlendi.`
+        : res.error || 'Şikayet güncellenemedi.'
+    );
     setActiveReport(null);
     setAdminNotes('');
     loadData();

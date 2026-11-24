@@ -105,8 +105,12 @@ export default function CompanyCalendarPage() {
   const handleBatchSave = async () => {
     if (selectedDates.length === 0) return;
     setSaving(true);
-    await setBatchAvailability(selectedListingId, selectedDates, targetStatus, notes);
+    const res = await setBatchAvailability(selectedListingId, selectedDates, targetStatus, notes);
     setSaving(false);
+    if (!res.success) {
+      alert(res.error || 'Takvim kaydedilemedi.');
+      return;
+    }
     setSaveSuccess(true);
     setSelectedDates([]);
     setNotes('');

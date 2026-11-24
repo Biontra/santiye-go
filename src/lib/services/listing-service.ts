@@ -6,6 +6,7 @@ import { createClient as createSupabaseDirectClient } from '@supabase/supabase-j
 import { calculateDistanceKm } from '@/lib/geo';
 import { CATEGORIES, CITIES, DEMO_LISTINGS, DISTRICTS, NEIGHBORHOODS } from '@/lib/mock-data';
 export { DEMO_LISTINGS } from '@/lib/mock-data';
+import { isDemoFallbackAllowed } from '@/lib/config/runtime';
 import { Category, City, District, Listing, Neighborhood, SearchParams, SearchResult } from '@/types/database';
 import { turkishIncludes } from '@/lib/turkish';
 
@@ -211,7 +212,7 @@ export async function searchListings(params: SearchParams): Promise<SearchResult
   // =========================================================================
   // LOCAL POSTGIS / HAVERSINE EMULATION ENGINE (Offline & Demo Reliability)
   // =========================================================================
-  const allowDemo = process.env.NEXT_PUBLIC_SHOW_DEMO_DATA === 'true';
+  const allowDemo = isDemoFallbackAllowed() && process.env.NEXT_PUBLIC_SHOW_DEMO_DATA === 'true';
   let pool = allowDemo ? [...DEMO_LISTINGS] : [];
 
   // 1. Status Filter
@@ -465,7 +466,7 @@ export async function getListingBySlugOrId(idOrSlug: string): Promise<Listing | 
   }
 
   // Production'da sahte/mock veri sızıntısını engelle
-  const allowDemo = process.env.NEXT_PUBLIC_SHOW_DEMO_DATA === 'true';
+  const allowDemo = isDemoFallbackAllowed() && process.env.NEXT_PUBLIC_SHOW_DEMO_DATA === 'true';
   if (allowDemo) {
     const found = DEMO_LISTINGS.find(
       (l) => l.id === decoded || l.slug === decoded || l.id === idOrSlug || l.slug === idOrSlug

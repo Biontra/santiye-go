@@ -49,8 +49,8 @@ export default function AdminListingsPage() {
     action: 'approve' | 'reject' | 'remove',
     reason: string = ''
   ) => {
-    await moderateListing(id, action, reason, 'admin-super-001');
-    setNotice(`İlan işlemi (${action}) başarıyla uygulandı.`);
+    const res = await moderateListing(id, action, reason, 'admin-super-001');
+    setNotice(res.success ? `İlan işlemi (${action}) başarıyla uygulandı.` : res.error || 'İlan güncellenemedi.');
     loadData();
     setTimeout(() => setNotice(''), 3000);
   };

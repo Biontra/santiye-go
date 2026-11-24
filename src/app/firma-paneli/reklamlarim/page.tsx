@@ -1,5 +1,6 @@
 'use client';
 
+import { withDemoModuleGate } from '@/components/common/DemoModuleGate';
 import { useState } from 'react';
 import Link from 'next/link';
 import {
@@ -19,7 +20,7 @@ import {
 import { DEMO_CAMPAIGNS, DEFAULT_AD_PRODUCTS } from '@/lib/services/ad-service';
 import { AdCampaign } from '@/types/database';
 
-export default function MyAdCampaignsPage() {
+function MyAdCampaignsPage() {
   const companyId = 'f0000000-0000-0000-0000-000000000001';
   const [campaigns, setCampaigns] = useState<AdCampaign[]>(
     DEMO_CAMPAIGNS.filter((c) => c.company_id === companyId)
@@ -258,3 +259,9 @@ export default function MyAdCampaignsPage() {
     </div>
   );
 }
+
+export default withDemoModuleGate(MyAdCampaignsPage, {
+  title: 'Reklamlarım',
+  backHref: '/firma-paneli',
+  backLabel: 'Firma Paneline Dön',
+});

@@ -12,6 +12,7 @@ import {
   Report,
 } from '@/types/database';
 import { CATEGORIES, DEMO_LISTINGS } from '@/lib/mock-data';
+import { isDemoFallbackAllowed, isSupabaseConfigured } from '@/lib/config/runtime';
 
 // Demo in-memory stores for Admin
 export const DEMO_ADMIN_LOGS: AdminAuditLog[] = [
@@ -171,14 +172,41 @@ export async function logAdminAction(
     created_at: new Date().toISOString(),
   };
 
-  try {
-    const supabase = createClient();
-    await supabase.from('admin_audit_logs').insert(log);
-  } catch {
-    // fallback
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      // Kimlik istemciden gelen parametreye değil oturuma dayanır; ip sunucuda bilinmez.
+      await supabase.from('admin_audit_logs').insert({
+        admin_id: user?.id ?? null,
+        action,
+        target_type: targetType,
+        target_id: targetId,
+        details: details || null,
+      });
+    } catch {
+      // Denetim logu yazılamazsa asıl işlem engellenmez.
+    }
+    if (!isDemoFallbackAllowed()) return;
   }
 
   DEMO_ADMIN_LOGS.unshift(log);
+}
+
+export async function getRecentAdminLogs(limit = 20): Promise<AdminAuditLog[]> {
+  if (isSupabaseConfigured()) {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('admin_audit_logs')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(limit);
+    if (!error && data) return data as AdminAuditLog[];
+    if (!isDemoFallbackAllowed()) return [];
+  }
+  return DEMO_ADMIN_LOGS.slice(0, limit);
 }
 
 // Dashboard Metrics
@@ -196,6 +224,10 @@ export async function getAdminDashboardMetrics() {
       supabase.from('listings').select('*', { count: 'exact', head: true }).eq('status', 'active'),
       supabase.from('companies').select('*', { count: 'exact', head: true }).eq('is_verified', false),
     ]);
+    const { count: pendingReports } = await supabase
+      .from('reports')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'pending');
 
     return {
       totalUsers: totalUsers ?? 0,
@@ -205,13 +237,13 @@ export async function getAdminDashboardMetrics() {
       totalVolumeCents: 0,
       totalCommissionCents: 0,
       pendingVerifications: pendingVerifications ?? 0,
-      pendingReports: 0,
+      pendingReports: pendingReports ?? 0,
     };
   } catch (err) {
     console.warn('[admin-service] getAdminDashboardMetrics error:', err);
   }
 
-  const allowDemo = process.env.NEXT_PUBLIC_SHOW_DEMO_DATA === 'true';
+  const allowDemo = isDemoFallbackAllowed() && process.env.NEXT_PUBLIC_SHOW_DEMO_DATA === 'true';
   if (allowDemo) {
     return {
       totalUsers: 6,
@@ -301,7 +333,7 @@ export async function getCompaniesForVerification(): Promise<Company[]> {
   }
 
   // 3. Gerçek veritabanı sonuçlarını dön (Production'da sahte/demo veri sızıntısını engelle)
-  const allowDemo = process.env.NEXT_PUBLIC_SHOW_DEMO_DATA === 'true';
+  const allowDemo = isDemoFallbackAllowed() && process.env.NEXT_PUBLIC_SHOW_DEMO_DATA === 'true';
   if (resultList.length > 0) {
     return resultList;
   }
@@ -402,7 +434,7 @@ export async function getAdminListings(statusFilter = 'all'): Promise<Listing[]>
     }
 
     const { data, error } = await query;
-    if (!error && data && data.length > 0) {
+    if (!error && data) {
       return data.map((l) => ({
         ...l,
         company_name: l.company?.name || 'Firma',
@@ -415,7 +447,7 @@ export async function getAdminListings(statusFilter = 'all'): Promise<Listing[]>
     console.warn('[admin-service] getAdminListings error:', err);
   }
 
-  const allowDemo = process.env.NEXT_PUBLIC_SHOW_DEMO_DATA === 'true';
+  const allowDemo = isDemoFallbackAllowed() && process.env.NEXT_PUBLIC_SHOW_DEMO_DATA === 'true';
   if (allowDemo) {
     if (statusFilter === 'all') return DEMO_LISTINGS;
     return DEMO_LISTINGS.filter((l) => l.status === statusFilter);
@@ -428,51 +460,74 @@ export async function moderateListing(
   listingId: string,
   action: 'approve' | 'reject' | 'remove',
   reason: string,
-  adminId: string
-): Promise<{ success: boolean }> {
-  try {
-    const supabase = createClient();
-    const {
-      data: { user: authUser },
-    } = await supabase.auth.getUser();
-    const effectiveAdminId = authUser?.id || adminId;
-
-    // 1. Önce sunucu moderasyon API'sini çağır
-    if (typeof window !== 'undefined') {
-      await fetch('/api/admin/listings/moderate', {
+  _adminId?: string
+): Promise<{ success: boolean; error?: string }> {
+  if (isSupabaseConfigured()) {
+    try {
+      const res = await fetch('/api/admin/listings/moderate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ listingId, action, reason }),
-      }).catch(() => {});
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) return { success: false, error: json.error || 'İlan güncellenemedi.' };
+      return { success: true };
+    } catch {
+      if (!isDemoFallbackAllowed()) return { success: false, error: 'İlan güncellenemedi.' };
     }
-
-    // 2. Doğrudan supabase veritabanında durumu güncelle
-    const newStatus = action === 'approve' ? 'active' : action === 'reject' ? 'rejected' : 'inactive';
-    await supabase.from('listings').update({ status: newStatus }).eq('id', listingId);
-
-    await logAdminAction(effectiveAdminId, `LISTING_${action.toUpperCase()}`, 'listing', listingId, {
-      action,
-      reason,
-    });
-  } catch (err) {
-    console.warn('[admin-service] moderateListing error:', err);
   }
-
+  const demo = DEMO_LISTINGS.find((l) => l.id === listingId);
+  if (demo) demo.status = action === 'approve' ? 'active' : action === 'reject' ? 'rejected' : 'inactive';
   return { success: true };
 }
 
 // Category Management
 export async function getAdminCategories(): Promise<Category[]> {
+  if (isSupabaseConfigured()) {
+    const supabase = createClient();
+    const { data, error } = await supabase.from('categories').select('*').order('order_index');
+    if (!error && data) {
+      const parents = data.filter((c) => !c.parent_id);
+      return parents.map((parent) => ({
+        ...parent,
+        subcategories: data.filter((c) => c.parent_id === parent.id),
+      }));
+    }
+    if (!isDemoFallbackAllowed()) return [];
+  }
   return CATEGORIES;
 }
 
 export async function saveCategory(
   category: Partial<Category>,
   adminId: string
-): Promise<{ success: boolean; category?: Category }> {
+): Promise<{ success: boolean; category?: Category; error?: string }> {
+  if (isSupabaseConfigured()) {
+    const supabase = createClient();
+    const row = {
+      name: category.name,
+      slug: category.slug,
+      order_index: category.order_index,
+      is_active: category.is_active ?? true,
+      allowed_listing_types: category.allowed_listing_types,
+      parent_id: category.parent_id ?? null,
+    };
+    const isUuid = !!category.id && /^[0-9a-f-]{36}$/i.test(category.id);
+    const query = isUuid
+      ? supabase.from('categories').update(row).eq('id', category.id!).select().maybeSingle()
+      : supabase.from('categories').insert(row).select().maybeSingle();
+    const { data, error } = await query;
+    if (!error && data) {
+      await logAdminAction(adminId, 'CATEGORY_SAVED', 'category', data.id, { name: data.name });
+      return { success: true, category: data as Category };
+    }
+    if (!isDemoFallbackAllowed()) {
+      return { success: false, error: 'Kategori kaydedilemedi (slug benzersiz olmalı).' };
+    }
+  }
+
   let savedCat: Category;
   const existingIdx = CATEGORIES.findIndex((c) => c.id === category.id);
-
   if (existingIdx >= 0) {
     CATEGORIES[existingIdx] = { ...CATEGORIES[existingIdx], ...category } as Category;
     savedCat = CATEGORIES[existingIdx];
@@ -488,16 +543,22 @@ export async function saveCategory(
     };
     CATEGORIES.push(savedCat);
   }
-
-  await logAdminAction(adminId, 'CATEGORY_SAVED', 'category', savedCat.id, {
-    name: savedCat.name,
-  });
-
+  await logAdminAction(adminId, 'CATEGORY_SAVED', 'category', savedCat.id, { name: savedCat.name });
   return { success: true, category: savedCat };
 }
 
 // Reports Desk
 export async function getAdminReports(): Promise<Report[]> {
+  if (isSupabaseConfigured()) {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('reports')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(500);
+    if (!error && data) return data as Report[];
+    if (!isDemoFallbackAllowed()) return [];
+  }
   return DEMO_REPORTS;
 }
 
@@ -506,7 +567,30 @@ export async function resolveReport(
   status: 'resolved' | 'dismissed',
   adminNotes: string,
   adminId: string
-): Promise<{ success: boolean }> {
+): Promise<{ success: boolean; error?: string }> {
+  if (isSupabaseConfigured()) {
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const { data, error } = await supabase
+      .from('reports')
+      .update({
+        status,
+        admin_notes: adminNotes,
+        resolved_by: user?.id ?? null,
+        resolved_at: new Date().toISOString(),
+      })
+      .eq('id', reportId)
+      .select('id')
+      .maybeSingle();
+    if (!error && data) {
+      await logAdminAction(adminId, `REPORT_${status.toUpperCase()}`, 'user', reportId, { status, adminNotes });
+      return { success: true };
+    }
+    if (!isDemoFallbackAllowed()) return { success: false, error: 'Şikayet güncellenemedi.' };
+  }
+
   const rep = DEMO_REPORTS.find((r) => r.id === reportId);
   if (rep) {
     rep.status = status;
@@ -514,17 +598,30 @@ export async function resolveReport(
     rep.resolved_by = adminId;
     rep.resolved_at = new Date().toISOString();
   }
-
-  await logAdminAction(adminId, `REPORT_${status.toUpperCase()}`, 'user', reportId, {
-    status,
-    adminNotes,
-  });
-
+  await logAdminAction(adminId, `REPORT_${status.toUpperCase()}`, 'user', reportId, { status, adminNotes });
   return { success: true };
 }
 
 // Platform Settings
+// soft_launch_config gibi bazı anahtarlar system_settings tablosunda tutulur.
+const SYSTEM_SETTING_KEYS = new Set(['soft_launch_config']);
+
 export async function getPlatformSettings(): Promise<Record<string, PlatformSetting>> {
+  if (isSupabaseConfigured()) {
+    const supabase = createClient();
+    const [platform, system] = await Promise.all([
+      supabase.from('platform_settings').select('*'),
+      supabase.from('system_settings').select('*').in('key', Array.from(SYSTEM_SETTING_KEYS)),
+    ]);
+    if (!platform.error && platform.data) {
+      const result: Record<string, PlatformSetting> = {};
+      for (const row of [...platform.data, ...(system.data || [])]) {
+        result[row.key] = row as PlatformSetting;
+      }
+      return result;
+    }
+    if (!isDemoFallbackAllowed()) return {};
+  }
   return DEMO_PLATFORM_SETTINGS;
 }
 
@@ -532,10 +629,31 @@ export async function updatePlatformSetting(
   key: string,
   value: Record<string, any>,
   adminId: string
-): Promise<{ success: boolean }> {
+): Promise<{ success: boolean; error?: string }> {
+  if (isSupabaseConfigured()) {
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const table = SYSTEM_SETTING_KEYS.has(key) ? 'system_settings' : 'platform_settings';
+    const { data: existing } = await supabase.from(table).select('value').eq('key', key).maybeSingle();
+    // Mevcut alanlar korunur (ör. soft_launch_config.allowed_categories).
+    const merged = { ...((existing?.value as Record<string, any>) || {}), ...value };
+    const { error } = await supabase
+      .from(table)
+      .upsert({ key, value: merged, updated_by: user?.id ?? null, updated_at: new Date().toISOString() });
+    if (!error) {
+      await logAdminAction(adminId, 'SETTING_UPDATED', 'setting', key, {
+        old_value: existing?.value ?? null,
+        new_value: merged,
+      });
+      return { success: true };
+    }
+    if (!isDemoFallbackAllowed()) return { success: false, error: `Ayar kaydedilemedi: ${key}` };
+  }
+
   const existing = DEMO_PLATFORM_SETTINGS[key];
   const oldVal = existing ? existing.value : null;
-
   DEMO_PLATFORM_SETTINGS[key] = {
     key,
     value,
@@ -543,12 +661,7 @@ export async function updatePlatformSetting(
     updated_by: adminId,
     updated_at: new Date().toISOString(),
   };
-
-  await logAdminAction(adminId, 'SETTING_UPDATED', 'setting', key, {
-    old_value: oldVal,
-    new_value: value,
-  });
-
+  await logAdminAction(adminId, 'SETTING_UPDATED', 'setting', key, { old_value: oldVal, new_value: value });
   return { success: true };
 }
 
@@ -654,34 +767,26 @@ export async function getComplianceStats(): Promise<{
   repeatOffenderCount: number;
   softModeRevealCount: number;
 }> {
-  try {
-    const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-    if (isSupabaseConfigured) {
-      const { data: logs } = await supabase.from('compliance_mask_logs').select('*');
-      if (logs && logs.length > 0) {
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = createClient();
+      const { data: logs, error } = await supabase
+        .from('compliance_mask_logs')
+        .select('detected_types, is_false_positive_reported, review_status');
+      if (!error && logs) {
         let phone = 0, email = 0, iban = 0, social = 0, disputes = 0;
-        logs.forEach((l) => {
+        logs.forEach((l: any) => {
           const t: string[] = l.detected_types || [];
           if (t.includes('phone')) phone++;
           if (t.includes('email')) email++;
           if (t.includes('iban')) iban++;
           if (t.includes('social_keyword') || t.includes('domain_url')) social++;
-          if (l.is_false_positive_reported && l.false_positive_status === 'pending') disputes++;
+          if (l.is_false_positive_reported && l.review_status === 'pending') disputes++;
         });
-
-        const { count: offendersCount } = await supabase
-          .from('profiles')
-          .select('*', { count: 'exact', head: true })
-          .gte('mask_violation_count', 3);
-
-        const { count: revealCount } = await supabase
-          .from('phone_reveal_daily_logs')
-          .select('*', { count: 'exact', head: true });
-
+        const [{ count: offendersCount }, { count: revealCount }] = await Promise.all([
+          supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('mask_violation_count', 3),
+          supabase.from('phone_reveal_daily_logs').select('*', { count: 'exact', head: true }),
+        ]);
         return {
           totalMasked: logs.length,
           phoneCount: phone,
@@ -690,12 +795,18 @@ export async function getComplianceStats(): Promise<{
           socialCount: social,
           disputeCount: disputes,
           repeatOffenderCount: offendersCount || 0,
-          softModeRevealCount: revealCount || 12,
+          softModeRevealCount: revealCount || 0,
         };
       }
+    } catch {
+      // aşağıdaki karara düşer
     }
-  } catch {
-    // fallback
+    if (!isDemoFallbackAllowed()) {
+      return {
+        totalMasked: 0, phoneCount: 0, emailCount: 0, ibanCount: 0,
+        socialCount: 0, disputeCount: 0, repeatOffenderCount: 0, softModeRevealCount: 0,
+      };
+    }
   }
 
   return {
@@ -711,27 +822,22 @@ export async function getComplianceStats(): Promise<{
 }
 
 export async function getComplianceDisputes(): Promise<ComplianceLogItem[]> {
-  try {
+  if (isSupabaseConfigured()) {
     const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-    if (isSupabaseConfigured) {
-      const { data, error } = await supabase
-        .from('compliance_mask_logs')
-        .select('*')
-        .eq('is_false_positive_reported', true)
-        .order('created_at', { ascending: false });
-
-      if (!error && data) {
-        return data as ComplianceLogItem[];
-      }
+    const { data, error } = await supabase
+      .from('compliance_mask_logs')
+      .select('*')
+      .eq('is_false_positive_reported', true)
+      .order('created_at', { ascending: false });
+    if (!error && data) {
+      // Canlı şemada durum sütunu review_status, açıklama false_positive_reason.
+      return data.map((d: any) => ({
+        ...d,
+        false_positive_status: d.false_positive_status ?? d.review_status,
+      })) as ComplianceLogItem[];
     }
-  } catch {
-    // fallback
+    if (!isDemoFallbackAllowed()) return [];
   }
-
   return DEMO_COMPLIANCE_LOGS.filter((l) => l.is_false_positive_reported);
 }
 
@@ -740,71 +846,56 @@ export async function resolveComplianceDispute(
   status: 'approved' | 'rejected',
   adminNotes?: string,
   adminId: string = 'admin-super-001'
-): Promise<{ success: boolean }> {
-  try {
+): Promise<{ success: boolean; error?: string }> {
+  if (isSupabaseConfigured()) {
     const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-    if (isSupabaseConfigured) {
-      await supabase
-        .from('compliance_mask_logs')
-        .update({
-          false_positive_status: status,
-          reviewed_by: adminId,
-          reviewed_at: new Date().toISOString(),
-        })
-        .eq('id', logId);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const { data, error } = await supabase
+      .from('compliance_mask_logs')
+      .update({
+        review_status: status,
+        reviewed_by_admin: user?.id ?? null,
+      })
+      .eq('id', logId)
+      .select('id')
+      .maybeSingle();
+    if (!error && data) {
+      await logAdminAction(adminId, `COMPLIANCE_DISPUTE_${status.toUpperCase()}`, 'compliance_log', logId, {
+        status,
+        adminNotes,
+      });
+      return { success: true };
     }
-  } catch {
-    // fallback
+    if (!isDemoFallbackAllowed()) return { success: false, error: 'İtiraz güncellenemedi.' };
   }
 
   const found = DEMO_COMPLIANCE_LOGS.find((l) => l.id === logId);
-  if (found) {
-    found.false_positive_status = status;
-  }
-
+  if (found) found.false_positive_status = status;
   await logAdminAction(adminId, `COMPLIANCE_DISPUTE_${status.toUpperCase()}`, 'compliance_log', logId, {
     status,
     adminNotes,
   });
-
   return { success: true };
 }
 
 export async function getRepeatOffendersList(): Promise<OffenderProfile[]> {
-  try {
+  if (isSupabaseConfigured()) {
     const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-    if (isSupabaseConfigured) {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select(`
-          user_id:id,
-          full_name,
-          role,
-          mask_violation_count,
-          compliance_status
-        `)
-        .gte('mask_violation_count', 1)
-        .order('mask_violation_count', { ascending: false });
-
-      if (!error && data) {
-        return data.map((d: any) => ({
-          ...d,
-          last_violation_at: new Date().toISOString(),
-        }));
-      }
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('user_id:id, full_name, role, mask_violation_count, compliance_status, updated_at')
+      .gte('mask_violation_count', 1)
+      .order('mask_violation_count', { ascending: false });
+    if (!error && data) {
+      return data.map((d: any) => ({
+        ...d,
+        last_violation_at: d.updated_at || new Date().toISOString(),
+      }));
     }
-  } catch {
-    // fallback
+    if (!isDemoFallbackAllowed()) return [];
   }
-
   return DEMO_REPEAT_OFFENDERS;
 }
 
@@ -812,99 +903,97 @@ export async function takeOffenderAction(
   userId: string,
   action: 'warn' | 'suspend' | 'clear',
   adminId: string = 'admin-super-001'
-): Promise<{ success: boolean }> {
-  const newStatus = action === 'suspend' ? 'suspended' : action === 'warn' ? 'warned' : 'good_standing';
+): Promise<{ success: boolean; error?: string }> {
+  // profiles.compliance_status değerleri: clean | warned | flagged | suspended
+  const newStatus = action === 'suspend' ? 'suspended' : action === 'warn' ? 'warned' : 'clean';
 
-  try {
+  if (isSupabaseConfigured()) {
     const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-    if (isSupabaseConfigured) {
-      await supabase
-        .from('profiles')
-        .update({
-          compliance_status: newStatus,
-          mask_violation_count: action === 'clear' ? 0 : undefined,
-        })
-        .eq('id', userId);
+    const patch: Record<string, unknown> = { compliance_status: newStatus };
+    if (action === 'clear') patch.mask_violation_count = 0;
+    const { data, error } = await supabase
+      .from('profiles')
+      .update(patch)
+      .eq('id', userId)
+      .select('id')
+      .maybeSingle();
+    if (!error && data) {
+      await logAdminAction(adminId, `OFFENDER_ACTION_${action.toUpperCase()}`, 'profile', userId, {
+        action,
+        newStatus,
+      });
+      return { success: true };
     }
-  } catch {
-    // fallback
+    if (!isDemoFallbackAllowed()) return { success: false, error: 'Kullanıcı durumu güncellenemedi.' };
   }
 
   const offender = DEMO_REPEAT_OFFENDERS.find((o) => o.user_id === userId);
   if (offender) {
-    offender.compliance_status = newStatus;
+    offender.compliance_status = newStatus as OffenderProfile['compliance_status'];
     if (action === 'clear') offender.mask_violation_count = 0;
   }
-
   await logAdminAction(adminId, `OFFENDER_ACTION_${action.toUpperCase()}`, 'profile', userId, {
     action,
     newStatus,
   });
-
   return { success: true };
 }
 
-export async function getAntiLeakSettings(): Promise<{
+type AntiLeakSettings = {
   contactRevealRule: 'teklif_kabul' | 'odeme' | 'talep_kredisi' | 'numara_goster_butonu';
   violationThreshold: number;
   softModeDailyLimit: number;
   forbiddenKeywords: string;
-}> {
+};
+
+const DEFAULT_ANTI_LEAK: AntiLeakSettings = {
+  contactRevealRule: 'teklif_kabul',
+  violationThreshold: 3,
+  softModeDailyLimit: 3,
+  forbiddenKeywords:
+    'whatsapp, wp, watsap, telegram, t.me, instagram, insta, özelden yaz, elden anlaşalım, komisyonsuz, telefonumu ara',
+};
+
+/** Canlı system_settings anahtarları: reveal_rule, violation_threshold, numara_goster_config, mask_patterns. */
+export async function getAntiLeakSettings(): Promise<AntiLeakSettings> {
+  if (!isSupabaseConfigured()) return DEFAULT_ANTI_LEAK;
+  const supabase = createClient();
+  const { data } = await supabase
+    .from('system_settings')
+    .select('key, value')
+    .in('key', ['reveal_rule', 'violation_threshold', 'numara_goster_config', 'mask_patterns']);
+  const byKey = Object.fromEntries((data || []).map((r: any) => [r.key, r.value || {}]));
   return {
-    contactRevealRule: 'teklif_kabul',
-    violationThreshold: 3,
-    softModeDailyLimit: 3,
-    forbiddenKeywords: 'whatsapp, wp, watsap, telegram, t.me, instagram, insta, özelden yaz, elden anlaşalım, komisyonsuz, telefonumu ara',
+    contactRevealRule: byKey.reveal_rule?.default || DEFAULT_ANTI_LEAK.contactRevealRule,
+    violationThreshold: Number(byKey.violation_threshold?.warn_max) || DEFAULT_ANTI_LEAK.violationThreshold,
+    softModeDailyLimit: Number(byKey.numara_goster_config?.daily_limit) || DEFAULT_ANTI_LEAK.softModeDailyLimit,
+    forbiddenKeywords: Array.isArray(byKey.mask_patterns?.keywords)
+      ? byKey.mask_patterns.keywords.join(', ')
+      : DEFAULT_ANTI_LEAK.forbiddenKeywords,
   };
 }
 
 export async function updateAntiLeakSettings(
-  settings: {
-    contactRevealRule: string;
-    violationThreshold: number;
-    softModeDailyLimit: number;
-    forbiddenKeywords: string;
-  },
+  settings: AntiLeakSettings | { contactRevealRule: string; violationThreshold: number; softModeDailyLimit: number; forbiddenKeywords: string },
   adminId: string = 'admin-super-001'
-): Promise<{ success: boolean }> {
-  try {
+): Promise<{ success: boolean; error?: string }> {
+  if (isSupabaseConfigured()) {
     const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
+    const { data: rows } = await supabase
+      .from('system_settings')
+      .select('key, value')
+      .in('key', ['reveal_rule', 'violation_threshold', 'numara_goster_config', 'mask_patterns']);
+    const cur = Object.fromEntries((rows || []).map((r: any) => [r.key, r.value || {}]));
+    const keywordList = settings.forbiddenKeywords.split(',').map((k) => k.trim()).filter(Boolean);
 
-    if (isSupabaseConfigured) {
-      const keywordList = settings.forbiddenKeywords.split(',').map((k) => k.trim()).filter(Boolean);
-
-      await Promise.all([
-        supabase.from('system_settings').upsert({
-          key: 'contact_reveal_rule',
-          value: { rule: settings.contactRevealRule },
-          description: 'İletişim bilgisi kontrollü açılış kuralı',
-        }),
-        supabase.from('system_settings').upsert({
-          key: 'mask_violation_threshold',
-          value: { threshold: settings.violationThreshold },
-          description: 'Tekrarlayan ihlal eşiği',
-        }),
-        supabase.from('system_settings').upsert({
-          key: 'soft_mode_daily_limit',
-          value: { limit: settings.softModeDailyLimit },
-          description: 'Yumuşak mod günlük numara gösterim kotası',
-        }),
-        supabase.from('system_settings').upsert({
-          key: 'forbidden_contact_keywords',
-          value: { keywords: keywordList },
-          description: 'Dinamik yasaklı yönlendirme kelimeleri',
-        }),
-      ]);
-    }
-  } catch {
-    // fallback
+    const updates = [
+      { key: 'reveal_rule', value: { ...cur.reveal_rule, default: settings.contactRevealRule } },
+      { key: 'violation_threshold', value: { ...cur.violation_threshold, warn_max: Number(settings.violationThreshold) } },
+      { key: 'numara_goster_config', value: { ...cur.numara_goster_config, daily_limit: Number(settings.softModeDailyLimit) } },
+      { key: 'mask_patterns', value: { ...cur.mask_patterns, keywords: keywordList } },
+    ];
+    const { error } = await supabase.from('system_settings').upsert(updates);
+    if (error) return { success: false, error: 'Ayarlar kaydedilemedi.' };
   }
 
   await logAdminAction(adminId, 'ANTI_LEAK_SETTINGS_UPDATED', 'setting', 'anti_leak_config', settings);

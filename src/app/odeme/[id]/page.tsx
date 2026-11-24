@@ -1,5 +1,6 @@
 'use client';
 
+import { withDemoModuleGate } from '@/components/common/DemoModuleGate';
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -20,7 +21,7 @@ import { BookingWithDetails } from '@/lib/services/booking-service';
 import { createClient } from '@/lib/supabase/client';
 import { getPlatformEscrowSettings, createEscrowPaymentSession, confirmEscrowPaymentPaid } from '@/lib/services/escrow-service';
 
-export default function CheckoutPage() {
+function CheckoutPage() {
   const params = useParams();
   const router = useRouter();
   const bookingId = params.id as string;
@@ -331,3 +332,9 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
+export default withDemoModuleGate(CheckoutPage, {
+  title: 'Güvenli Ödeme',
+  backHref: '/alici-paneli/rezervasyonlar',
+  backLabel: 'Rezervasyonlarıma Dön',
+});

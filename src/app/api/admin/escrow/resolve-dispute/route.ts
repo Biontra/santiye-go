@@ -45,18 +45,50 @@ function verifyTotpCode(code: string, secret: string): boolean {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { disputeId, action, notes, twoFactorCode } = body;
+    const body = await req.json().catch(() => null);
+    // paymentId tercih edilir; geriye dönük uyumluluk için disputeId (payment_disputes.id) de kabul edilir.
+    const { paymentId, disputeId, action, notes, twoFactorCode } = body || {};
+    const buyerRefundCents = Number(body?.buyerRefundCents ?? 0);
+    const companyTransferCents = Number(body?.companyTransferCents ?? 0);
 
-    if (!disputeId || !action || !notes || !twoFactorCode) {
+    if ((!paymentId && !disputeId) || !action || !notes || !twoFactorCode) {
       return NextResponse.json(
-        { error: 'Eksik parametre: disputeId, action, notes ve twoFactorCode zorunludur.' },
+        { error: 'Eksik parametre: paymentId (veya disputeId), action, notes ve twoFactorCode zorunludur.' },
         { status: 400 }
       );
     }
 
-    if (typeof notes !== 'string' || typeof twoFactorCode !== 'string' || typeof disputeId !== 'string' || typeof action !== 'string') {
+    if (
+      typeof notes !== 'string' ||
+      typeof twoFactorCode !== 'string' ||
+      typeof action !== 'string' ||
+      (paymentId !== undefined && typeof paymentId !== 'string') ||
+      (disputeId !== undefined && typeof disputeId !== 'string')
+    ) {
       return NextResponse.json({ error: 'Geçersiz parametre türü.' }, { status: 400 });
+    }
+
+    // Eski istemci adlarını veritabanı fonksiyonunun çözüm türlerine eşle.
+    const ACTION_MAP: Record<string, 'transfer_to_company' | 'full_refund_to_buyer' | 'split'> = {
+      transfer_to_company: 'transfer_to_company',
+      payout_to_seller: 'transfer_to_company',
+      full_refund_to_buyer: 'full_refund_to_buyer',
+      refund_to_buyer: 'full_refund_to_buyer',
+      refund_buyer: 'full_refund_to_buyer',
+      split: 'split',
+    };
+    const resolutionType = ACTION_MAP[action];
+    if (!resolutionType) {
+      return NextResponse.json({ error: 'Geçersiz çözüm türü.' }, { status: 400 });
+    }
+    if (
+      resolutionType === 'split' &&
+      (!Number.isInteger(buyerRefundCents) ||
+        !Number.isInteger(companyTransferCents) ||
+        buyerRefundCents < 0 ||
+        companyTransferCents < 0)
+    ) {
+      return NextResponse.json({ error: 'Paylaşım tutarları geçersiz.' }, { status: 400 });
     }
 
     if (notes.trim().length < 15) {
@@ -134,8 +166,9 @@ export async function POST(req: NextRequest) {
       p_success: isCodeMatch,
       p_ip_address: clientIp.slice(0, 45),
       p_details: {
-        dispute_id: disputeId,
-        action,
+        payment_id: paymentId ?? null,
+        dispute_id: disputeId ?? null,
+        action: resolutionType,
         aal2: isAal2Verified,
         attempted_at: new Date().toISOString(),
       },
@@ -172,41 +205,48 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3. Service Role RPC ile İtirazı Çözümle
+    // 3. Ödeme kaydını belirle
+    let targetPaymentId: string | null = typeof paymentId === 'string' ? paymentId : null;
+    if (!targetPaymentId && disputeId) {
+      const { data: disp } = await serviceClient
+        .from('payment_disputes')
+        .select('payment_id')
+        .eq('id', disputeId)
+        .maybeSingle();
+      targetPaymentId = disp?.payment_id ?? null;
+    }
+    if (!targetPaymentId) {
+      return NextResponse.json({ error: 'İtiraz / ödeme kaydı bulunamadı.' }, { status: 404 });
+    }
+
+    // 4. Service Role RPC ile itirazı çözümle (yalnızca service_role çağırabilir)
     const { data, error } = await serviceClient.rpc('admin_resolve_escrow_dispute', {
-      p_dispute_id: disputeId,
-      p_action: action,
-      p_notes: `[SUNUCU 2FA AAL2 DOĞRULANDI - Yönetici: ${adminUser.email || authenticatedAdminId}] ${notes.trim()}`,
+      p_payment_id: targetPaymentId,
       p_admin_id: authenticatedAdminId,
+      p_resolution_type: resolutionType,
+      p_admin_notes: `[SUNUCU 2FA DOĞRULANDI - Yönetici: ${adminUser.email || authenticatedAdminId}] ${notes.trim()}`,
+      p_buyer_refund_cents: resolutionType === 'split' ? buyerRefundCents : 0,
+      p_company_transfer_cents: resolutionType === 'split' ? companyTransferCents : 0,
     });
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      console.error('[resolve-dispute] rpc error:', error.message);
+      return NextResponse.json({ error: 'Uyuşmazlık çözümlenemedi.' }, { status: 400 });
     }
-
-    // 4. Satıcıya serbest bırakma kararı verildiyse ödemeyi alt üye işyerine aktar
-    if (action === 'payout_to_seller') {
-      const { data: disp } = await serviceClient
-        .from('escrow_disputes')
-        .select('payment_id')
-        .eq('id', disputeId)
-        .single();
-
-      if (disp?.payment_id) {
-        const { executeEscrowPayout } = await import('@/lib/services/escrow-service');
-        await executeEscrowPayout(disp.payment_id);
-      }
+    if (data && data.success === false) {
+      return NextResponse.json({ error: data.error || 'Uyuşmazlık çözümlenemedi.' }, { status: 400 });
     }
 
     // 5. Değiştirilemez Denetim Logu
     try {
       await serviceClient.from('admin_audit_logs').insert({
         action: 'escrow_dispute_manual_resolution_2fa',
-        actor_id: authenticatedAdminId,
-        target_type: 'escrow_dispute',
-        target_id: disputeId,
+        admin_id: authenticatedAdminId,
+        target_type: 'payment_transaction',
+        target_id: targetPaymentId,
         details: {
-          action,
+          action: resolutionType,
+          dispute_id: disputeId ?? null,
           notes,
           admin_email: adminUser.email,
           admin_name: profile.full_name,

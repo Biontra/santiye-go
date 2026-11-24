@@ -1,5 +1,6 @@
 'use client';
 
+import { withDemoModuleGate } from '@/components/common/DemoModuleGate';
 import { useState } from 'react';
 import Link from 'next/link';
 import {
@@ -26,7 +27,7 @@ import {
 } from '@/lib/services/ad-service';
 import { AdCampaign, AdProduct } from '@/types/database';
 
-export default function AdminAdsPage() {
+function AdminAdsPage() {
   const [campaigns, setCampaigns] = useState<AdCampaign[]>(DEMO_CAMPAIGNS);
   const [products, setProducts] = useState<AdProduct[]>(DEFAULT_AD_PRODUCTS);
   const [activeTab, setActiveTab] = useState<'campaigns' | 'products'>('campaigns');
@@ -420,3 +421,9 @@ export default function AdminAdsPage() {
     </div>
   );
 }
+
+export default withDemoModuleGate(AdminAdsPage, {
+  title: 'Reklam Yönetimi',
+  backHref: '/admin',
+  backLabel: 'Yönetim Paneline Dön',
+});

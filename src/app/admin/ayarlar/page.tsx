@@ -68,7 +68,7 @@ export default function AdminSettingsPage() {
     e.preventDefault();
     setSaving(true);
 
-    await Promise.all([
+    const results = await Promise.all([
       updatePlatformSetting('default_commission_rate', { rate_percent: Number(commissionRate) }, 'admin-super-001'),
       updatePlatformSetting('booking_cancellation_hours', { hours: Number(cancelHours) }, 'admin-super-001'),
       updatePlatformSetting('quote_request_auto_expire_hours', { hours: Number(expireHours) }, 'admin-super-001'),
@@ -79,7 +79,12 @@ export default function AdminSettingsPage() {
     ]);
 
     setSaving(false);
-    setNotice('Tüm sistem ayarları başarıyla güncellendi ve denetim loglarına kaydedildi!');
+    const failed = results.filter((r) => !r.success);
+    setNotice(
+      failed.length === 0
+        ? 'Tüm sistem ayarları başarıyla güncellendi ve denetim loglarına kaydedildi!'
+        : `Bazı ayarlar kaydedilemedi: ${failed.map((f) => f.error).join(', ')}`
+    );
     setTimeout(() => setNotice(''), 3000);
   };
 

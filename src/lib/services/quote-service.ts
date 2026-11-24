@@ -1,8 +1,8 @@
 import { createClient } from '@/lib/supabase/client';
 import { QuoteRequest, Quote } from '@/types/database';
 import { sanitizeContent } from '@/lib/security/contact-masker';
-import { triggerControlledReveal } from './reveal-service';
 import { getActiveProfile } from './auth-service';
+import { isDemoFallbackAllowed, isSupabaseConfigured } from '@/lib/config/runtime';
 
 const STORAGE_QUOTE_REQUESTS_KEY = 'santiyego_quote_requests_store';
 const STORAGE_QUOTES_KEY = 'santiyego_quotes_store';
@@ -169,57 +169,48 @@ export async function createQuoteRequest(
     quotes: [],
   };
 
-  // 1. Tarayıcı yerel saklama alanına kaydet (sayfa yenilense / oturum açılıp kapansa kaybolmaz)
-  saveStoredQuoteRequest(newRequest);
-
-  // 2. Canlı Supabase varsa senkronize et
-  try {
+  if (isSupabaseConfigured()) {
     const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
+    const hasCoords = typeof data.lat === 'number' && typeof data.lng === 'number';
+    const insertPayload = {
+      buyer_id: buyerId,
+      request_type: newRequest.request_type,
+      listing_id: newRequest.listing_id,
+      category_id: newRequest.category_id,
+      title: newRequest.title,
+      description: newRequest.description || newRequest.title,
+      quantity: newRequest.quantity,
+      start_date: newRequest.start_date,
+      end_date: newRequest.end_date,
+      city_id: newRequest.city_id,
+      district_id: newRequest.district_id,
+      address_detail: newRequest.address_detail,
+      // geography sütunu EWKT metni kabul eder.
+      location: hasCoords ? `SRID=4326;POINT(${data.lng} ${data.lat})` : null,
+      need_operator: newRequest.need_operator,
+      need_fuel: newRequest.need_fuel,
+      need_transport: newRequest.need_transport,
+      max_recipients: newRequest.max_recipients,
+      search_radius_km: newRequest.search_radius_km,
+      expires_at: newRequest.expires_at,
+    };
 
-    if (isSupabaseConfigured) {
-      const insertPayload = {
-        buyer_id: buyerId,
-        request_type: newRequest.request_type,
-        listing_id: newRequest.listing_id,
-        category_id: newRequest.category_id,
-        title: newRequest.title,
-        description: newRequest.description,
-        quantity: newRequest.quantity,
-        start_date: newRequest.start_date,
-        end_date: newRequest.end_date,
-        city_id: newRequest.city_id,
-        district_id: newRequest.district_id,
-        address_detail: newRequest.address_detail,
-        lat: newRequest.lat,
-        lng: newRequest.lng,
-        need_operator: newRequest.need_operator,
-        need_fuel: newRequest.need_fuel,
-        need_transport: newRequest.need_transport,
-        status: newRequest.status,
-        max_recipients: newRequest.max_recipients,
-        search_radius_km: newRequest.search_radius_km,
-        expires_at: newRequest.expires_at,
-        is_demo: false,
-      };
+    const { data: dbData, error } = await supabase
+      .from('quote_requests')
+      .insert(insertPayload)
+      .select()
+      .single();
 
-      const { data: dbData, error } = await supabase
-        .from('quote_requests')
-        .insert(insertPayload)
-        .select()
-        .single();
-
-      if (!error && dbData) {
-        saveStoredQuoteRequest(dbData as QuoteRequest);
-        return { success: true, request: dbData as QuoteRequest };
-      }
+    if (!error && dbData) {
+      return { success: true, request: dbData as QuoteRequest };
     }
-  } catch (err) {
-    console.warn('[createQuoteRequest] Supabase sync fallback to local store:', err);
+    if (!isDemoFallbackAllowed()) {
+      return { success: false, error: dbErrorMessage(error?.message, 'Teklif talebi gönderilemedi.') };
+    }
   }
 
+  // Yerel demo modu: tarayıcı deposuna kaydet
+  saveStoredQuoteRequest(newRequest);
   return { success: true, request: newRequest };
 }
 
@@ -251,7 +242,7 @@ export async function getBuyerQuoteRequests(buyerId: string): Promise<QuoteReque
         .eq('is_demo', false)
         .order('created_at', { ascending: false });
 
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
         results = data as QuoteRequest[];
       }
     }
@@ -259,7 +250,10 @@ export async function getBuyerQuoteRequests(buyerId: string): Promise<QuoteReque
     console.warn('[getBuyerQuoteRequests] Supabase fetch error:', err);
   }
 
-  // 2. Yerel saklama alanındaki kullanıcının kendi talepleri ile birleştir
+  // 2. Yerel demo modunda tarayıcı deposundaki taleplerle birleştir
+  if (!isDemoFallbackAllowed()) {
+    return results;
+  }
   const stored = getStoredQuoteRequests().filter((r) => r.buyer_id === buyerId);
   const storedQuotes = getStoredQuotes();
 
@@ -314,7 +308,9 @@ export async function getCompanyQuoteRequests(companyId: string): Promise<QuoteR
     // fallback
   }
 
-  // Yerel saklama alanındaki taleplerden de ekle
+  if (!isDemoFallbackAllowed()) return results;
+
+  // Yerel demo modunda tarayıcı deposundaki taleplerden de ekle
   const stored = getStoredQuoteRequests();
   const storedQuotes = getStoredQuotes();
   for (const s of stored) {
@@ -333,134 +329,111 @@ export async function submitQuote(
   quoteData: Partial<Quote>
 ): Promise<{ success: boolean; quote?: Quote; error?: string }> {
   const sanitizedNotes = quoteData.notes ? sanitizeContent(quoteData.notes).maskedText : '';
+  if (!quoteData.request_id) return { success: false, error: 'Talep bulunamadı.' };
+  if (!quoteData.price_total || quoteData.price_total <= 0) {
+    return { success: false, error: 'Geçerli bir teklif tutarı giriniz.' };
+  }
+
+  const validUntil = new Date(Date.now() + 86400000 * 3).toISOString();
+
+  if (isSupabaseConfigured()) {
+    const supabase = createClient();
+    // Durum, geçerlilik ve talep durumu güncellemesi veritabanında (quotes_guard /
+    // quotes_after_change) yapılır; firma yalnızca kendisine iletilen taleplere teklif verebilir.
+    const { data, error } = await supabase
+      .from('quotes')
+      .insert({
+        request_id: quoteData.request_id,
+        company_id: quoteData.company_id,
+        listing_id: quoteData.listing_id || null,
+        price_total: quoteData.price_total,
+        price_unit: quoteData.price_unit || null,
+        currency: 'TRY',
+        is_operator_included: quoteData.is_operator_included ?? false,
+        is_fuel_included: quoteData.is_fuel_included ?? false,
+        is_transport_included: quoteData.is_transport_included ?? false,
+        notes: sanitizedNotes,
+        valid_until: validUntil,
+      })
+      .select()
+      .single();
+    if (!error && data) return { success: true, quote: data as Quote };
+    if (!isDemoFallbackAllowed()) {
+      if (error?.code === '23505') {
+        return { success: false, error: 'Bu talebe zaten bir teklif verdiniz.' };
+      }
+      return { success: false, error: dbErrorMessage(error?.message, 'Teklif gönderilemedi.') };
+    }
+  }
 
   const newQuote: Quote = {
     id: `quote-${Date.now()}`,
-    request_id: quoteData.request_id!,
+    request_id: quoteData.request_id,
     company_id: quoteData.company_id || 'f0000000-0000-0000-0000-000000000001',
     listing_id: quoteData.listing_id || null,
-    price_total: quoteData.price_total || 0,
+    price_total: quoteData.price_total,
     price_unit: quoteData.price_unit || null,
     currency: 'TRY',
     is_operator_included: quoteData.is_operator_included ?? false,
     is_fuel_included: quoteData.is_fuel_included ?? false,
     is_transport_included: quoteData.is_transport_included ?? false,
     notes: sanitizedNotes,
-    valid_until: new Date(Date.now() + 86400000 * 3).toISOString(),
+    valid_until: validUntil,
     status: 'submitted',
-    is_demo: false,
+    is_demo: true,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
-
   saveStoredQuote(newQuote);
-
-  try {
-    const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-    if (isSupabaseConfigured) {
-      const { data, error } = await supabase.from('quotes').insert(newQuote).select().single();
-      if (!error && data) {
-        await supabase
-          .from('quote_requests')
-          .update({ status: 'quotes_received' })
-          .eq('id', quoteData.request_id);
-        return { success: true, quote: data as Quote };
-      }
-    }
-  } catch {
-    // fallback
-  }
-
   return { success: true, quote: newQuote };
 }
 
-export async function acceptQuote(
+async function respondToQuote(
   quoteId: string,
-  requestId: string
+  status: 'accepted' | 'rejected',
+  requestId?: string
 ): Promise<{ success: boolean; error?: string }> {
-  try {
+  if (isSupabaseConfigured()) {
     const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
-
-    if (isSupabaseConfigured) {
-      await supabase
-        .from('quotes')
-        .update({ status: 'accepted', updated_at: new Date().toISOString() })
-        .eq('id', quoteId);
-
-      await supabase
-        .from('quote_requests')
-        .update({ status: 'accepted', updated_at: new Date().toISOString() })
-        .eq('id', requestId);
-
-      const { data: dbQuote } = await supabase
-        .from('quotes')
-        .select(`id, company_id, request:quote_requests(buyer_id)`)
-        .eq('id', quoteId)
-        .maybeSingle();
-
-      if (dbQuote) {
-        const buyerId = (dbQuote.request as any)?.buyer_id;
-        if (buyerId) {
-          await triggerControlledReveal({
-            buyerId,
-            companyId: dbQuote.company_id,
-            quoteId: dbQuote.id,
-            triggerType: 'teklif_kabul',
-          });
-        }
-      }
+    // Talep durumu ve iletişim açılışı veritabanı tetikleyicisiyle yapılır.
+    const { data, error } = await supabase
+      .from('quotes')
+      .update({ status })
+      .eq('id', quoteId)
+      .select('id')
+      .maybeSingle();
+    if (!error && data) return { success: true };
+    if (!isDemoFallbackAllowed()) {
+      return { success: false, error: dbErrorMessage(error?.message, 'Teklif yanıtlanamadı.') };
     }
-  } catch {
-    // fallback
   }
 
-  // Yerel depoda güncelle
   const quotes = getStoredQuotes();
   const q = quotes.find((x) => x.id === quoteId);
   if (q) {
-    q.status = 'accepted';
+    q.status = status;
     saveStoredQuote(q);
   }
-  const requests = getStoredQuoteRequests();
-  const r = requests.find((x) => x.id === requestId);
-  if (r) {
-    r.status = 'accepted';
-    saveStoredQuoteRequest(r);
+  if (status === 'accepted' && requestId) {
+    const r = getStoredQuoteRequests().find((x) => x.id === requestId);
+    if (r) {
+      r.status = 'accepted';
+      saveStoredQuoteRequest(r);
+    }
   }
-
   return { success: true };
 }
 
-export async function rejectQuote(quoteId: string): Promise<{ success: boolean; error?: string }> {
-  try {
-    const supabase = createClient();
-    const isSupabaseConfigured =
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder');
+export function acceptQuote(quoteId: string, requestId: string): Promise<{ success: boolean; error?: string }> {
+  return respondToQuote(quoteId, 'accepted', requestId);
+}
 
-    if (isSupabaseConfigured) {
-      await supabase
-        .from('quotes')
-        .update({ status: 'rejected', updated_at: new Date().toISOString() })
-        .eq('id', quoteId);
-    }
-  } catch {
-    // fallback
-  }
+export function rejectQuote(quoteId: string): Promise<{ success: boolean; error?: string }> {
+  return respondToQuote(quoteId, 'rejected');
+}
 
-  const quotes = getStoredQuotes();
-  const q = quotes.find((x) => x.id === quoteId);
-  if (q) {
-    q.status = 'rejected';
-    saveStoredQuote(q);
-  }
-
-  return { success: true };
+/** Veritabanı korumalarının Türkçe mesajlarını gösterir, teknik hataları gizler. */
+function dbErrorMessage(message: string | undefined, fallback: string): string {
+  if (message && /[ğüşıöçĞÜŞİÖÇ]/.test(message)) return message;
+  return fallback;
 }

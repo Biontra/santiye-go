@@ -20,7 +20,7 @@ import {
   getAdminDashboardMetrics,
   getCompaniesForVerification,
   getAdminReports,
-  DEMO_ADMIN_LOGS,
+  getRecentAdminLogs,
 } from '@/lib/services/admin-service';
 import { Company, Report, AdminAuditLog } from '@/types/database';
 
@@ -33,15 +33,16 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     async function load() {
-      const [m, c, r] = await Promise.all([
+      const [m, c, r, l] = await Promise.all([
         getAdminDashboardMetrics(),
         getCompaniesForVerification(),
         getAdminReports(),
+        getRecentAdminLogs(),
       ]);
       setMetrics(m);
       setCompanies(c);
       setReports(r);
-      setLogs(DEMO_ADMIN_LOGS);
+      setLogs(l);
       setLoading(false);
     }
     load();

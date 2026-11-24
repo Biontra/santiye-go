@@ -76,8 +76,8 @@ export default function BuyerBookingsPage() {
 
   const handleCancel = async (bookingId: string) => {
     if (confirm('Rezervasyon talebinizi iptal etmek istediğinize emin misiniz?')) {
-      await cancelBooking(bookingId);
-      setActionNotice('Rezervasyon talebi iptal edildi.');
+      const res = await cancelBooking(bookingId);
+      setActionNotice(res.success ? 'Rezervasyon talebi iptal edildi.' : res.error || 'Rezervasyon iptal edilemedi.');
       loadData();
       setTimeout(() => setActionNotice(''), 3000);
     }
