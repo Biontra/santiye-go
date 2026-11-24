@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/client';
+import { resolveModerationResult, type ModerationResult } from '@/lib/services/moderation-result';
 import {
   AdminAuditLog,
   AdminRole,
@@ -429,7 +430,7 @@ export async function moderateListing(
   action: 'approve' | 'reject' | 'remove',
   reason: string,
   adminId: string
-): Promise<{ success: boolean }> {
+): Promise<ModerationResult> {
   try {
     const supabase = createClient();
     const {
@@ -437,28 +438,52 @@ export async function moderateListing(
     } = await supabase.auth.getUser();
     const effectiveAdminId = authUser?.id || adminId;
 
-    // 1. Önce sunucu moderasyon API'sini çağır
+    // 1. Sunucu moderasyon ucunu çağır
+    let apiOk = false;
+    let apiError: string | null = null;
     if (typeof window !== 'undefined') {
-      await fetch('/api/admin/listings/moderate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ listingId, action, reason }),
-      }).catch(() => {});
+      try {
+        const res = await fetch('/api/admin/listings/moderate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ listingId, action, reason }),
+        });
+        apiOk = res.ok;
+        if (!res.ok) {
+          const body = await res.json().catch(() => null);
+          apiError = body?.error || null;
+        }
+      } catch {
+        apiError = 'Sunucuya ulaşılamadı.';
+      }
     }
 
-    // 2. Doğrudan supabase veritabanında durumu güncelle
-    const newStatus = action === 'approve' ? 'active' : action === 'reject' ? 'rejected' : 'inactive';
-    await supabase.from('listings').update({ status: newStatus }).eq('id', listingId);
+    // 2. Sunucu ucu başarısızsa doğrudan veritabanında dene; değişen satırı say
+    let updatedRows = 0;
+    let dbError: string | null = null;
+    if (!apiOk) {
+      const newStatus = action === 'approve' ? 'active' : action === 'reject' ? 'rejected' : 'inactive';
+      const { data, error } = await supabase
+        .from('listings')
+        .update({ status: newStatus })
+        .eq('id', listingId)
+        .select('id');
+      updatedRows = data?.length || 0;
+      dbError = error?.message || null;
+    }
 
-    await logAdminAction(effectiveAdminId, `LISTING_${action.toUpperCase()}`, 'listing', listingId, {
-      action,
-      reason,
-    });
+    const result = resolveModerationResult({ apiOk, apiError, updatedRows, dbError });
+    if (result.success) {
+      await logAdminAction(effectiveAdminId, `LISTING_${action.toUpperCase()}`, 'listing', listingId, {
+        action,
+        reason,
+      });
+    }
+    return result;
   } catch (err) {
     console.warn('[admin-service] moderateListing error:', err);
+    return { success: false, error: err instanceof Error ? err.message : 'İlan güncellenemedi.' };
   }
-
-  return { success: true };
 }
 
 // Category Management

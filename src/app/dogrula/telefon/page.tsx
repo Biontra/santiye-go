@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Phone, ShieldCheck, AlertCircle, CheckCircle2, RotateCw, ArrowRight } from 'lucide-react';
+import { Phone, ShieldCheck, AlertCircle, CheckCircle2, RotateCw, ArrowRight, Mail } from 'lucide-react';
 import { sendPhoneOtp, verifyPhoneOtp } from '@/lib/services/sms-service';
 import { markPhoneVerified } from '@/lib/services/auth-service';
 
@@ -159,13 +159,13 @@ function PhoneVerificationForm() {
       <div className="max-w-md w-full bg-white p-8 rounded-xl border border-slate-200 shadow-md space-y-6">
         <div className="text-center space-y-2">
           <div className="inline-flex w-14 h-14 rounded-xl bg-orange-50 text-orange-600 items-center justify-center border border-orange-100 shadow-inner">
-            <Phone className="w-7 h-7" />
+            <Mail className="w-7 h-7" />
           </div>
           <h2 className="text-2xl font-bold text-navy-900 tracking-tight">
             Hesabınızı Doğrulayın
           </h2>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
-            <strong className="text-slate-800">{email || rawPhone || 'Hesabınıza'}</strong> adresine gönderilen 6 haneli onay kodunu giriniz.
+            <strong className="text-slate-800">{email || 'E-posta'}</strong> adresinize gönderilen 6 haneli onay kodunu giriniz.
           </p>
         </div>
 
@@ -244,7 +244,7 @@ function PhoneVerificationForm() {
               {resendCooldown > 0
                 ? `Tekrar Kod Gönder (${resendCooldown}s)`
                 : resendCount >= 3
-                ? 'Maksimum SMS sınırına ulaşıldı'
+                ? 'Kod gönderme sınırına ulaşıldı'
                 : 'Yeni Kod Gönder'}
             </span>
           </button>

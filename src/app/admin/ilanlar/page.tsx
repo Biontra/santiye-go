@@ -49,21 +49,29 @@ export default function AdminListingsPage() {
     action: 'approve' | 'reject' | 'remove',
     reason: string = ''
   ) => {
-    await moderateListing(id, action, reason, 'admin-super-001');
-    setNotice(`İlan işlemi (${action}) başarıyla uygulandı.`);
+    const result = await moderateListing(id, action, reason, 'admin-super-001');
+    const label = action === 'approve' ? 'onaylandı' : action === 'reject' ? 'reddedildi' : 'yayından kaldırıldı';
+    setNotice(result.success ? `İlan ${label}.` : `İşlem uygulanamadı: ${result.error}`);
     loadData();
-    setTimeout(() => setNotice(''), 3000);
+    setTimeout(() => setNotice(''), 5000);
   };
 
   const handleBatchRemove = async () => {
     if (selectedIds.length === 0) return;
     if (confirm(`Seçili ${selectedIds.length} ilanı yayından kaldırmak istediğinize emin misiniz?`)) {
+      let failed = 0;
       for (const id of selectedIds) {
-        await moderateListing(id, 'remove', 'Toplu moderasyon işlemi', 'admin-super-001');
+        const result = await moderateListing(id, 'remove', 'Toplu moderasyon işlemi', 'admin-super-001');
+        if (!result.success) failed += 1;
       }
-      setNotice(`${selectedIds.length} ilan toplu olarak yayından kaldırıldı.`);
+      const done = selectedIds.length - failed;
+      setNotice(
+        failed === 0
+          ? `${done} ilan yayından kaldırıldı.`
+          : `${done} ilan kaldırıldı, ${failed} ilan kaldırılamadı.`
+      );
       loadData();
-      setTimeout(() => setNotice(''), 3000);
+      setTimeout(() => setNotice(''), 5000);
     }
   };
 
@@ -112,8 +120,14 @@ export default function AdminListingsPage() {
       </div>
 
       {notice && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-300 text-emerald-900 rounded-xl text-xs font-bold flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+        <div
+          role="status"
+          className={`p-3.5 border rounded-xl text-xs font-bold flex items-center gap-2 ${
+            notice.includes('uygulanamadı') || notice.includes('kaldırılamadı')
+              ? 'bg-red-50 border-red-300 text-red-800'
+              : 'bg-emerald-50 border-emerald-300 text-emerald-900'
+          }`}
+        >
           <span>{notice}</span>
         </div>
       )}
