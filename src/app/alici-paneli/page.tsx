@@ -48,7 +48,7 @@ export default function BuyerDashboardPage() {
       {/* Top Banner */}
       <div className="bg-navy-900 rounded-2xl p-6 sm:p-8 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-black text-2xl shadow-lg shadow-orange-500/30">
+          <div className="w-14 h-14 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-black text-2xl shadow-lg">
             <User className="w-7 h-7" />
           </div>
           <div>
@@ -69,7 +69,7 @@ export default function BuyerDashboardPage() {
         <div className="flex items-center gap-2">
           <Link
             href="/teklif-iste"
-            className="px-4 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-black shadow-lg shadow-orange-500/25 flex items-center gap-1.5 transition"
+            className="px-4 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-black shadow-lg flex items-center gap-1.5 transition"
           >
             <Plus className="w-4 h-4" />
             Teklif Talebi Aç
@@ -90,7 +90,7 @@ export default function BuyerDashboardPage() {
           href="/alici-paneli/taleplerim"
           className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-orange-500 hover:shadow-md transition group space-y-2"
         >
-          <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center group-hover:scale-110 transition">
+          <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center transition">
             <FileText className="w-5 h-5" />
           </div>
           <h3 className="text-base font-extrabold text-navy-900 group-hover:text-orange-600 transition">
@@ -105,7 +105,7 @@ export default function BuyerDashboardPage() {
           href="/alici-paneli/rezervasyonlar"
           className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-orange-500 hover:shadow-md transition group space-y-2"
         >
-          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-110 transition">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center transition">
             <Calendar className="w-5 h-5" />
           </div>
           <h3 className="text-base font-extrabold text-navy-900 group-hover:text-orange-600 transition">
@@ -120,7 +120,7 @@ export default function BuyerDashboardPage() {
           href="/mesajlar"
           className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-orange-500 hover:shadow-md transition group space-y-2"
         >
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center transition">
             <MessageSquare className="w-5 h-5" />
           </div>
           <h3 className="text-base font-extrabold text-navy-900 group-hover:text-orange-600 transition">

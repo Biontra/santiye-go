@@ -288,19 +288,19 @@ function AdminPaymentsPage() {
           {/* Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-              <div className="text-xs font-bold text-slate-500 uppercase">Filtrelenen Hacim</div>
+              <div className="text-xs font-bold text-slate-500">Filtrelenen Hacim</div>
               <div className="text-2xl font-black text-navy-900">{formatCents(totalVolume)}</div>
               <div className="text-[11px] text-slate-400">{filtered.length} İşlem</div>
             </div>
 
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-              <div className="text-xs font-bold text-slate-500 uppercase">Platform Komisyonu</div>
+              <div className="text-xs font-bold text-slate-500">Platform Komisyonu</div>
               <div className="text-2xl font-black text-orange-600">{formatCents(totalCommission)}</div>
               <div className="text-[11px] text-slate-400">Net Platform Hakedişi</div>
             </div>
 
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-              <div className="text-xs font-bold text-slate-500 uppercase">Satıcılara Aktarılan Net</div>
+              <div className="text-xs font-bold text-slate-500">Satıcılara Aktarılan Net</div>
               <div className="text-2xl font-black text-emerald-600">
                 {formatCents(totalVolume - totalCommission)}
               </div>
@@ -346,7 +346,7 @@ function AdminPaymentsPage() {
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 text-slate-500 font-extrabold uppercase tracking-wider border-b border-slate-200 text-[10px]">
+                <thead className="bg-slate-50 text-slate-500 font-extrabold border-b border-slate-200 text-[10px]">
                   <tr>
                     <th className="py-3 px-4">İşlem & Tarih</th>
                     <th className="py-3 px-4">Alıcı / Tedarikçi</th>
@@ -395,7 +395,7 @@ function AdminPaymentsPage() {
                       </td>
                       <td className="py-3 px-4">
                         <span
-                          className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-black uppercase ${
+                          className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-black ${
                             t.status === 'transferred'
                               ? 'bg-emerald-100 text-emerald-800'
                               : t.status === 'disputed'
@@ -439,7 +439,7 @@ function AdminPaymentsPage() {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="px-2.5 py-0.5 rounded bg-red-100 text-red-800 text-[10px] font-black uppercase">
+                        <span className="px-2.5 py-0.5 rounded bg-red-100 text-red-800 text-[10px] font-black">
                           {d.status}
                         </span>
                         <span className="font-mono text-xs text-slate-400">#{d.id}</span>
@@ -488,7 +488,7 @@ function AdminPaymentsPage() {
               <div>
                 <h2 className="text-base font-black text-navy-900">Günlük Sağlayıcı Mutabakat Raporu</h2>
                 <p className="text-xs text-slate-500">
-                  Şantiye GO veritabanındaki hakediş kayıtları ile iyzico sağlayıcı gün sonu kayıtlarının otomatik karşılaştırması.
+                  ŞantiyeGO veritabanındaki hakediş kayıtları ile iyzico sağlayıcı gün sonu kayıtlarının otomatik karşılaştırması.
                 </p>
               </div>
               <input
@@ -503,19 +503,19 @@ function AdminPaymentsPage() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 font-bold uppercase text-[10px]">Platform İç Kayıt Toplamı</span>
+                    <span className="text-slate-400 font-bold text-[10px]">Platform İç Kayıt Toplamı</span>
                     <div className="text-xl font-black text-navy-900 mt-1">
                       {formatCents(reconReport.internalTotalCents)}
                     </div>
                   </div>
                   <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 font-bold uppercase text-[10px]">iyzico Sağlayıcı Toplamı</span>
+                    <span className="text-slate-400 font-bold text-[10px]">iyzico Sağlayıcı Toplamı</span>
                     <div className="text-xl font-black text-blue-900 mt-1">
                       {formatCents(reconReport.providerTotalCents)}
                     </div>
                   </div>
                   <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 font-bold uppercase text-[10px]">Tespit Edilen Uyumsuzluk</span>
+                    <span className="text-slate-400 font-bold text-[10px]">Tespit Edilen Uyumsuzluk</span>
                     <div className={`text-xl font-black mt-1 ${reconReport.discrepanciesCount > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
                       {reconReport.discrepanciesCount} Adet
                     </div>

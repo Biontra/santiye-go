@@ -334,14 +334,14 @@ function PromoteListingPage() {
               type="button"
               disabled={isSubmitting}
               onClick={handlePurchase}
-              className="w-full py-4 rounded-xl bg-orange-500 hover:bg-orange-600 active:scale-[0.98] text-white font-black text-sm tracking-wide shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 transition disabled:opacity-50"
+              className="w-full py-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm tracking-wide shadow-lg flex items-center justify-center gap-2 transition disabled:opacity-50"
             >
               {isSubmitting ? (
                 <span>İşleniyor...</span>
               ) : (
                 <>
                   <CreditCard className="w-5 h-5" />
-                  <span>ÖDEME YAP VE YAYINA GÖNDER</span>
+                  <span>Ödeme yap ve yayına gönder</span>
                 </>
               )}
             </button>

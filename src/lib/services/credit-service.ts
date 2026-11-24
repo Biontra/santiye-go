@@ -1,6 +1,6 @@
 /**
 -- ==============================================================================
--- ŞANTİYE GO – TEKLİF VERME KREDİSİ, DEFTER (LEDGER) VE SLOT SERVİSİ
+-- ŞantiyeGO – TEKLİF VERME KREDİSİ, DEFTER (LEDGER) VE SLOT SERVİSİ
 -- Prompt 9B: İki taraflı bakiye güvenliği, atomik harcama RPC, gölge mod,
 -- slot kontenjanı, dinamik paketler ve sorunlu talep iade yönetimi.
 -- ==============================================================================

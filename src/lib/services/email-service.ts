@@ -1,5 +1,5 @@
 /**
- * ŞANTİYE GO – GERÇEK E-POSTA SERVİSİ
+ * ŞantiyeGO – GERÇEK E-POSTA SERVİSİ
  * Prompt 8: Resend API entegrasyonu, SMTP yedeklemesi,
  * tek kullanımlık e-posta engeli ve markalı Türkçe HTML şablonları.
  */
@@ -93,8 +93,8 @@ function renderBaseTemplate(title: string, bodyContent: string, actionButton?: {
       }
     </div>
     <div class="footer">
-      <p style="margin: 0 0 6px 0;">Bu e-posta ŞANTİYE GO hesabınızla ilgili önemli bir işlem için gönderilmiştir.</p>
-      <p style="margin: 0;">© ${new Date().getFullYear()} ŞANTİYE GO Dijital Pazaryeri • Türkiye</p>
+      <p style="margin: 0 0 6px 0;">Bu e-posta ŞantiyeGO hesabınızla ilgili önemli bir işlem için gönderilmiştir.</p>
+      <p style="margin: 0;">© ${new Date().getFullYear()} ŞantiyeGO Dijital Pazaryeri • Türkiye</p>
     </div>
   </div>
 </body>
@@ -122,7 +122,7 @@ export async function sendEmail({
   }
 
   const resendApiKey = process.env.RESEND_API_KEY;
-  const fromEmail = process.env.EMAIL_FROM || 'Şantiye GO <onboarding@resend.dev>';
+  const fromEmail = process.env.EMAIL_FROM || 'ŞantiyeGO <onboarding@resend.dev>';
 
   // 1. RESEND API ENTEGRASYONU
   if (resendApiKey && !resendApiKey.includes('demo') && !resendApiKey.includes('placeholder')) {
@@ -182,7 +182,7 @@ export async function sendEmailVerification(
   const title = 'E-posta Adresinizi Doğrulayın';
   const body = `
     <p>Merhaba <strong>${name}</strong>,</p>
-    <p>Şantiye GO ailesine hoş geldiniz! Hesabınızı güvenle kullanmaya başlamak ve ilan/teklif işlemlerinizi gerçekleştirebilmek için lütfen e-posta adresinizi onaylayın.</p>
+    <p>ŞantiyeGO ailesine hoş geldiniz! Hesabınızı güvenle kullanmaya başlamak ve ilan/teklif işlemlerinizi gerçekleştirebilmek için lütfen e-posta adresinizi onaylayın.</p>
     <p>Bu bağlantı <strong>24 saat</strong> boyunca geçerlidir.</p>
   `;
 
@@ -193,7 +193,7 @@ export async function sendEmailVerification(
 
   return sendEmail({
     to,
-    subject: 'Şantiye GO – E-posta Adresinizi Doğrulayın',
+    subject: 'ŞantiyeGO – E-posta Adresinizi Doğrulayın',
     html,
   });
 }
@@ -209,7 +209,7 @@ export async function sendPasswordResetEmail(
   const title = 'Şifre Sıfırlama Talebi';
   const body = `
     <p>Merhaba <strong>${name}</strong>,</p>
-    <p>Şantiye GO hesabınız için bir şifre sıfırlama talebinde bulunuldu. Yeni bir şifre belirlemek için aşağıdaki butona tıklayabilirsiniz.</p>
+    <p>ŞantiyeGO hesabınız için bir şifre sıfırlama talebinde bulunuldu. Yeni bir şifre belirlemek için aşağıdaki butona tıklayabilirsiniz.</p>
     <p>Bu bağlantı güvenliğiniz için <strong>1 saat</strong> süreyle geçerlidir. Eğer bu talebi siz yapmadıysanız lütfen bu e-postayı dikkate almayınız.</p>
   `;
 
@@ -220,7 +220,7 @@ export async function sendPasswordResetEmail(
 
   return sendEmail({
     to,
-    subject: 'Şantiye GO – Şifre Sıfırlama Bağlantısı',
+    subject: 'ŞantiyeGO – Şifre Sıfırlama Bağlantısı',
     html,
   });
 }
@@ -242,7 +242,7 @@ export async function sendQuoteNotification(
 
   return sendEmail({
     to,
-    subject: `Şantiye GO – ${titleText}`,
+    subject: `ŞantiyeGO – ${titleText}`,
     html,
   });
 }
@@ -258,7 +258,7 @@ export async function sendEmailOtp(
   const title = `Doğrulama Kodunuz: ${code}`;
   const body = `
     <p>Merhaba <strong>${escapeHtml((name || 'Kullanıcımız').slice(0, 80))}</strong>,</p>
-    <p>Şantiye GO hesabınızı doğrulamak ve güvenle kullanmaya başlamak için aşağıdaki 6 haneli güvenlik kodunu kullanınız:</p>
+    <p>ŞantiyeGO hesabınızı doğrulamak ve güvenle kullanmaya başlamak için aşağıdaki 6 haneli güvenlik kodunu kullanınız:</p>
     <div style="text-align: center; margin: 28px 0;">
       <span style="font-size: 32px; font-weight: 900; letter-spacing: 8px; color: #f97316; background: #fff7ed; padding: 14px 28px; border-radius: 12px; border: 2px dashed #f97316; display: inline-block;">
         ${code}
@@ -273,7 +273,7 @@ export async function sendEmailOtp(
 
   return sendEmail({
     to,
-    subject: `Şantiye GO – Doğrulama Kodunuz: ${code}`,
+    subject: `ŞantiyeGO – Doğrulama Kodunuz: ${code}`,
     html,
   });
 }
@@ -290,8 +290,8 @@ export async function sendMessageNotificationEmail(
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://santiyego.com';
   const body = `
     <p>Merhaba <strong>${name || 'Kullanıcımız'}</strong>,</p>
-    <p>Şantiye GO üzerindeki görüşmenizle ilgili yeni bir mesaj aldınız.</p>
-    <p>Mesajınızı okumak ve yanıtlamak için lütfen Şantiye GO gelen kutunuza giriş yapınız.</p>
+    <p>ŞantiyeGO üzerindeki görüşmenizle ilgili yeni bir mesaj aldınız.</p>
+    <p>Mesajınızı okumak ve yanıtlamak için lütfen ŞantiyeGO gelen kutunuza giriş yapınız.</p>
     <p style="font-size: 12px; color: #64748b; margin-top: 16px;">
       Güvenliğiniz için teklif veya rezervasyon karşılıklı onaylanana kadar harici iletişim bilgisi paylaşmayınız.
     </p>
@@ -304,7 +304,7 @@ export async function sendMessageNotificationEmail(
 
   return sendEmail({
     to,
-    subject: 'Şantiye GO – Yeni Mesajınız Var',
+    subject: 'ŞantiyeGO – Yeni Mesajınız Var',
     html,
   });
 }

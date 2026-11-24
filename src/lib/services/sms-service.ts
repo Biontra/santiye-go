@@ -1,5 +1,5 @@
 /**
- * ŞANTİYE GO – GERÇEK SMS VE TELEFON OTP SERVİSİ
+ * ŞantiyeGO – GERÇEK SMS VE TELEFON OTP SERVİSİ
  * Prompt 8: Türkiye formatında (+90) telefon normalizasyonu,
  * Netgsm API entegrasyonu, Twilio yedeklemesi ve 6 haneli güvenli OTP doğrulaması.
  */
@@ -223,7 +223,7 @@ export async function sendPhoneOtp(rawPhone: string): Promise<SendOtpResult> {
   }
 
   // 4. SMS Gönder
-  const smsBody = `Şantiye GO telefon doğrulama kodunuz: ${code}. Bu kod 5 dakika geçerlidir. Güvenliğiniz için kimseyle paylaşmayınız. B002`;
+  const smsBody = `ŞantiyeGO telefon doğrulama kodunuz: ${code}. Bu kod 5 dakika geçerlidir. Güvenliğiniz için kimseyle paylaşmayınız. B002`;
   const smsResult = await sendSmsViaProvider(formatted, smsBody);
 
   if (!smsResult.success) {

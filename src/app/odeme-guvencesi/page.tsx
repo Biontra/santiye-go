@@ -30,13 +30,13 @@ export default function PaymentGuaranteePage() {
         <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-6 text-xs sm:text-sm text-slate-700 leading-relaxed">
           <div className="border-b pb-4">
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-xs font-black uppercase flex items-center gap-1">
+              <span className="px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-xs font-black flex items-center gap-1">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 Platform Ödeme Güvencesi
               </span>
             </div>
             <h1 className="text-2xl font-black text-navy-900 mt-2">
-              Şantiye GO Ödeme Güvencesi (Emanet / Escrow Havuz Sistemi) Koşulları
+              ŞantiyeGO Ödeme Güvencesi (Emanet / Escrow Havuz Sistemi) Koşulları
             </h1>
             <p className="text-xs text-slate-500 mt-1">
               Sürüm: 1.0 (Pazaryeri & Alt Üye İşyeri Modeli) | Son Güncelleme: 9 Kasım 2026
@@ -76,7 +76,7 @@ export default function PaymentGuaranteePage() {
           <section className="space-y-2">
             <h2 className="text-base font-extrabold text-navy-900">1. SİSTEMİN ÇALIŞMA PRENSİBİ VE TARAFLAR</h2>
             <p>
-              Platform Ödeme Güvencesi, Şantiye GO üzerinde anlaşmaya varılan iş makinesi kiralama, yapı malzemesi satışı veya şantiye lojistik hizmetlerinde alıcı ve satıcıyı korumak amacıyla tasarlanmış bir emanet (escrow) mekanizmasıdır.
+              Platform Ödeme Güvencesi, ŞantiyeGO üzerinde anlaşmaya varılan iş makinesi kiralama, yapı malzemesi satışı veya şantiye lojistik hizmetlerinde alıcı ve satıcıyı korumak amacıyla tasarlanmış bir emanet (escrow) mekanizmasıdır.
             </p>
             <p>
               Ödeme, alıcı tarafından kredi kartı (3D Secure) veya banka kartı ile platform üzerinden gerçekleştirildiğinde; tutar satıcı firmanın hesabına doğrudan aktarılmaz. Tutar, BDDK ve TCMB lisanslı yetkili ödeme kuruluşu nezdinde açılmış korumalı pazaryeri havuz hesabında bloke edilir.
@@ -119,7 +119,7 @@ export default function PaymentGuaranteePage() {
           <section className="space-y-2">
             <h2 className="text-base font-extrabold text-navy-900">5. VERGİ, FATURA VE KDV SORUMLULUĞU</h2>
             <p>
-              Şantiye GO, verdiği aracılık hizmeti için yalnızca tahsil ettiği platform komisyonu tutarı kadar komisyon faturası düzenler. Kiralanan makine veya ifa edilen hizmetin asıl faturası, satıcı firma tarafından doğrudan alıcı adına tanzim edilir. Tüm işlem ve KDV dökümleri taraflarca panelden CSV formatında dışa aktarılabilir.
+              ŞantiyeGO, verdiği aracılık hizmeti için yalnızca tahsil ettiği platform komisyonu tutarı kadar komisyon faturası düzenler. Kiralanan makine veya ifa edilen hizmetin asıl faturası, satıcı firma tarafından doğrudan alıcı adına tanzim edilir. Tüm işlem ve KDV dökümleri taraflarca panelden CSV formatında dışa aktarılabilir.
             </p>
           </section>
         </div>

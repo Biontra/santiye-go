@@ -10,7 +10,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const title = `${slug.replace(/-/g, ' ').toUpperCase()} | Şantiye GO Rehber`;
+  const title = `${slug.replace(/-/g, ' ').toUpperCase()} | ŞantiyeGO Rehber`;
   return {
     title,
     description: 'Şantiye ekipman kiralama ve mevzuat bilgilendirme rehberi.',
@@ -49,7 +49,7 @@ export default async function GuideDetailPage({ params }: Props) {
           </Link>
 
           <header className="space-y-4 border-b border-slate-100 pb-6">
-            <span className="px-2.5 py-1 rounded-md bg-orange-50 text-orange-700 text-xs font-black uppercase tracking-wider">
+            <span className="px-2.5 py-1 rounded-md bg-orange-50 text-orange-700 text-xs font-black">
               Mevzuat & Standartlar
             </span>
             <h1 className="text-2xl sm:text-3xl font-black text-navy-900 tracking-tight leading-snug">

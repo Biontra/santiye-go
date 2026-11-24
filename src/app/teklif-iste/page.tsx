@@ -186,7 +186,7 @@ function MultiVendorQuoteForm() {
             <Calculator className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-black text-navy-900">
-                ✅ Metraj Hesaplayıcı&apos;dan Otomatik Dolduruldu
+                Metraj Hesaplayıcı&apos;dan Otomatik Dolduruldu
               </p>
               <p className="text-xs text-slate-600 mt-0.5">
                 Başlık, açıklama ve miktar alanları hesaplama sonucunuzdan aktarıldı.
@@ -198,9 +198,8 @@ function MultiVendorQuoteForm() {
 
         {/* Header Hero Banner */}
         <div className="bg-navy-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl mb-8 relative overflow-hidden">
-          <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-64 h-64 bg-orange-500/10 rounded-full blur-2xl pointer-events-none" />
           <div className="relative z-10 max-w-2xl">
-            <span className="px-3 py-1 rounded-full bg-orange-500 text-white text-[11px] font-black uppercase tracking-wider inline-block mb-3">
+            <span className="px-3 py-1 rounded-full bg-orange-500 text-white text-[11px] font-black inline-block mb-3">
               Çoklu Firma Teklif Dağıtımı
             </span>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-snug">
@@ -386,7 +385,7 @@ function MultiVendorQuoteForm() {
                 3. Şantiye Konumu ve Firma Dağıtım Yarıçapı
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                PostGIS mesafe motorumuz belirlediğiniz yarıçaptaki en yakın onaylı tedarikçileri filtreler.
+                Sistem, belirlediğiniz yarıçaptaki en yakın onaylı tedarikçileri filtreler.
               </p>
             </div>
 
@@ -511,7 +510,7 @@ function MultiVendorQuoteForm() {
             <button
               type="submit"
               disabled={loading || success}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm tracking-wide shadow-lg shadow-orange-500/30 transition disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm tracking-wide shadow-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <Send className="w-4 h-4" />
               {loading ? 'Teklif Talebi Dağıtılıyor...' : 'TEKLİF TALEBİNİ GÖNDER'}

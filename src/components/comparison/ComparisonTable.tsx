@@ -126,7 +126,7 @@ export default function ComparisonTable({
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs border-collapse">
           <thead>
-            <tr className="bg-navy-900 text-white font-bold uppercase tracking-wider text-[11px]">
+            <tr className="bg-navy-900 text-white font-bold text-[11px]">
               <th className="py-3 px-3 text-center w-12">Seç</th>
               <th
                 onClick={() => handleHeaderClick('title')}
@@ -193,12 +193,12 @@ export default function ComparisonTable({
                   <td className="py-3 px-4 max-w-xs">
                     <div className="flex items-center gap-1.5 mb-0.5">
                       {isCheapestDaily && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-600 text-white shadow-sm">
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-black bg-emerald-600 text-white shadow-sm">
                           EN UCUZ
                         </span>
                       )}
                       {isClosest && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase bg-orange-500 text-white shadow-sm">
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-black bg-orange-500 text-white shadow-sm">
                           EN YAKIN
                         </span>
                       )}

@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { getActiveProfile } from '@/lib/services/auth-service';
+import { LogoMark } from '@/components/brand/Logo';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -120,7 +121,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center font-bold text-white">
             <HardHat className="w-5 h-5" />
           </div>
-          <span className="font-black text-sm tracking-wide">ŞANTİYE GO ADMİN</span>
+          <span className="font-black text-sm tracking-wide">ŞantiyeGO Yönetim</span>
         </div>
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -140,18 +141,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           {/* Brand header */}
           <div className="p-5 border-b border-navy-800/80">
             <Link href="/admin" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-orange-500 flex items-center justify-center text-white shadow-md">
-                <HardHat className="w-5 h-5" />
-              </div>
+              <LogoMark className="w-8 h-8" />
               <div>
-                <div className="font-black text-base tracking-tight flex items-center gap-1.5">
-                  <span>ŞANTİYE</span>
-                  <span className="text-orange-400">GO</span>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-orange-600/30 text-orange-400 border border-orange-500/40 font-bold">
-                    ADMİN
-                  </span>
+                <div className="font-semibold text-base tracking-tight">
+                  Şantiye<span className="text-orange-400">GO</span>
+                  <span className="ml-2 text-xs font-normal text-slate-400">Yönetim</span>
                 </div>
-                <div className="text-[10px] text-slate-400">Platform Yönetim Masası</div>
               </div>
             </Link>
           </div>
@@ -172,7 +167,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   onClick={() => setSidebarOpen(false)}
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition ${
                     isActive
-                      ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20'
+                      ? 'bg-orange-500 text-white shadow-md'
                       : 'text-slate-300 hover:bg-navy-900 hover:text-white'
                   }`}
                 >

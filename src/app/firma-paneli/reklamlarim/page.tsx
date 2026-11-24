@@ -114,7 +114,7 @@ function MyAdCampaignsPage() {
 
         <Link
           href="/firma-paneli/one-cikar"
-          className="px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-black shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 transition"
+          className="px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-black shadow-lg flex items-center justify-center gap-2 transition"
         >
           <PlusCircle className="w-4 h-4" />
           Yeni Reklam Ver
@@ -153,7 +153,7 @@ function MyAdCampaignsPage() {
           </p>
           <Link
             href="/firma-paneli/one-cikar"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold transition shadow-md shadow-orange-500/20"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold transition shadow-md"
           >
             <PlusCircle className="w-4 h-4" />
             Hemen Reklam Ver
@@ -175,7 +175,7 @@ function MyAdCampaignsPage() {
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-black uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">
+                    <span className="text-[11px] font-black text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">
                       {product?.name || camp.product_id}
                     </span>
                     {getStatusBadge(camp.status)}
@@ -201,7 +201,7 @@ function MyAdCampaignsPage() {
                   {/* Performance Metrics Cards */}
                   <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 text-center">
                     <div className="p-2 rounded-xl bg-slate-50">
-                      <div className="text-[10px] text-slate-500 font-bold uppercase flex items-center justify-center gap-1">
+                      <div className="text-[10px] text-slate-500 font-bold flex items-center justify-center gap-1">
                         <Eye className="w-3 h-3 text-slate-400" /> Gösterim
                       </div>
                       <div className="text-base font-black text-navy-900 mt-0.5">
@@ -210,7 +210,7 @@ function MyAdCampaignsPage() {
                     </div>
 
                     <div className="p-2 rounded-xl bg-slate-50">
-                      <div className="text-[10px] text-slate-500 font-bold uppercase flex items-center justify-center gap-1">
+                      <div className="text-[10px] text-slate-500 font-bold flex items-center justify-center gap-1">
                         <MousePointerClick className="w-3 h-3 text-slate-400" /> Tıklama
                       </div>
                       <div className="text-base font-black text-navy-900 mt-0.5">
@@ -219,7 +219,7 @@ function MyAdCampaignsPage() {
                     </div>
 
                     <div className="p-2 rounded-xl bg-slate-50">
-                      <div className="text-[10px] text-slate-500 font-bold uppercase flex items-center justify-center gap-1">
+                      <div className="text-[10px] text-slate-500 font-bold flex items-center justify-center gap-1">
                         <Percent className="w-3 h-3 text-slate-400" /> CTR
                       </div>
                       <div className="text-base font-black text-orange-600 mt-0.5">

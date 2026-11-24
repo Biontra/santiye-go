@@ -39,7 +39,7 @@ export default function KvkkModal({ isOpen, onClose }: KvkkModalProps) {
         {/* Content */}
         <div className="p-6 overflow-y-auto space-y-4 text-xs sm:text-sm text-slate-600 leading-relaxed">
           <p>
-            <strong>ŞANTİYE GO</strong> olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu (&quot;KVKK&quot;) uyarınca veri sorumlusu sıfatıyla, platformumuza kayıt olan ve hizmetlerimizden faydalanan kullanıcılarımızın kişisel verilerini güvence altına almaktayız.
+            <strong>ŞantiyeGO</strong> olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu (&quot;KVKK&quot;) uyarınca veri sorumlusu sıfatıyla, platformumuza kayıt olan ve hizmetlerimizden faydalanan kullanıcılarımızın kişisel verilerini güvence altına almaktayız.
           </p>
           <h4 className="font-bold text-navy-900 text-sm">1. İşlenen Kişisel Veriler</h4>
           <p>

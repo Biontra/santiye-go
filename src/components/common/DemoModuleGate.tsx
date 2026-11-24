@@ -16,7 +16,7 @@ export function withDemoModuleGate<P extends object>(
     return (
       <div className="bg-slate-50 min-h-[60vh] flex items-center justify-center px-4 py-16">
         <div className="max-w-md w-full bg-white border border-slate-200 rounded-2xl p-8 text-center shadow-sm space-y-3">
-          <span className="inline-block px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-black uppercase">
+          <span className="inline-block px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-black">
             Yakında
           </span>
           <h1 className="text-xl font-black text-navy-900">{options.title}</h1>

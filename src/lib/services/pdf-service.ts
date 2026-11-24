@@ -79,7 +79,7 @@ export async function generateContractPdf(snapshot: ContractSnapshot): Promise<G
   });
 
   if (customFont) {
-    page.drawText('TASLAK – HUKUKİ İNCELEMEDEN GEÇMELİDİR  •  ŞANTİYE GO ARACI HİZMET PLATFORMU', {
+    page.drawText('TASLAK – HUKUKİ İNCELEMEDEN GEÇMELİDİR  •  ŞantiyeGO ARACI HİZMET PLATFORMU', {
       x: 52,
       y: currentY - 18,
       size: 8.5,

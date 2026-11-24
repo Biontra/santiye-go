@@ -7,7 +7,7 @@ import { runScheduledTasks } from '../cron-service';
 import { Listing } from '@/types/database';
 
 async function runPrompt7Tests() {
-  console.log('--- ŞANTİYE GO – PROMPT 7 GÜVENLİK & SEO TESTLERİ ---');
+  console.log('--- ŞantiyeGO – PROMPT 7 GÜVENLİK & SEO TESTLERİ ---');
   let passed = 0;
   let failed = 0;
 
@@ -54,7 +54,7 @@ async function runPrompt7Tests() {
   // 4. JSON-LD Schema (No fake reviews guarantee)
   console.log('\n[TEST GROUP 3: SCHEMA.ORG JSON-LD BÜTÜNLÜĞÜ]');
   const orgSchema = getOrganizationSchema();
-  assert(orgSchema['@type'] === 'Organization' && orgSchema.name === 'Şantiye GO', 'Organization schema geçerli');
+  assert(orgSchema['@type'] === 'Organization' && orgSchema.name === 'ŞantiyeGO', 'Organization schema geçerli');
 
   const mockListing: Listing = {
     id: 'test-1',

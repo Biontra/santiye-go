@@ -74,7 +74,7 @@ export default function CompareDrawer({
           <button
             type="button"
             onClick={() => setModalOpen(true)}
-            className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs rounded-xl shadow-md transition flex items-center gap-1 active:scale-95 whitespace-nowrap"
+            className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs rounded-xl shadow-md transition flex items-center gap-1 whitespace-nowrap"
           >
             <span>Karşılaştır</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -131,7 +131,7 @@ export default function CompareDrawer({
                           className="object-cover"
                         />
                         <div
-                          className={`absolute top-2 left-2 text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded shadow-sm ${
+                          className={`absolute top-2 left-2 text-white text-[10px] font-extrabold px-2 py-0.5 rounded shadow-sm ${
                             l.listing_type === 'rental'
                               ? 'bg-navy-900'
                               : l.listing_type === 'service'
@@ -154,7 +154,7 @@ export default function CompareDrawer({
 
                       {/* Pricing Box */}
                       <div className="bg-white p-3 rounded-lg border border-slate-200 mb-3 space-y-1">
-                        <div className="text-[11px] font-bold text-slate-500 uppercase">Fiyat Tarifesi</div>
+                        <div className="text-[11px] font-bold text-slate-500">Fiyat Tarifesi</div>
                         {l.pricing_type === 'custom_quote' || (!l.price_daily && !l.price_sale) ? (
                           <div>
                             <div className="text-base font-black text-navy-900">Teklife Göre</div>
@@ -198,22 +198,22 @@ export default function CompareDrawer({
                       <div className="space-y-1.5 text-xs text-slate-700 mb-3 border-t border-slate-200 pt-2">
                         <div className="flex items-center justify-between">
                           <span>Operatör Dahil:</span>
-                          <strong>{l.is_operator_included ? '✅ Evet' : '❌ Hayır'}</strong>
+                          <strong>{l.is_operator_included ? 'Evet' : 'Hayır'}</strong>
                         </div>
                         <div className="flex items-center justify-between">
                           <span>Yakıt Dahil:</span>
-                          <strong>{l.is_fuel_included ? '✅ Evet' : '❌ Hayır'}</strong>
+                          <strong>{l.is_fuel_included ? 'Evet' : 'Hayır'}</strong>
                         </div>
                         <div className="flex items-center justify-between">
                           <span>Nakliye Dahil:</span>
-                          <strong>{l.is_transport_included ? '✅ Evet' : '❌ Hayır'}</strong>
+                          <strong>{l.is_transport_included ? 'Evet' : 'Hayır'}</strong>
                         </div>
                       </div>
 
                       {/* Technical Specs */}
                       {l.technical_specs && Object.keys(l.technical_specs).length > 0 && (
                         <div className="space-y-1 text-xs text-slate-600 border-t border-slate-200 pt-2">
-                          <div className="text-[10px] font-bold text-slate-400 uppercase">Teknik Parametreler</div>
+                          <div className="text-[10px] font-bold text-slate-400">Teknik Parametreler</div>
                           {Object.entries(l.technical_specs).slice(0, 5).map(([key, val]) => (
                             <div key={key} className="flex items-center justify-between text-[11px]">
                               <span className="text-slate-500">{formatTechnicalSpecLabel(key)}:</span>

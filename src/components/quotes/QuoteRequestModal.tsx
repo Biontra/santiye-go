@@ -74,7 +74,7 @@ export default function QuoteRequestModal({
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
           <div>
-            <span className="text-[10px] font-bold uppercase text-orange-600 tracking-wider">
+            <span className="text-[10px] font-bold text-orange-600 tracking-wider">
               Doğrudan Teklif Talebi
             </span>
             <h3 className="font-extrabold text-navy-900 text-base sm:text-lg line-clamp-1">
@@ -231,7 +231,7 @@ export default function QuoteRequestModal({
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs shadow-md transition flex items-center gap-1.5 active:scale-95"
+                className="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs shadow-md transition flex items-center gap-1.5"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>{loading ? 'Gönderiliyor...' : 'Teklif İsteğini İlet'}</span>

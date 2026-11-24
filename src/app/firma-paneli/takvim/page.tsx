@@ -195,7 +195,7 @@ export default function CompanyCalendarPage() {
             </div>
             <Link
               href="/firma-paneli/yeni-ilan"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-black transition shadow-lg shadow-orange-500/25"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-black transition shadow-lg"
             >
               <span>+ Yeni İlan Ekle</span>
             </Link>
@@ -258,7 +258,7 @@ export default function CompanyCalendarPage() {
             </div>
 
             {/* Days of Week Header */}
-            <div className="grid grid-cols-7 gap-2 text-center text-xs font-black text-slate-400 uppercase tracking-wider">
+            <div className="grid grid-cols-7 gap-2 text-center text-xs font-black text-slate-400">
               <div>Pzt</div>
               <div>Sal</div>
               <div>Çar</div>

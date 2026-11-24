@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Search } from 'lucide-react';
 import LocationAutocomplete from '@/components/search/LocationAutocomplete';
 
 export default function HeroSearch() {
@@ -41,135 +41,92 @@ export default function HeroSearch() {
     router.push(`/ilanlar?${params.toString()}`);
   };
 
-  return (
-    <div className="relative bg-gradient-to-b from-navy-900 via-navy-900 to-navy-950 text-white py-12 md:py-20 px-4 overflow-hidden border-b border-navy-800">
-      {/* Background Architectural Grid */}
-      <div 
-        className="absolute inset-0 opacity-10 pointer-events-none"
-        style={{
-          backgroundImage: 'radial-gradient(#F97316 1px, transparent 1px)',
-          backgroundSize: '28px 28px',
-        }}
-      />
+  const radiusOptions = [
+    { label: '10 km', val: '10' },
+    { label: '25 km', val: '25' },
+    { label: '50 km', val: '50' },
+    { label: '100 km', val: '100' },
+    { label: 'Tüm Türkiye', val: 'all' },
+  ];
 
-      <div className="relative max-w-5xl mx-auto text-center space-y-6">
-        {/* Badges / Slogan */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-navy-800 border border-slate-700/80 text-xs font-semibold text-orange-400 shadow-inner">
-          <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-          Akıllı şantiye ve yapı marketiniz
+  const popular = ['Ekskavatör', 'Beko loder', 'Mobil vinç', 'Hazır beton', 'Nervürlü demir', 'Lowbed', 'Cephe iskelesi'];
+
+  return (
+    <section className="bg-navy-900 text-white border-b-4 border-orange-500">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-12 md:pt-16 md:pb-16">
+        <div className="max-w-3xl">
+          <h1 className="text-[28px] leading-[1.15] sm:text-4xl md:text-[44px] md:leading-[1.1] font-semibold tracking-tight">
+            İş makinesi, yapı malzemesi ve nakliye için Türkiye&apos;nin şantiye pazaryeri
+          </h1>
+          <p className="mt-4 text-base md:text-lg text-slate-300 max-w-2xl leading-relaxed">
+            Size en yakın firmaların ilanlarını inceleyin ya da tek bir taleple birden fazla firmadan fiyat alın.
+          </p>
         </div>
 
-        {/* Main Title Required */}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight sm:leading-none">
-          Şantiyeniz için ihtiyacınız olan <br className="hidden sm:inline" />
-          <span className="text-orange-500">her şey tek yerde!</span>
-        </h1>
-
-        {/* Promise */}
-        <p className="text-slate-300 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-normal">
-          &quot;Aradığın her şey, sana en yakın yerde, en iyi tekliflerle!&quot;
-        </p>
-
-        {/* Big Search Form Box */}
-        <form
-          onSubmit={handleSearch}
-          className="bg-white rounded-2xl shadow-2xl p-3.5 sm:p-5 text-navy-900 max-w-4xl mx-auto border-2 border-slate-200/80"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
-            {/* Input 1: "Ne arıyorsunuz?" */}
-            <div className="md:col-span-5 relative text-left">
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1 pl-1">
-                Ne arıyorsunuz?
-              </label>
-              <div className="relative flex items-center">
-                <Search className="w-5 h-5 text-slate-400 absolute left-3.5 pointer-events-none" />
-                <input
-                  type="text"
-                  value={keyword}
-                  onChange={(e) => setKeyword(e.target.value)}
-                  placeholder="Ekskavatör, Çimento, Lowbed, JCB, Demir..."
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-navy-900 placeholder:text-slate-400 rounded-xl text-sm font-medium border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none transition"
-                />
-              </div>
-            </div>
-
-            {/* Input 2: Location Autocomplete */}
-            <div className="md:col-span-4 text-left">
-              <LocationAutocomplete
-                valueLabel={locationData?.label || ''}
-                onSelectLocation={(data) => setLocationData(data)}
+        <form onSubmit={handleSearch} className="mt-8 bg-white rounded-md p-2 text-navy-900 shadow-xl">
+          <div className="grid grid-cols-1 md:grid-cols-[1.3fr_1fr_auto_auto] gap-2">
+            <div className="relative flex items-center">
+              <Search
+                className="w-[18px] h-[18px] text-slate-400 absolute left-3 pointer-events-none"
+                strokeWidth={1.75}
+              />
+              <input
+                type="text"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                placeholder="Ne arıyorsunuz? Örn. ekskavatör, hazır beton"
+                aria-label="Ne arıyorsunuz?"
+                className="w-full h-12 pl-10 pr-3 bg-white text-navy-900 placeholder:text-slate-400 rounded-md text-[15px] border border-slate-300 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none transition-colors"
               />
             </div>
 
-            {/* Button: "HEMEN ARA" */}
-            <div className="md:col-span-3">
-              <button
-                type="submit"
-                className="w-full py-3.5 px-6 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-base tracking-wide shadow-lg shadow-orange-500/30 active:scale-[0.98] transition flex items-center justify-center gap-2 uppercase"
-              >
-                <Search className="w-5 h-5" />
-                <span>HEMEN ARA</span>
-              </button>
-            </div>
-          </div>
+            <LocationAutocomplete
+              compact
+              valueLabel={locationData?.label || ''}
+              onSelectLocation={(data) => setLocationData(data)}
+              inputClassName="w-full h-12 pl-10 pr-16 bg-white text-navy-900 placeholder:text-slate-400 rounded-md text-[15px] border border-slate-300 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none transition-colors"
+            />
 
-          {/* Distance Radius Selector */}
-          <div className="mt-3.5 pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-600 gap-2 px-1">
-            <div className="flex items-center gap-1.5 font-bold text-navy-900">
-              <SlidersHorizontal className="w-3.5 h-3.5 text-orange-500" />
-              <span>Arama Yarıçapı (PostGIS):</span>
-            </div>
-            <div className="flex flex-wrap items-center gap-1.5">
-              {[
-                { label: '5 km', val: '5' },
-                { label: '10 km', val: '10' },
-                { label: '25 km (Varsayılan)', val: '25' },
-                { label: '50 km', val: '50' },
-                { label: '100 km', val: '100' },
-                { label: 'Tüm Türkiye', val: 'all' },
-              ].map((item) => (
-                <button
-                  key={item.val}
-                  type="button"
-                  onClick={() => setRadius(item.val)}
-                  className={`px-2.5 py-1 rounded-md text-xs font-semibold transition ${
-                    radius === item.val
-                      ? 'bg-orange-500 text-white shadow-sm font-bold'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                  }`}
-                >
-                  {item.label}
-                </button>
+            <select
+              value={radius}
+              onChange={(e) => setRadius(e.target.value)}
+              aria-label="Mesafe"
+              className="h-12 px-3 pr-8 bg-white text-navy-900 rounded-md text-[15px] border border-slate-300 focus:border-navy-900 focus:ring-1 focus:ring-navy-900 focus:outline-none"
+            >
+              {radiusOptions.map((o) => (
+                <option key={o.val} value={o.val}>
+                  {o.val === 'all' ? o.label : `${o.label} içinde`}
+                </option>
               ))}
-            </div>
+            </select>
+
+            <button
+              type="submit"
+              className="h-12 px-7 rounded-md bg-orange-500 hover:bg-orange-600 text-white font-semibold text-[15px] transition-colors flex items-center justify-center gap-2"
+            >
+              <Search className="w-[18px] h-[18px]" strokeWidth={2} />
+              Ara
+            </button>
           </div>
         </form>
 
-        {/* Quick Popular Tags */}
-        <div className="pt-2 flex flex-wrap items-center justify-center gap-2 text-xs font-medium text-slate-400">
-          <span className="text-slate-300">Popüler Şantiye Aramaları:</span>
-          {[
-            'Ekskavatör',
-            'Samsun OSB',
-            'Ostim Kepçe',
-            'Tuzla Vinç',
-            'Hazır Beton',
-            'Lowbed Nakliye',
-            'Nervürlü Demir',
-          ].map((tag) => (
+        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+          <span className="text-slate-400">Sık arananlar:</span>
+          {popular.map((tag) => (
             <button
               key={tag}
+              type="button"
               onClick={() => {
                 setKeyword(tag);
                 router.push(`/ilanlar?q=${encodeURIComponent(tag)}`);
               }}
-              className="px-2.5 py-1 rounded-full bg-navy-800/80 hover:bg-navy-700 border border-slate-700 text-slate-300 hover:text-white transition"
+              className="text-slate-200 hover:text-white underline-offset-4 hover:underline"
             >
               {tag}
             </button>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }

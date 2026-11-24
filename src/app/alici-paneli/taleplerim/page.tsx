@@ -93,7 +93,7 @@ export default function BuyerQuoteRequestsPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded bg-blue-100 text-blue-800 text-xs font-black uppercase">
+              <span className="px-2.5 py-0.5 rounded bg-blue-100 text-blue-800 text-xs font-black">
                 Alıcı Paneli
               </span>
               <span className="text-slate-400">•</span>
@@ -110,7 +110,7 @@ export default function BuyerQuoteRequestsPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/teklif-iste"
-              className="px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md shadow-orange-500/20 transition flex items-center gap-1.5"
+              className="px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md transition flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
               YENİ TEKLİF TALEBİ AÇ
@@ -166,7 +166,7 @@ export default function BuyerQuoteRequestsPage() {
                     <div className="space-y-2">
                       <div className="flex flex-wrap items-center gap-2">
                         <span
-                          className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                          className={`px-2 py-0.5 rounded text-[10px] font-black ${
                             req.request_type === 'single_listing'
                               ? 'bg-blue-100 text-blue-800'
                               : 'bg-purple-100 text-purple-800'
@@ -244,7 +244,7 @@ export default function BuyerQuoteRequestsPage() {
                         <div className="overflow-x-auto">
                           <table className="w-full text-left border-collapse text-xs sm:text-sm">
                             <thead>
-                              <tr className="border-b border-slate-200 text-slate-500 uppercase text-[10px] tracking-wider font-extrabold bg-slate-100/70">
+                              <tr className="border-b border-slate-200 text-slate-500 text-[10px] tracking-wider font-extrabold bg-slate-100/70">
                                 <th className="p-3">Firma Bilgisi</th>
                                 <th className="p-3">Mesafe</th>
                                 <th className="p-3">Teklif Fiyatı</th>

@@ -6,7 +6,7 @@ export default function PrivacyPage() {
           Gizlilik ve Çerez Politikası
         </h1>
         <p>
-          Bu Gizlilik Politikası, <strong>ŞANTİYE GO</strong> platformunu ziyaret eden ve hizmetlerimizi kullanan tüm kullanıcıların gizlilik haklarını korumak amacıyla hazırlanmıştır.
+          Bu Gizlilik Politikası, <strong>ŞantiyeGO</strong> platformunu ziyaret eden ve hizmetlerimizi kullanan tüm kullanıcıların gizlilik haklarını korumak amacıyla hazırlanmıştır.
         </p>
 
         <h2 className="text-lg font-bold text-navy-900 pt-2">1. Çerezlerin (Cookies) Kullanımı</h2>

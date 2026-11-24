@@ -229,7 +229,7 @@ export default function AdminCreditsPage() {
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-[11px] font-black uppercase">
+            <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-[11px] font-black">
               Gelir & Para Kazanma Motoru
             </span>
             <span className="text-slate-400">•</span>
@@ -340,7 +340,7 @@ export default function AdminCreditsPage() {
         <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+              <span className="text-[11px] font-bold text-slate-500 block">
                 Gölge Mod Potansiyel Gelir
               </span>
               <div className="text-3xl font-black text-amber-600">
@@ -352,7 +352,7 @@ export default function AdminCreditsPage() {
             </div>
 
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+              <span className="text-[11px] font-bold text-slate-500 block">
                 Simüle Edilen Teklif Harcaması
               </span>
               <div className="text-3xl font-black text-navy-900">
@@ -364,7 +364,7 @@ export default function AdminCreditsPage() {
             </div>
 
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+              <span className="text-[11px] font-bold text-slate-500 block">
                 Ortalama Slot Doluluğu
               </span>
               <div className="text-3xl font-black text-emerald-600">
@@ -376,7 +376,7 @@ export default function AdminCreditsPage() {
             </div>
 
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+              <span className="text-[11px] font-bold text-slate-500 block">
                 Bekleyen İade İtirazları
               </span>
               <div className="text-3xl font-black text-orange-600">
@@ -594,7 +594,7 @@ export default function AdminCreditsPage() {
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-600 uppercase text-[10px] font-extrabold border-b border-slate-200">
+              <thead className="bg-slate-50 text-slate-600 text-[10px] font-extrabold border-b border-slate-200">
                 <tr>
                   <th className="py-2.5 px-3">Sıra</th>
                   <th className="py-2.5 px-3">Paket Adı</th>
@@ -683,7 +683,7 @@ export default function AdminCreditsPage() {
                       <span className="text-slate-400">•</span>
                       <span className="font-bold text-slate-700">Firma: {d.company?.name || d.company_id}</span>
                       <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                        className={`px-2 py-0.5 rounded text-[10px] font-black ${
                           d.status === 'approved'
                             ? 'bg-emerald-100 text-emerald-800'
                             : d.status === 'rejected'

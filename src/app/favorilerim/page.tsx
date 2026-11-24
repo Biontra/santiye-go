@@ -136,7 +136,7 @@ export default function FavoritesPage() {
       {/* Header */}
       <div className="bg-navy-900 rounded-3xl p-6 sm:p-8 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-black shadow-lg shadow-orange-500/30">
+          <div className="w-14 h-14 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-black shadow-lg">
             <Heart className="w-7 h-7 fill-current" />
           </div>
           <div>

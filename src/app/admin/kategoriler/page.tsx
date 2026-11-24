@@ -226,7 +226,7 @@ export default function AdminCategoriesPage() {
 
               {cat.subcategories && cat.subcategories.length > 0 && (
                 <div className="mt-3 space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 block">
+                  <span className="text-[10px] font-bold text-slate-400 block">
                     Alt Kategoriler ({cat.subcategories.length}):
                   </span>
                   <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto pt-1">
@@ -404,7 +404,7 @@ export default function AdminCategoriesPage() {
             <div className="p-5 overflow-y-auto space-y-6">
               {/* Existing Attributes List */}
               <div>
-                <h4 className="text-xs font-black text-slate-500 uppercase tracking-wider mb-2">
+                <h4 className="text-xs font-black text-slate-500 mb-2">
                   Tanımlı Alanlar ({catAttributes.length})
                 </h4>
                 {catAttributes.length === 0 ? (

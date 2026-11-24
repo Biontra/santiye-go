@@ -4,8 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import {
-  HardHat,
-  PlusCircle,
+  Plus,
   User,
   Heart,
   Menu,
@@ -13,12 +12,11 @@ import {
   Building2,
   Bell,
   MessageSquare,
-  Send,
   CheckCheck,
   LogOut,
-  Calculator,
-  Recycle,
+  ChevronRight,
 } from 'lucide-react';
+import Logo from '@/components/brand/Logo';
 import { createClient } from '@/lib/supabase/client';
 import { Profile, Notification } from '@/types/database';
 import { getActiveProfile, logoutUser } from '@/lib/services/auth-service';
@@ -154,151 +152,151 @@ export default function Header() {
     window.location.href = '/';
   };
 
+  const iconBtn =
+    'relative p-2 rounded-md text-slate-600 hover:text-navy-900 hover:bg-slate-100 transition-colors';
+  const badge =
+    'absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-orange-500 text-white text-[10px] font-semibold leading-4 text-center';
+
+  const primaryNav = [
+    { href: '/ilanlar?category=is-makineleri', label: 'İş Makineleri' },
+    { href: '/ilanlar?category=yapi-malzemeleri', label: 'Yapı Malzemeleri' },
+    { href: '/ilanlar?category=nakliye', label: 'Nakliye' },
+    { href: '/ilanlar', label: 'Tüm İlanlar' },
+  ];
+
+  const secondaryNav = [
+    { href: '/teklif-iste', label: 'Teklif İste' },
+    { href: '/kesif-yukle', label: 'Keşif Listesi Yükle' },
+    { href: '/hesaplayici', label: 'Metraj Hesaplayıcı' },
+    { href: '/santiyeden-santiyeye', label: 'Şantiyeden Şantiyeye' },
+    { href: '/operatorler', label: 'Operatör Bul' },
+  ];
+
+  const panelHref =
+    profile?.role === 'admin' || profile?.role === 'super_admin'
+      ? '/admin'
+      : profile?.role === 'company'
+        ? '/firma-paneli'
+        : '/alici-paneli';
+  const panelLabel =
+    profile?.role === 'admin' || profile?.role === 'super_admin'
+      ? 'Yönetim'
+      : profile?.role === 'company'
+        ? 'Firma Paneli'
+        : 'Hesabım';
+
   return (
-    <header className="sticky top-0 z-50 bg-navy-900 border-b border-navy-800 text-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
-          {/* Logo & Brand */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-orange-500 flex items-center justify-center text-white shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform">
-              <HardHat className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="flex items-center text-xl sm:text-2xl font-black tracking-tight">
-                <span>ŞANTİYE</span>
-                <span className="ml-1 px-1.5 py-0.5 rounded bg-orange-500 text-white text-base sm:text-lg font-extrabold tracking-wider">
-                  GO
-                </span>
-              </div>
-              <p className="hidden sm:block text-[10px] text-slate-300 font-medium tracking-wide">
-                Şantiyenizin akıllı çözüm ortağı
-              </p>
-            </div>
-          </Link>
-
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-2.5 text-[13px] font-semibold text-slate-200">
-            <Link
-              href="/ilanlar?category=is-makineleri"
-              className="hover:text-orange-500 transition-colors"
-            >
-              İş Makineleri
-            </Link>
-            <Link
-              href="/ilanlar?category=yapi-malzemeleri"
-              className="hover:text-orange-500 transition-colors"
-            >
-              Yapı Malzemeleri
-            </Link>
-            <Link
-              href="/ilanlar?category=nakliye"
-              className="hover:text-orange-500 transition-colors"
-            >
-              Nakliye
-            </Link>
-            <Link href="/operatorler" className="hover:text-orange-500 transition-colors">Operatör Havuzu</Link>
-            <Link href="/kesif-yukle" className="hover:text-orange-500 transition-colors">Keşif / BOQ Yükle</Link>
-            <Link
-              href="/santiyeden-santiyeye"
-              className="hover:text-orange-500 transition-colors flex items-center gap-1.5 leading-tight"
-            >
-              <Recycle className="w-3.5 h-3.5" />
-              Şantiyeden Şantiyeye
-            </Link>
-            <Link
-              href="/hesaplayici"
-              className="hover:text-emerald-400 text-emerald-400 font-bold transition-colors flex items-center gap-1.5"
-            >
-              <Calculator className="w-3.5 h-3.5" />
-              Hesaplayıcı
-            </Link>
-            <Link
-              href="/teklif-iste"
-              className="hover:text-orange-400 text-orange-400 font-bold transition-colors flex items-center gap-1.5"
-            >
-              <Send className="w-3.5 h-3.5" />
-              Teklif İste
-            </Link>
+    <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
+      {/* Hizmet çubuğu */}
+      <div className="hidden md:block bg-navy-900 text-slate-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-8 flex items-center justify-between text-xs">
+          <nav className="flex items-center gap-5">
+            {secondaryNav.map((item) => (
+              <Link key={item.href} href={item.href} className="hover:text-white transition-colors">
+                {item.label}
+              </Link>
+            ))}
           </nav>
+          <div className="flex items-center gap-5">
+            {profile?.role !== 'company' && (
+              <Link href="/kayit?role=company" className="hover:text-white transition-colors">
+                Firmanızı ekleyin
+              </Link>
+            )}
+            <Link href="/odeme-guvencesi" className="hover:text-white transition-colors">
+              Nasıl çalışır?
+            </Link>
+          </div>
+        </div>
+      </div>
 
-          {/* User & Action Buttons */}
-          <div className="hidden md:flex items-center gap-2.5">
-            {/* Messages Button */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14 md:h-16 gap-6">
+          <div className="flex items-center gap-8 min-w-0">
+            <Logo />
+            <nav className="hidden lg:flex items-center gap-1 text-sm font-medium text-slate-700">
+              {primaryNav.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="px-3 py-2 rounded-md hover:bg-slate-100 hover:text-navy-900 transition-colors"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Masaüstü eylemler */}
+          <div className="hidden md:flex items-center gap-1">
             <Link
               href={profile ? '/mesajlar' : '/giris?redirect=/mesajlar'}
-              className="relative p-2 text-slate-300 hover:text-orange-500 transition-colors rounded-lg hover:bg-navy-800"
-              title="Mesajlarım"
+              className={iconBtn}
+              title="Mesajlar"
+              aria-label="Mesajlar"
             >
-              <MessageSquare className="w-5 h-5" />
-              {unreadMessagesCount > 0 && (
-                <span className="absolute top-1 right-1 px-1.5 py-0.2 rounded-full bg-orange-500 text-white text-[9px] font-black">
-                  {unreadMessagesCount}
-                </span>
-              )}
+              <MessageSquare className="w-5 h-5" strokeWidth={1.75} />
+              {unreadMessagesCount > 0 && <span className={badge}>{unreadMessagesCount}</span>}
             </Link>
 
-            {/* Notification Bell Dropdown */}
             <div className="relative">
               <button
                 type="button"
                 onClick={handleNotifClick}
-                className="relative p-2 text-slate-300 hover:text-orange-500 transition-colors rounded-lg hover:bg-navy-800"
+                className={iconBtn}
                 title="Bildirimler"
+                aria-label="Bildirimler"
               >
-                <Bell className="w-5 h-5" />
+                <Bell className="w-5 h-5" strokeWidth={1.75} />
                 {unreadNotifsCount > 0 && (
-                  <span className="absolute top-1 right-1 px-1.5 py-0.2 rounded-full bg-orange-500 text-white text-[9px] font-black">
-                    {unreadNotifsCount > 9 ? '9+' : unreadNotifsCount}
-                  </span>
+                  <span className={badge}>{unreadNotifsCount > 9 ? '9+' : unreadNotifsCount}</span>
                 )}
               </button>
 
-              {/* Notification Popover */}
               {profile && notifDropdownOpen && (
-                <div className="absolute right-0 top-12 w-80 max-w-[calc(100vw-1.5rem)] bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden text-navy-900 z-50 animate-in fade-in zoom-in-95">
-                  <div className="p-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-                    <span className="text-xs font-black uppercase text-navy-900">
-                      Bildirimler ({unreadNotifsCount} Yeni)
+                <div className="absolute right-0 top-11 w-80 max-w-[calc(100vw-1.5rem)] bg-white rounded-md shadow-xl border border-slate-200 overflow-hidden text-navy-900 z-50">
+                  <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+                    <span className="text-sm font-semibold">
+                      Bildirimler
+                      {unreadNotifsCount > 0 && (
+                        <span className="ml-1.5 text-slate-500 font-normal">({unreadNotifsCount} yeni)</span>
+                      )}
                     </span>
                     {unreadNotifsCount > 0 && (
                       <button
                         type="button"
                         onClick={handleMarkAllRead}
-                        className="text-[10px] font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1"
+                        className="text-xs font-medium text-orange-600 hover:text-orange-700 flex items-center gap-1"
                       >
-                        <CheckCheck className="w-3 h-3" />
-                        Tümünü Okundu Yap
+                        <CheckCheck className="w-3.5 h-3.5" />
+                        Tümünü okundu say
                       </button>
                     )}
                   </div>
 
-                  <div className="max-h-72 overflow-y-auto divide-y divide-slate-100">
+                  <div className="max-h-80 overflow-y-auto divide-y divide-slate-100">
                     {notifications.length === 0 ? (
-                      <div className="p-4 text-center text-xs text-slate-400">
-                        Bildiriminiz bulunmuyor.
-                      </div>
+                      <div className="px-4 py-8 text-center text-sm text-slate-500">Henüz bildiriminiz yok.</div>
                     ) : (
                       notifications.map((n) => (
                         <Link
                           key={n.id}
                           href={safeInternalPath(n.link_url)}
                           onClick={() => handleNotificationClick(n)}
-                          className={`block p-3 hover:bg-slate-50 transition text-xs ${
-                            !n.is_read ? 'bg-orange-50/50' : ''
+                          className={`block px-4 py-3 hover:bg-slate-50 transition-colors text-sm ${
+                            !n.is_read ? 'bg-orange-50/60' : ''
                           }`}
                         >
-                          <div className="font-extrabold text-navy-900 flex items-center justify-between">
-                            <span>{n.title}</span>
-                            <span className="text-[10px] text-slate-400 font-normal">
+                          <div className="flex items-start justify-between gap-3">
+                            <span className="font-medium text-navy-900">{n.title}</span>
+                            <span className="text-xs text-slate-400 shrink-0 tabular">
                               {new Date(n.created_at).toLocaleTimeString('tr-TR', {
                                 hour: '2-digit',
                                 minute: '2-digit',
                               })}
                             </span>
                           </div>
-                          <p className="text-slate-600 mt-0.5 line-clamp-2 leading-relaxed">
-                            {n.body}
-                          </p>
+                          <p className="text-slate-600 mt-0.5 line-clamp-2 leading-relaxed text-[13px]">{n.body}</p>
                         </Link>
                       ))
                     )}
@@ -306,9 +304,9 @@ export default function Header() {
                   <Link
                     href="/bildirimler"
                     onClick={() => setNotifDropdownOpen(false)}
-                    className="block p-2.5 text-center text-[11px] font-bold text-orange-600 hover:bg-slate-50 border-t border-slate-100"
+                    className="block px-4 py-2.5 text-center text-sm font-medium text-navy-900 hover:bg-slate-50 border-t border-slate-200"
                   >
-                    Tüm bildirimleri gör
+                    Tüm bildirimler
                   </Link>
                 </div>
               )}
@@ -316,106 +314,75 @@ export default function Header() {
 
             <Link
               href={profile ? '/favorilerim' : '/giris?redirect=/favorilerim'}
-              className="p-2 text-slate-300 hover:text-orange-500 transition-colors rounded-lg hover:bg-navy-800"
-              title="Favorilerim"
+              className={iconBtn}
+              title="Favoriler"
+              aria-label="Favoriler"
             >
-              <Heart className="w-5 h-5" />
+              <Heart className="w-5 h-5" strokeWidth={1.75} />
             </Link>
 
-            {/* Role Navigations or Guest Buttons */}
+            <div className="w-px h-6 bg-slate-200 mx-2" />
+
             {profile ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 <Link
-                  href="/alici-paneli/taleplerim"
-                  className="hidden xl:flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-lg bg-navy-800 hover:bg-navy-700 text-slate-200 border border-slate-700 transition"
+                  href={panelHref}
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md text-navy-900 hover:bg-slate-100 transition-colors"
                 >
-                  Taleplerim
+                  {profile.role === 'company' ? (
+                    <Building2 className="w-4 h-4 text-slate-500" strokeWidth={1.75} />
+                  ) : (
+                    <User className="w-4 h-4 text-slate-500" strokeWidth={1.75} />
+                  )}
+                  {panelLabel}
                 </Link>
-
-                {profile?.role === 'admin' || profile?.role === 'super_admin' ? (
-                  <Link
-                    href="/admin"
-                    className="flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-bold rounded-lg bg-orange-600 hover:bg-orange-700 text-white shadow-sm transition"
-                  >
-                    <HardHat className="w-4 h-4" />
-                    Admin
-                  </Link>
-                ) : profile?.role === 'company' ? (
-                  <Link
-                    href="/firma-paneli"
-                    className="flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-lg bg-navy-800 hover:bg-navy-700 text-white border border-slate-700 transition"
-                  >
-                    <Building2 className="w-4 h-4 text-orange-500" />
-                    Firma Paneli
-                  </Link>
-                ) : (
-                  <Link
-                    href="/alici-paneli"
-                    className="flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-lg bg-navy-800 hover:bg-navy-700 text-white border border-slate-700 transition"
-                  >
-                    <User className="w-4 h-4 text-orange-500" />
-                    Hesabım
-                  </Link>
-                )}
-
                 <button
                   type="button"
                   onClick={handleSignOut}
-                  className="p-2 text-slate-400 hover:text-red-400 rounded-lg hover:bg-navy-800 transition"
-                  title="Güvenli Çıkış Yap"
+                  className={iconBtn}
+                  title="Çıkış yap"
+                  aria-label="Çıkış yap"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-4 h-4" strokeWidth={1.75} />
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/giris"
-                  className="px-3.5 py-2 text-xs sm:text-sm font-bold text-slate-200 hover:text-white transition"
-                >
-                  Giriş Yap
+              <div className="flex items-center gap-1 text-sm font-medium">
+                <Link href="/giris" className="px-3 py-2 rounded-md text-navy-900 hover:bg-slate-100 transition-colors">
+                  Giriş yap
                 </Link>
-                <Link
-                  href="/kayit"
-                  className="px-3.5 py-2 text-xs sm:text-sm font-bold rounded-lg bg-navy-800 hover:bg-navy-700 text-white border border-slate-700 transition"
-                >
-                  Kayıt Ol
+                <Link href="/kayit" className="px-3 py-2 rounded-md text-navy-900 hover:bg-slate-100 transition-colors">
+                  Üye ol
                 </Link>
               </div>
             )}
 
-            {/* Post Ad Button */}
             <Link
               href={profile?.role === 'company' ? '/firma-paneli/yeni-ilan' : '/giris?redirect=/firma-paneli/yeni-ilan'}
-              className="flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-bold rounded-lg bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-500/25 transition active:scale-95"
+              className="ml-2 btn-primary"
             >
-              <PlusCircle className="w-4 h-4" />
-              <span>İlan Ver</span>
+              <Plus className="w-4 h-4" strokeWidth={2.25} />
+              İlan Ver
             </Link>
           </div>
 
-          {/* Mobile Hamburger Button */}
-          <div className="flex md:hidden items-center gap-2">
+          {/* Mobil */}
+          <div className="flex md:hidden items-center gap-1">
             <Link
               href={profile ? '/mesajlar' : '/giris?redirect=/mesajlar'}
-              className="relative p-1.5 text-slate-300 hover:text-white"
+              className={iconBtn}
+              aria-label="Mesajlar"
             >
-              <MessageSquare className="w-5 h-5" />
+              <MessageSquare className="w-5 h-5" strokeWidth={1.75} />
               {unreadMessagesCount > 0 && (
-                <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-orange-500" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-orange-500" />
               )}
-            </Link>
-            <Link
-              href={profile?.role === 'company' ? '/firma-paneli/yeni-ilan' : '/firma-paneli'}
-              className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-lg bg-orange-500 text-white"
-            >
-              <PlusCircle className="w-3.5 h-3.5" />
-              İlan Ver
             </Link>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-slate-300 hover:text-white hover:bg-navy-800 focus:outline-none"
+              className={iconBtn}
               aria-label="Menü"
+              aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -423,87 +390,49 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Dropdown Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-navy-950 border-b border-navy-800 px-4 pt-3 pb-5 space-y-3">
-          <div className="flex flex-col space-y-2 text-sm font-medium">
-            <Link
-              href="/teklif-iste"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-md bg-orange-500/20 text-orange-400 font-bold"
-            >
-              ⚡ Çoklu Teklif Talebi Oluştur
-            </Link>
-            <Link href="/operatorler" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 rounded-md hover:bg-navy-800 text-slate-200">Operatör Havuzu</Link>
-            <Link href="/kesif-yukle" onClick={() => setMobileMenuOpen(false)} className="px-3 py-2 rounded-md hover:bg-navy-800 text-slate-200">Keşif / BOQ Yükle</Link>
-            <Link
-              href="/santiyeden-santiyeye"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-md hover:bg-navy-800 text-slate-200 flex items-center gap-1.5"
-            >
-              <Recycle className="w-3.5 h-3.5 text-orange-500" />
-              Şantiyeden Şantiyeye
-            </Link>
-            <Link
-              href="/hesaplayici"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-md bg-emerald-500/10 text-emerald-400 font-bold flex items-center gap-1.5"
-            >
-              <Calculator className="w-3.5 h-3.5" />
-              Metraj Hesaplayıcı
-            </Link>
+        <div className="md:hidden border-t border-slate-200 bg-white max-h-[calc(100vh-56px)] overflow-y-auto">
+          <nav className="px-4 py-2 divide-y divide-slate-100 text-[15px]">
+            {[...primaryNav, ...secondaryNav].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between py-3 text-navy-900"
+              >
+                {item.label}
+                <ChevronRight className="w-4 h-4 text-slate-400" />
+              </Link>
+            ))}
             <Link
               href={profile ? '/alici-paneli/taleplerim' : '/giris?redirect=/alici-paneli/taleplerim'}
               onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-md hover:bg-navy-800 text-slate-200"
+              className="flex items-center justify-between py-3 text-navy-900"
             >
-              Teklif Taleplerim & Karşılaştırma
+              Teklif taleplerim
+              <ChevronRight className="w-4 h-4 text-slate-400" />
             </Link>
-            <Link
-              href={profile ? '/mesajlar' : '/giris?redirect=/mesajlar'}
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-md hover:bg-navy-800 text-slate-200"
-            >
-              Mesajlarım
-            </Link>
-            <Link
-              href="/ilanlar?category=is-makineleri"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-md hover:bg-navy-800 text-slate-200"
-            >
-              İş Makineleri
-            </Link>
-            <Link
-              href="/ilanlar?category=yapi-malzemeleri"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-md hover:bg-navy-800 text-slate-200"
-            >
-              Yapı Malzemeleri
-            </Link>
-            <Link
-              href="/ilanlar?category=nakliye"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-md hover:bg-navy-800 text-slate-200"
-            >
-              Nakliye
-            </Link>
-          </div>
-
-          <div className="pt-3 border-t border-navy-800 flex flex-col gap-2">
-            <Link
-              href={profile ? "/firma-paneli" : "/giris?redirect=/firma-paneli"}
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-center py-2.5 rounded-lg bg-navy-800 text-white font-semibold text-xs"
-            >
-              Firma Paneli (Talepler & Takvim)
-            </Link>
-            <Link
-              href={profile ? "/alici-paneli" : "/giris?redirect=/alici-paneli"}
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-center py-2.5 rounded-lg bg-navy-800 text-white font-semibold text-xs"
-            >
-              Alıcı / Müteahhit Paneli
-            </Link>
+          </nav>
+          <div className="px-4 pb-5 pt-2 grid grid-cols-2 gap-2">
+            {profile ? (
+              <>
+                <Link href={panelHref} onClick={() => setMobileMenuOpen(false)} className="btn-secondary">
+                  {panelLabel}
+                </Link>
+                <button type="button" onClick={handleSignOut} className="btn-secondary">
+                  Çıkış yap
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/giris" onClick={() => setMobileMenuOpen(false)} className="btn-secondary">
+                  Giriş yap
+                </Link>
+                <Link href="/kayit" onClick={() => setMobileMenuOpen(false)} className="btn-dark">
+                  Üye ol
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

@@ -57,7 +57,7 @@ export function runCommissionUnitTests(): { passed: boolean; results: string[] }
 // Auto-run if executed directly
 if (typeof require !== 'undefined' && require.main === module) {
   const { passed, results } = runCommissionUnitTests();
-  console.log('--- ŞANTİYE GO KOMİSYON MOTORU TEST RAPORU ---');
+  console.log('--- ŞantiyeGO KOMİSYON MOTORU TEST RAPORU ---');
   results.forEach((r) => console.log(r));
   console.log(`Sonuç: ${passed ? 'TÜM TESTLER BAŞARILI' : 'BAZI TESTLER BAŞARISIZ'}`);
   process.exit(passed ? 0 : 1);

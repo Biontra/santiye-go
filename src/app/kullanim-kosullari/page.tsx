@@ -16,12 +16,12 @@ export default function TermsPage() {
           Kullanım Koşulları ve Üyelik Şartları
         </h1>
         <p>
-          <strong>ŞANTİYE GO</strong> platformuna erişerek ve platformu kullanarak aşağıdaki kullanım şartlarını ve kurallarını peşinen kabul etmiş sayılırsınız.
+          <strong>ŞantiyeGO</strong> platformuna erişerek ve platformu kullanarak aşağıdaki kullanım şartlarını ve kurallarını peşinen kabul etmiş sayılırsınız.
         </p>
 
         <h2 className="text-lg font-bold text-navy-900 pt-2">1. Hizmetin Niteliği</h2>
         <p>
-          ŞANTİYE GO, iş makineleri kiralama, yapı malzemeleri ve nakliye hizmeti sunan firmalar ile bu hizmetlere ihtiyaç duyan müteahhit ve şantiye yöneticilerini bir araya getiren bağımsız bir dijital pazaryeri ve sektörel koordinasyon platformudur.
+          ŞantiyeGO, iş makineleri kiralama, yapı malzemeleri ve nakliye hizmeti sunan firmalar ile bu hizmetlere ihtiyaç duyan müteahhit ve şantiye yöneticilerini bir araya getiren bağımsız bir dijital pazaryeri ve sektörel koordinasyon platformudur.
         </p>
 
         <h2 className="text-lg font-bold text-navy-900 pt-2">2. İlan Verme Kuralları ve Doğruluk</h2>
@@ -55,7 +55,7 @@ export default function TermsPage() {
 
         <h2 className="text-lg font-bold text-navy-900 pt-2">4. Sorumluluk Sınırı</h2>
         <p>
-          Alıcı ve satıcı firma arasında mutabık kalınan saha operasyonları, makine teslim tutanakları ve saha güvenlik önlemleri tarafların kendi aralarındaki hukuki ve cezai sorumluluğundadır. ŞANTİYE GO, tarafların platform kurallarına uygun işlem yapmasını gözetir.
+          Alıcı ve satıcı firma arasında mutabık kalınan saha operasyonları, makine teslim tutanakları ve saha güvenlik önlemleri tarafların kendi aralarındaki hukuki ve cezai sorumluluğundadır. ŞantiyeGO, tarafların platform kurallarına uygun işlem yapmasını gözetir.
         </p>
 
         <h2 className="text-lg font-bold text-navy-900 pt-2">5. Uyuşmazlıkların Çözümü</h2>

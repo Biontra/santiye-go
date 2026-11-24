@@ -1,5 +1,5 @@
 /**
- * ŞANTİYE GO – SCHEMA.ORG (JSON-LD) YAPILANDIRILMIŞ VERİ ÜRETİCİSİ
+ * ŞantiyeGO – SCHEMA.ORG (JSON-LD) YAPILANDIRILMIŞ VERİ ÜRETİCİSİ
  * Google zengin sonuçları (Rich Snippets) için doğrulanmış şema çıktıları üretir.
  * KURAL: Uydurma puan/yorum veya sahte fiyat kesinlikle yazılmaz.
  */
@@ -10,7 +10,7 @@ export function getOrganizationSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Şantiye GO',
+    name: 'ŞantiyeGO',
     url: 'https://santiyego.com',
     logo: 'https://santiyego.com/icon-512.svg',
     description: 'Türkiye geneli kiralık ve satılık iş makineleri, yapı malzemeleri ve inşaat hizmetleri dijital pazaryeri.',
@@ -50,7 +50,7 @@ export function getListingProductSchema(listing: Listing) {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: listing.title,
-    description: listing.description || `${listing.title} - Şantiye GO güvencesiyle kiralık/satılık.`,
+    description: listing.description || `${listing.title} - ŞantiyeGO güvencesiyle kiralık/satılık.`,
     image: listing.images && listing.images.length > 0 ? listing.images : ['https://santiyego.com/icon-512.svg'],
     category: listing.category?.name || 'İş Makineleri & Ekipman',
   };

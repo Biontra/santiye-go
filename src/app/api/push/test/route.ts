@@ -31,7 +31,7 @@ export async function POST() {
     const outcome = await sendPushToUser(
       userId,
       {
-        title: 'ŞANTİYE GO bildirimleri açık',
+        title: 'ŞantiyeGO bildirimleri açık',
         body: 'Yeni mesaj, teklif ve rezervasyonlardan anında haberdar olacaksınız.',
         url: '/bildirimler',
         tag: 'push-test',

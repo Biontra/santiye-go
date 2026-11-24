@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
-  HardHat,
   Building2,
   User,
   Mail,
@@ -26,6 +25,7 @@ import { normalizeTurkishPhone, sendPhoneOtp } from '@/lib/services/sms-service'
 import { isDisposableEmail, sendEmailVerification } from '@/lib/services/email-service';
 import { checkRateLimit } from '@/lib/security/rate-limiter';
 import { registerUser } from '@/lib/services/auth-service';
+import { LogoMark } from '@/components/brand/Logo';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -215,11 +215,9 @@ export default function RegisterPage() {
       <div className="max-w-xl w-full bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-xl space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex w-12 h-12 rounded-2xl bg-navy-900 text-orange-500 items-center justify-center shadow-lg shadow-navy-900/10">
-            <HardHat className="w-7 h-7" />
-          </div>
+          <LogoMark className="w-11 h-11 mx-auto" />
           <h2 className="text-2xl sm:text-3xl font-black text-navy-900 tracking-tight">
-            Şantiye GO&apos;ya Katılın
+            ŞantiyeGO&apos;ya Katılın
           </h2>
           <p className="text-xs sm:text-sm text-slate-500">
             İş makineleri, yapı malzemeleri ve şantiye hizmetleri için tek hesap
@@ -477,7 +475,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm shadow-lg shadow-orange-500/25 active:scale-[0.98] transition flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? (
               <span className="flex items-center gap-2">

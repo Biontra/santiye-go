@@ -68,7 +68,7 @@ export default function AdminDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-[11px] font-black uppercase">
+            <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-[11px] font-black">
               Süper Admin
             </span>
             <span className="text-slate-400">•</span>
@@ -245,7 +245,7 @@ export default function AdminDashboardPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-100 text-slate-400 uppercase text-[10px] tracking-wider font-extrabold">
+              <tr className="border-b border-slate-100 text-slate-400 text-[10px] tracking-wider font-extrabold">
                 <th className="py-2.5 px-3">Zaman</th>
                 <th className="py-2.5 px-3">Yönetici</th>
                 <th className="py-2.5 px-3">Eylem</th>

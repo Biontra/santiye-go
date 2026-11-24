@@ -78,7 +78,7 @@ export default function ReviewModal({
             key={star}
             type="button"
             onClick={() => onChange(star)}
-            className="p-1 focus:outline-none transition-transform hover:scale-110"
+            className="p-1 focus:outline-none transition-transform"
           >
             <Star
               className={`w-5 h-5 ${
@@ -100,7 +100,7 @@ export default function ReviewModal({
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
           <div>
-            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase text-emerald-700">
+            <div className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-700">
               <ShieldCheck className="w-3.5 h-3.5" />
               Doğrulanmış Müşteri Değerlendirmesi
             </div>
@@ -120,7 +120,7 @@ export default function ReviewModal({
           {success && (
             <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-              <span>Değerlendirmeniz yayınlandı! Şantiye GO topluluğuna katkınız için teşekkür ederiz.</span>
+              <span>Değerlendirmeniz yayınlandı! ŞantiyeGO topluluğuna katkınız için teşekkür ederiz.</span>
             </div>
           )}
 

@@ -190,7 +190,7 @@ function CheckoutPage() {
                   <Lock className="w-4 h-4 text-emerald-600" />
                   <span>Platform Ödeme Güvencesi</span>
                 </div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-100 text-emerald-800">
+                <span className="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-100 text-emerald-800">
                   Havuz Koruması
                 </span>
               </div>
@@ -213,7 +213,7 @@ function CheckoutPage() {
                   <Banknote className="w-4 h-4 text-orange-600" />
                   <span>Platform Dışı Doğrudan</span>
                 </div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-slate-100 text-slate-700">
+                <span className="px-2 py-0.5 rounded text-[10px] font-black bg-slate-100 text-slate-700">
                   Elden / Havale
                 </span>
               </div>
@@ -251,7 +251,7 @@ function CheckoutPage() {
           <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
             {/* Rezervasyon Özeti */}
             <div className="border-b border-slate-100 pb-5 space-y-3">
-              <span className="text-[11px] font-black text-orange-600 uppercase tracking-wider block">
+              <span className="text-[11px] font-black text-orange-600 block">
                 Rezervasyon Dökümü
               </span>
               <h2 className="text-xl font-black text-navy-900">{booking.listing?.title}</h2>
@@ -308,8 +308,8 @@ function CheckoutPage() {
               disabled={isProcessing}
               className={`w-full py-4 rounded-2xl font-black text-sm text-white transition flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 ${
                 paymentModeChoice === 'platform'
-                  ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/25'
-                  : 'bg-orange-600 hover:bg-orange-700 shadow-orange-600/25'
+                  ? 'bg-emerald-600 hover:bg-emerald-700'
+                  : 'bg-orange-600 hover:bg-orange-700'
               }`}
             >
               {isProcessing ? (

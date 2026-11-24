@@ -19,7 +19,7 @@ export default function AdvertisingTermsPage() {
           <div>
             <strong>Yasal Uyarı & Taslak Bildirimi:</strong>
             <p className="text-slate-600 mt-0.5">
-              İşbu Reklam ve Öne Çıkarma Şartları metni Şantiye GO platformunun reklam yayın prensiplerini düzenleyen taslak hukuki metindir. Şirketinizin unvanı ve kurumsal avukatlarınızın incelemesiyle nihai hale getirilmelidir.
+              İşbu Reklam ve Öne Çıkarma Şartları metni ŞantiyeGO platformunun reklam yayın prensiplerini düzenleyen taslak hukuki metindir. Şirketinizin unvanı ve kurumsal avukatlarınızın incelemesiyle nihai hale getirilmelidir.
             </p>
           </div>
         </div>
@@ -68,7 +68,7 @@ export default function AdvertisingTermsPage() {
           <section className="space-y-2">
             <h2 className="text-base font-extrabold text-navy-900">1. GENEL PRENSİPLER VE KAPSAM</h2>
             <p>
-              Şantiye GO platformu üzerinden satın alınan tüm reklam ve öne çıkarma hizmetleri (Ana Sayfa Vitrini, Kategori Vitrini, Sponsorlu Arama Sonucu, Bölgesel Hedefli Reklam ve Öne Çıkan Firma Profili), inşaat ve şantiye sektörünün güvenliğini ve şeffaflığını koruma amacıyla işbu kurallara tabidir.
+              ŞantiyeGO platformu üzerinden satın alınan tüm reklam ve öne çıkarma hizmetleri (Ana Sayfa Vitrini, Kategori Vitrini, Sponsorlu Arama Sonucu, Bölgesel Hedefli Reklam ve Öne Çıkan Firma Profili), inşaat ve şantiye sektörünün güvenliğini ve şeffaflığını koruma amacıyla işbu kurallara tabidir.
             </p>
           </section>
 

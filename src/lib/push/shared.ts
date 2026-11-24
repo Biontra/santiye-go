@@ -1,5 +1,5 @@
 /**
- * ŞANTİYE GO – Web Push ortak (istemci + sunucu) yardımcıları.
+ * ŞantiyeGO – Web Push ortak (istemci + sunucu) yardımcıları.
  * Saf fonksiyonlar: ağ/DB erişimi yok, kolayca test edilir.
  */
 
@@ -117,7 +117,7 @@ export function buildPushPayload(n: {
   // Geçerli bir site içi link yoksa bildirimler birbirinin yerini almasın (kimlik tabanlı tag).
   const hasValidLink = safeInternalPath(n.link_url, '') !== '';
   return {
-    title: clip((n.title || 'ŞANTİYE GO').trim(), 80),
+    title: clip((n.title || 'ŞantiyeGO').trim(), 80),
     body: clip((n.content || '').trim(), 160),
     url,
     // Aynı konuşma/talep için gelen bildirimler birbirinin yerini alsın (bildirim yığılmasın).

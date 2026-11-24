@@ -204,7 +204,7 @@ export default function CompanyDashboardPage() {
       {/* Dashboard Top Header */}
       <div className="bg-navy-900 rounded-2xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-black text-2xl shadow-lg shadow-orange-500/30 shrink-0">
+          <div className="w-16 h-16 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-black text-2xl shadow-lg shrink-0">
             <Building2 className="w-8 h-8" />
           </div>
           <div>
@@ -241,7 +241,7 @@ export default function CompanyDashboardPage() {
           </Link>
           <Link
             href="/firma-paneli/yeni-ilan"
-            className="flex-1 md:flex-none text-center px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-black shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 transition"
+            className="flex-1 md:flex-none text-center px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-black shadow-lg flex items-center justify-center gap-2 transition"
           >
             <PlusCircle className="w-4 h-4" />
             <span>Yeni İlan Ekle</span>
@@ -253,7 +253,7 @@ export default function CompanyDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex items-center justify-between">
           <div>
-            <div className="text-xs font-bold text-slate-500 uppercase">Yayındaki İlanlar</div>
+            <div className="text-xs font-bold text-slate-500">Yayındaki İlanlar</div>
             <div className="text-3xl font-black text-navy-900 mt-1">
               {stats.activeCount}
             </div>
@@ -265,7 +265,7 @@ export default function CompanyDashboardPage() {
 
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex items-center justify-between">
           <div>
-            <div className="text-xs font-bold text-slate-500 uppercase">Toplam İlan Sayısı</div>
+            <div className="text-xs font-bold text-slate-500">Toplam İlan Sayısı</div>
             <div className="text-3xl font-black text-navy-900 mt-1">{stats.totalCount}</div>
           </div>
           <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
@@ -275,7 +275,7 @@ export default function CompanyDashboardPage() {
 
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex items-center justify-between">
           <div>
-            <div className="text-xs font-bold text-slate-500 uppercase">Toplam Görüntülenme</div>
+            <div className="text-xs font-bold text-slate-500">Toplam Görüntülenme</div>
             <div className="text-3xl font-black text-navy-900 mt-1">
               {stats.totalCount > 0 ? `${stats.viewsCount}+` : '0'}
             </div>
@@ -292,7 +292,7 @@ export default function CompanyDashboardPage() {
           href="/firma-paneli/talepler"
           className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-orange-500 hover:shadow-md transition group space-y-2"
         >
-          <div className="text-orange-600 font-black text-sm uppercase tracking-wide">
+          <div className="text-orange-600 font-black text-sm">
             Gelen Talepler
           </div>
           <h3 className="font-extrabold text-navy-900 text-base group-hover:text-orange-600 transition">
@@ -307,7 +307,7 @@ export default function CompanyDashboardPage() {
           href="/firma-paneli/rezervasyonlar"
           className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-orange-500 hover:shadow-md transition group space-y-2"
         >
-          <div className="text-blue-600 font-black text-sm uppercase tracking-wide">
+          <div className="text-blue-600 font-black text-sm">
             Rezervasyonlar
           </div>
           <h3 className="font-extrabold text-navy-900 text-base group-hover:text-orange-600 transition">
@@ -322,7 +322,7 @@ export default function CompanyDashboardPage() {
           href="/firma-paneli/takvim"
           className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-orange-500 hover:shadow-md transition group space-y-2"
         >
-          <div className="text-emerald-600 font-black text-sm uppercase tracking-wide">
+          <div className="text-emerald-600 font-black text-sm">
             Müsaitlik
           </div>
           <h3 className="font-extrabold text-navy-900 text-base group-hover:text-orange-600 transition">
@@ -337,7 +337,7 @@ export default function CompanyDashboardPage() {
           href="/firma-paneli/kazanclarim"
           className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-orange-500 hover:shadow-md transition group space-y-2"
         >
-          <div className="text-emerald-700 font-black text-sm uppercase tracking-wide">
+          <div className="text-emerald-700 font-black text-sm">
             iyzico Finans
           </div>
           <h3 className="font-extrabold text-navy-900 text-base group-hover:text-orange-600 transition">
@@ -352,7 +352,7 @@ export default function CompanyDashboardPage() {
           href="/firma-paneli/uyelik"
           className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-orange-500 hover:shadow-md transition group space-y-2"
         >
-          <div className="text-amber-600 font-black text-sm uppercase tracking-wide">
+          <div className="text-amber-600 font-black text-sm">
             Paket & Limitler
           </div>
           <h3 className="font-extrabold text-navy-900 text-base group-hover:text-orange-600 transition">
@@ -367,7 +367,7 @@ export default function CompanyDashboardPage() {
           href="/mesajlar"
           className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-orange-500 hover:shadow-md transition group space-y-2"
         >
-          <div className="text-purple-600 font-black text-sm uppercase tracking-wide">
+          <div className="text-purple-600 font-black text-sm">
             Canlı İletişim
           </div>
           <h3 className="font-extrabold text-navy-900 text-base group-hover:text-orange-600 transition">
@@ -408,7 +408,7 @@ export default function CompanyDashboardPage() {
             </div>
             <Link
               href="/firma-paneli/yeni-ilan"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-black shadow-lg shadow-orange-500/25 transition"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-black shadow-lg transition"
             >
               <PlusCircle className="w-4 h-4" />
               <span>İlk İlanınızı Ekleyin</span>
@@ -417,7 +417,7 @@ export default function CompanyDashboardPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200">
+              <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
                 <tr>
                   <th className="py-3 px-4">Görsel & Başlık</th>
                   <th className="py-3 px-4">Kategori / Tür</th>
@@ -464,7 +464,7 @@ export default function CompanyDashboardPage() {
                       <span className="px-2 py-0.5 rounded bg-slate-100 font-semibold text-slate-700">
                         {l.category?.name || 'Genel'}
                       </span>
-                      <div className="text-[10px] text-slate-400 font-bold uppercase mt-0.5">
+                      <div className="text-[10px] text-slate-400 font-bold mt-0.5">
                         {l.listing_type === 'rental' ? 'Kiralık' : 'Satılık'}
                       </div>
                     </td>

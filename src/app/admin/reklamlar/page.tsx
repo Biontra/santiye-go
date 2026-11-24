@@ -164,7 +164,7 @@ function AdminAdsPage() {
           <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs sm:text-sm">
-                <thead className="bg-slate-50 text-slate-500 font-bold uppercase text-[11px] border-b">
+                <thead className="bg-slate-50 text-slate-500 font-bold text-[11px] border-b">
                   <tr>
                     <th className="py-3 px-4">Kampanya & Ürün</th>
                     <th className="py-3 px-4">Bağlı İlan</th>
@@ -362,7 +362,7 @@ function AdminAdsPage() {
           <button
             type="button"
             onClick={() => alert('Fiyat ve slot ayarları başarıyla güncellendi.')}
-            className="px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md shadow-orange-500/20 transition"
+            className="px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md transition"
           >
             Tüm Ayarları Kaydet
           </button>
@@ -410,7 +410,7 @@ function AdminAdsPage() {
               <button
                 type="button"
                 onClick={handleRejectSubmit}
-                className="px-5 py-2 rounded-xl text-xs font-black bg-red-600 hover:bg-red-700 text-white shadow-md shadow-red-600/20"
+                className="px-5 py-2 rounded-xl text-xs font-black bg-red-600 hover:bg-red-700 text-white shadow-md"
               >
                 Reddet ve İade Et
               </button>

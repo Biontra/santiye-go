@@ -23,7 +23,7 @@ export default function EscrowLegalTermsPage() {
         <div className="p-4 bg-amber-50 border border-amber-300 rounded-2xl flex items-start gap-3 text-amber-950">
           <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
           <div className="text-xs space-y-1">
-            <span className="font-black block uppercase tracking-wide">
+            <span className="font-black block">
               Hukuki İnceleme Uyarısı (Taslak Metin)
             </span>
             <p className="text-amber-900 leading-relaxed">
@@ -35,7 +35,7 @@ export default function EscrowLegalTermsPage() {
         {/* Contract Card */}
         <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-sm space-y-8 text-slate-700 leading-relaxed">
           <div className="border-b border-slate-100 pb-5">
-            <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">
+            <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 mb-1">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span>Güvenli Pazaryeri & Escrow Sözleşmesi</span>
             </div>

@@ -1,5 +1,5 @@
 /**
- * ŞANTİYE GO – KONTROLLÜ İLETİŞİM AÇILIŞ SERVİSİ (PROMPT 9A)
+ * ŞantiyeGO – KONTROLLÜ İLETİŞİM AÇILIŞ SERVİSİ (PROMPT 9A)
  * Belirlenen kural (teklif kabulü, ödeme, numara göster butonu) gerçekleştiğinde
  * tarafların iletişim kartını açar, doğrular, loglar ve RLS kurallarını yönetir.
  */

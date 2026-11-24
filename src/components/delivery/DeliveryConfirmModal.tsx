@@ -135,7 +135,7 @@ export default function DeliveryConfirmModal({
         {/* Modal Başlığı */}
         <div className="bg-navy-900 text-white p-5 flex items-center justify-between border-b border-navy-800">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-orange-500 text-white flex items-center justify-center shadow-md shadow-orange-500/20">
+            <div className="w-9 h-9 rounded-xl bg-orange-500 text-white flex items-center justify-center shadow-md">
               <FileCheck2 className="w-5 h-5" />
             </div>
             <div>
@@ -159,7 +159,7 @@ export default function DeliveryConfirmModal({
         {completedWaybill ? (
           <div className="p-6 sm:p-8 space-y-6">
             <div className="p-5 bg-emerald-50 border-2 border-emerald-500 rounded-3xl text-center space-y-3">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500 text-white flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/30">
+              <div className="w-14 h-14 rounded-2xl bg-emerald-500 text-white flex items-center justify-center mx-auto shadow-lg">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
               <div>
@@ -250,7 +250,7 @@ export default function DeliveryConfirmModal({
                   value={pinOrToken}
                   onChange={(e) => handlePinChange(e.target.value)}
                   placeholder="Örn: 749215"
-                  className="w-full px-4 py-3 rounded-2xl border-2 border-slate-300 focus:border-orange-500 text-center font-mono text-2xl font-black tracking-widest text-navy-900 focus:outline-none uppercase bg-slate-50 focus:bg-white transition"
+                  className="w-full px-4 py-3 rounded-2xl border-2 border-slate-300 focus:border-orange-500 text-center font-mono text-2xl font-black tracking-widest text-navy-900 focus:outline-none bg-slate-50 focus:bg-white transition"
                 />
                 <KeyRound className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
@@ -264,7 +264,7 @@ export default function DeliveryConfirmModal({
               <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-2.5">
                 <div className="flex items-start justify-between">
                   <div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">
+                    <span className="text-[10px] font-bold text-slate-400">
                       Teslim Alınacak Kalem
                     </span>
                     <h4 className="text-sm font-black text-navy-900">
@@ -341,7 +341,7 @@ export default function DeliveryConfirmModal({
               type="button"
               disabled={loading || !actorId}
               onClick={handleConfirm}
-              className="w-full py-4 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm tracking-wide shadow-lg shadow-orange-500/30 transition active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm tracking-wide shadow-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <Lock className="w-4 h-4" />
               {loading

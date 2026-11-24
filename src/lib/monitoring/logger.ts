@@ -1,5 +1,5 @@
 /**
- * ŞANTİYE GO – HATA VE GÜVENLİK İZLEME MOTORU (SENTRY & ERROR LOGGING)
+ * ŞantiyeGO – HATA VE GÜVENLİK İZLEME MOTORU (SENTRY & ERROR LOGGING)
  * Kullanıcı şifreleri, kredi kartı numaraları ve TCKN gibi hassas verilerin
  * hata günlüklerine sızmasını engelleyen (sanitizer) korumalı kayıt mekanizması.
  */
@@ -61,7 +61,7 @@ export function logError(
   };
 
   // Standard structured console log (read by Vercel / Datadog / CloudWatch)
-  console.error('[ŞANTİYE GO ERROR LOG]', JSON.stringify(logPayload, null, 2));
+  console.error('[ŞantiyeGO ERROR LOG]', JSON.stringify(logPayload, null, 2));
 
   // In production with SENTRY_DSN configured:
   if (process.env.NEXT_PUBLIC_SENTRY_DSN && typeof window !== 'undefined') {

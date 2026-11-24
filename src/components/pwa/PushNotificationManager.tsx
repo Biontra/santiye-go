@@ -129,7 +129,7 @@ export default function PushNotificationManager() {
             type="button"
             onClick={turnOn}
             disabled={busy}
-            className="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 disabled:opacity-60 text-white font-bold text-xs transition shadow-md shadow-orange-500/20 shrink-0 flex items-center gap-1.5"
+            className="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 disabled:opacity-60 text-white font-bold text-xs transition shadow-md shrink-0 flex items-center gap-1.5"
           >
             {busy && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
             Bildirimleri Aç

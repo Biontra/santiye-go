@@ -218,7 +218,7 @@ function EmailVerificationContent() {
               <div className="pt-4">
                 <Link
                   href="/giris?verified=1"
-                  className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-sm shadow-lg shadow-orange-500/25 transition active:scale-95"
+                  className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-sm shadow-lg transition"
                 >
                   <span>Giriş Yap ve Başla</span>
                   <ArrowRight className="w-4 h-4" />
@@ -270,7 +270,7 @@ function EmailVerificationContent() {
         {/* Bilgilendirme Kartı */}
         <div className="p-3.5 bg-orange-50/80 border border-orange-200/80 rounded-2xl text-orange-950 text-xs space-y-1">
           <p className="font-bold flex items-center gap-1.5 text-orange-900">
-            <span>📬</span> 6 Haneli Onay Kodunuz Gönderildi
+            6 Haneli Onay Kodunuz Gönderildi
           </p>
           <p className="text-[11px] text-orange-800 leading-relaxed">
             <strong>onay@santiyego.com</strong> adresinden gelen 6 haneli güvenlik kodunu aşağıdaki kutucuklara giriniz. (Gelen kutusunda göremediyseniz spam/gereksiz klasörünü kontrol ediniz).
@@ -333,7 +333,7 @@ function EmailVerificationContent() {
             <button
               type="submit"
               disabled={loading || digits.join('').length !== 6 || timeLeft <= 0}
-              className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm shadow-lg shadow-orange-500/25 active:scale-[0.98] transition flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {loading ? (
                 <span className="flex items-center gap-2">

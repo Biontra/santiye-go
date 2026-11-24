@@ -101,13 +101,12 @@ export default function TokenDeliveryConfirmPage() {
 
         {/* Hero Header */}
         <div className="bg-navy-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-          <div className="absolute right-0 top-0 translate-x-10 -translate-y-10 w-64 h-64 bg-orange-500/10 rounded-full blur-2xl pointer-events-none" />
           <div className="relative z-10 flex items-center gap-3 mb-2">
             <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center font-black">
               <FileCheck2 className="w-5 h-5 text-white" />
             </div>
             <div>
-              <span className="px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 text-[10px] font-black uppercase tracking-wider border border-orange-500/30">
+              <span className="px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 text-[10px] font-black border border-orange-500/30">
                 QR Doğrulama Bağlantısı
               </span>
               <h1 className="text-xl sm:text-2xl font-black tracking-tight">
@@ -125,7 +124,7 @@ export default function TokenDeliveryConfirmPage() {
         {completedWaybill ? (
           <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
             <div className="p-6 bg-emerald-50 border-2 border-emerald-500 rounded-3xl text-center space-y-3">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-500 text-white flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/30">
+              <div className="w-16 h-16 rounded-2xl bg-emerald-500 text-white flex items-center justify-center mx-auto shadow-lg">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <div>
@@ -194,7 +193,7 @@ export default function TokenDeliveryConfirmPage() {
             <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3">
               <div className="flex items-start justify-between">
                 <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase">
+                  <span className="text-[10px] font-bold text-slate-400">
                     Teslim Alınacak Kalem
                   </span>
                   <h3 className="text-base font-black text-navy-900">
@@ -263,7 +262,7 @@ export default function TokenDeliveryConfirmPage() {
               type="button"
               disabled={loading}
               onClick={handleConfirm}
-              className="w-full py-4 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm tracking-wide shadow-lg shadow-orange-500/30 transition active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm tracking-wide shadow-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <Lock className="w-4 h-4" />
               {loading

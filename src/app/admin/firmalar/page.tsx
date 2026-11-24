@@ -147,7 +147,7 @@ export default function AdminCompaniesPage() {
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-extrabold uppercase tracking-wider border-b border-slate-200 text-[10px]">
+            <thead className="bg-slate-50 text-slate-500 font-extrabold border-b border-slate-200 text-[10px]">
               <tr>
                 <th className="py-3 px-4">Firma & Ünvan</th>
                 <th className="py-3 px-4">Vergi Bilgileri</th>
@@ -231,7 +231,7 @@ export default function AdminCompaniesPage() {
           <div className="bg-white rounded-2xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
             <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
               <div>
-                <span className="text-[10px] font-bold uppercase text-orange-600">
+                <span className="text-[10px] font-bold text-orange-600">
                   Firma Evrak İnceleme Masası
                 </span>
                 <h3 className="font-black text-navy-900 text-base">{activeCompany.name}</h3>

@@ -1,5 +1,5 @@
 /**
- * ŞANTİYE GO – BİRLEŞİK KİMLİK DOĞRULAMA VE HESAP YÖNETİMİ (AUTH SERVICE)
+ * ŞantiyeGO – BİRLEŞİK KİMLİK DOĞRULAMA VE HESAP YÖNETİMİ (AUTH SERVICE)
  * Hem canlı Supabase bağlantısı hem de yerel/demo ortamında sıfır kesintiyle çalışan
  * kurumsal kayıt, giriş, profil ve oturum yöneticisi.
  */

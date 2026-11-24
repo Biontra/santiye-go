@@ -1,5 +1,5 @@
 /**
- * ŞANTİYE GO – ZAMANLANMIŞ GÖREVLER MOTORU (CRON SERVICE)
+ * ŞantiyeGO – ZAMANLANMIŞ GÖREVLER MOTORU (CRON SERVICE)
  * Reklam sürelerinin bitişini, onay bekleyen rezervasyonların otomatik iptalini
  * ve üyelik periyotlarını denetler.
  */

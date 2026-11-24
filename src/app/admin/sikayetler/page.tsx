@@ -111,7 +111,7 @@ export default function AdminReportsPage() {
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-extrabold uppercase tracking-wider border-b border-slate-200 text-[10px]">
+            <thead className="bg-slate-50 text-slate-500 font-extrabold border-b border-slate-200 text-[10px]">
               <tr>
                 <th className="py-3 px-4">Şikayet Nedeni</th>
                 <th className="py-3 px-4">Hedef Türü</th>

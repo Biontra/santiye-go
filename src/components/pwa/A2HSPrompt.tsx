@@ -80,7 +80,7 @@ export default function A2HSPrompt() {
             </div>
             <div>
               <div className="font-black text-xs sm:text-sm tracking-tight">
-                ŞANTİYE GO Uygulamasını Yükle
+                ŞantiyeGO Uygulamasını Yükle
               </div>
               <p className="text-[11px] text-slate-300">
                 Şantiyenizde tek tıkla hızlı açılış ve anlık bildirimler.
@@ -92,7 +92,7 @@ export default function A2HSPrompt() {
             <button
               type="button"
               onClick={handleInstallClick}
-              className="px-3 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs flex items-center gap-1 transition shadow-md shadow-orange-500/25"
+              className="px-3 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs flex items-center gap-1 transition shadow-md"
             >
               <Download className="w-3.5 h-3.5" />
               Yükle

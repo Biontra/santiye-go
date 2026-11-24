@@ -139,7 +139,7 @@ export default function CompanyQuoteRequestsPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-black uppercase">
+              <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-black">
                 Firma Paneli
               </span>
               <span className="text-slate-400">•</span>
@@ -231,7 +231,7 @@ export default function CompanyQuoteRequestsPage() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
                     <div className="flex items-center gap-2">
                       <span
-                        className={`px-2.5 py-0.5 rounded text-[11px] font-black uppercase ${
+                        className={`px-2.5 py-0.5 rounded text-[11px] font-black ${
                           req.request_type === 'single_listing'
                             ? 'bg-blue-100 text-blue-800'
                             : 'bg-purple-100 text-purple-800'
@@ -348,7 +348,7 @@ export default function CompanyQuoteRequestsPage() {
                         <button
                           type="button"
                           onClick={() => openQuoteModal(req)}
-                          className="w-full py-2.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md shadow-orange-500/20 transition flex items-center justify-center gap-2"
+                          className="w-full py-2.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md transition flex items-center justify-center gap-2"
                         >
                           <Send className="w-4 h-4" />
                           TEKLİF VER
@@ -376,7 +376,7 @@ export default function CompanyQuoteRequestsPage() {
             <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
               <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
                 <div>
-                  <span className="text-[10px] font-bold uppercase text-orange-600 tracking-wider">
+                  <span className="text-[10px] font-bold text-orange-600 tracking-wider">
                     Teklif Formu
                   </span>
                   <h3 className="font-black text-navy-900 text-base line-clamp-1">

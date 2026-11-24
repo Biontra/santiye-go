@@ -1,14 +1,13 @@
 import Link from 'next/link';
-import { HardHat, Search, Home, ArrowRight } from 'lucide-react';
+import { Search, Home, ArrowRight } from 'lucide-react';
+import { LogoMark } from '@/components/brand/Logo';
 
 export default function NotFound() {
   return (
     <div className="min-h-[75vh] flex items-center justify-center p-4 bg-slate-50">
       <div className="max-w-lg w-full bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-xl text-center space-y-6">
         <div className="relative inline-block">
-          <div className="w-20 h-20 rounded-2xl bg-navy-900 text-orange-500 flex items-center justify-center mx-auto shadow-lg">
-            <HardHat className="w-10 h-10" />
-          </div>
+          <LogoMark className="w-14 h-14 mx-auto" />
           <span className="absolute -bottom-2 -right-2 px-2.5 py-0.5 rounded-full bg-orange-500 text-white font-black text-xs shadow">
             404
           </span>

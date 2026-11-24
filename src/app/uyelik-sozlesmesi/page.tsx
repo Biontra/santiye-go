@@ -68,7 +68,7 @@ export default function MembershipAgreementPage() {
           <section className="space-y-2">
             <h2 className="text-base font-extrabold text-navy-900">MADDE 1 – TARAFLAR VE TANIMLAR</h2>
             <p>
-              İşbu Sözleşme; bir tarafta dijital pazar yeri altyapısını işleten <strong>Şantiye GO Dijital Pazaryeri Platformu</strong> (&quot;PLATFORM&quot;) ile diğer tarafta platforma üye olarak iş makinesi kiralayan, inşaat malzemesi satan veya lojistik/nakliye hizmeti sunan tüzel kişi veya şahıs şirketi (&quot;ÜYE FİRMA / ALT ÜYE İŞYERİ&quot;) arasında akdedilmiştir.
+              İşbu Sözleşme; bir tarafta dijital pazar yeri altyapısını işleten <strong>ŞantiyeGO Dijital Pazaryeri Platformu</strong> (&quot;PLATFORM&quot;) ile diğer tarafta platforma üye olarak iş makinesi kiralayan, inşaat malzemesi satan veya lojistik/nakliye hizmeti sunan tüzel kişi veya şahıs şirketi (&quot;ÜYE FİRMA / ALT ÜYE İŞYERİ&quot;) arasında akdedilmiştir.
             </p>
             <p>
               PLATFORM, 6563 sayılı Kanun kapsamında &quot;Aracı Hizmet Sağlayıcı&quot; olup, ALICI (Müşteri) ile ÜYE FİRMA arasındaki ticari akitlerin kurulmasına elektronik ortam sağlamaktadır.

@@ -171,7 +171,7 @@ function CompanyEarningsPage() {
         {/* Top Header */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-black uppercase">
+            <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-black">
               Firma Finans
             </span>
             <h1 className="text-2xl font-black text-navy-900 mt-1">
@@ -185,7 +185,7 @@ function CompanyEarningsPage() {
           {/* Submerchant IBAN Card (SADECE SON 4 HANE GÖSTERİLİR) */}
           <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-1 shrink-0">
             <div className="flex items-center justify-between gap-3">
-              <span className="text-slate-400 font-bold uppercase text-[10px]">
+              <span className="text-slate-400 font-bold text-[10px]">
                 Alt Üye İşyeri Hesabı
               </span>
               <span
@@ -309,14 +309,14 @@ function CompanyEarningsPage() {
               <div className="space-y-1">
                 <h4 className="font-bold text-navy-900 text-sm">Henüz Bir Ödeme veya Hakediş Kaydı Yok</h4>
                 <p className="text-xs text-slate-500 max-w-md mx-auto">
-                  Şantiye GO Güvenli Ödeme Sistemi üzerinden ilanlarınıza yapılan kiralama, satış veya hizmet ödemeleri burada listelenecektir.
+                  ŞantiyeGO Güvenli Ödeme Sistemi üzerinden ilanlarınıza yapılan kiralama, satış veya hizmet ödemeleri burada listelenecektir.
                 </p>
               </div>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 text-slate-500 uppercase font-black text-[10px] border-b border-slate-200">
+                <thead className="bg-slate-50 text-slate-500 font-black text-[10px] border-b border-slate-200">
                   <tr>
                     <th className="py-3 px-4">İşlem / Tarih</th>
                     <th className="py-3 px-4">Alıcı</th>
@@ -377,7 +377,7 @@ function CompanyEarningsPage() {
                         </td>
                         <td className="py-3.5 px-4">
                           <span
-                            className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-black uppercase ${
+                            className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-black ${
                               statusColors[tx.status] || 'bg-slate-100 text-slate-600'
                             }`}
                           >

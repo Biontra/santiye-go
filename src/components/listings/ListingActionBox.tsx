@@ -53,7 +53,7 @@ export default function ListingActionBox({ listing }: ListingActionBoxProps) {
   const companyPhone = listing.company?.phone || '+905320000000';
   const whatsappNumber = (listing.company?.whatsapp || companyPhone).replace(/[^0-9]/g, '');
   const whatsappMessage = encodeURIComponent(
-    `Merhaba, Şantiye GO üzerinden "${listing.title}" başlıklı ilanınız hakkında bilgi ve teklif almak istiyorum.`
+    `Merhaba, ŞantiyeGO üzerinden "${listing.title}" başlıklı ilanınız hakkında bilgi ve teklif almak istiyorum.`
   );
 
   return (
@@ -61,7 +61,7 @@ export default function ListingActionBox({ listing }: ListingActionBoxProps) {
       <div className="bg-white rounded-2xl border-2 border-orange-500/30 p-6 shadow-xl space-y-5">
         {/* Pricing Info */}
         <div>
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+          <span className="text-xs font-bold text-slate-400">
             Fiyat Tarifesi
           </span>
           {listing.listing_type === 'sale' ? (
@@ -111,10 +111,10 @@ export default function ListingActionBox({ listing }: ListingActionBoxProps) {
             <button
               type="button"
               onClick={() => setBookingModalOpen(true)}
-              className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm shadow-lg shadow-orange-500/30 active:scale-[0.98] transition flex items-center justify-center gap-2"
+              className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm shadow-lg transition flex items-center justify-center gap-2"
             >
               <Calendar className="w-5 h-5" />
-              <span>TARİH SEÇ & REZERVASYON YAP</span>
+              <span>Tarih seç ve rezervasyon yap</span>
             </button>
           )}
 
@@ -124,7 +124,7 @@ export default function ListingActionBox({ listing }: ListingActionBoxProps) {
             className="w-full py-3 px-4 rounded-xl border-2 border-navy-900 hover:bg-navy-900 hover:text-white text-navy-900 font-extrabold text-sm transition flex items-center justify-center gap-2"
           >
             <Send className="w-4 h-4 text-orange-500" />
-            <span>DOĞRUDAN TEKLİF İSTE</span>
+            <span>Teklif iste</span>
           </button>
         </div>
 
@@ -148,7 +148,7 @@ export default function ListingActionBox({ listing }: ListingActionBoxProps) {
           <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-left space-y-1.5">
             <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Şantiye GO İletişim Güvencesi</span>
+              <span>ŞantiyeGO İletişim Güvencesi</span>
             </div>
             <p className="text-[11px] text-slate-500 leading-relaxed">
               İletişim bilgileri (telefon, WhatsApp ve tam konum), teklif veya rezervasyon onaylandıktan sonra her iki tarafa otomatik paylaşılır.

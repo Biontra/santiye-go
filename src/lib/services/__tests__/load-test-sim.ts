@@ -1,5 +1,5 @@
 /**
- * ŞANTİYE GO – YÜK VE PERFORMANS TEST SİMÜLASYONU
+ * ŞantiyeGO – YÜK VE PERFORMANS TEST SİMÜLASYONU
  * 50.000 ilan ve 200 eşzamanlı PostGIS mesafe sorgusu performans ölçümü
  */
 
@@ -44,7 +44,7 @@ function generateSyntheticListings(count: number): SyntheticListing[] {
 
 async function runLoadSimulation() {
   console.log('===========================================================');
-  console.log('ŞANTİYE GO – 50.000 İLAN YÜK & POSTGIS PERFORMANS TESTİ');
+  console.log('ŞantiyeGO – 50.000 İLAN YÜK & POSTGIS PERFORMANS TESTİ');
   console.log('===========================================================');
 
   const LISTING_COUNT = 50000;

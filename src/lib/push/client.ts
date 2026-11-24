@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * ŞANTİYE GO – Web Push tarayıcı yardımcıları.
+ * ŞantiyeGO – Web Push tarayıcı yardımcıları.
  * Abonelik: izin iste → pushManager.subscribe → /api/push/subscribe (sunucu doğrular ve kaydeder).
  */
 import { DEFAULT_PUSH_PREFS, type PushPrefs } from '@/lib/push/shared';

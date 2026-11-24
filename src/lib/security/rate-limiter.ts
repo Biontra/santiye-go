@@ -1,5 +1,5 @@
 /**
- * ŞANTİYE GO – GÜVENLİK VE ORAN SINIRLAYICI (RATE LIMITER & REDIRECT SANITIZER)
+ * ŞantiyeGO – GÜVENLİK VE ORAN SINIRLAYICI (RATE LIMITER & REDIRECT SANITIZER)
  * Brute-force ve DDoS ataklarına karşı API ve uç noktaları korur.
  */
 

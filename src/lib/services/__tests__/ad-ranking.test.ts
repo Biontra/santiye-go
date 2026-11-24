@@ -90,7 +90,7 @@ export function runAdRankingUnitTests(): { passed: boolean; results: string[] } 
 // Auto-run if executed directly
 if (typeof require !== 'undefined' && require.main === module) {
   const { passed, results } = runAdRankingUnitTests();
-  console.log('--- ŞANTİYE GO REKLAM VE SIRALAMA TEST RAPORU ---');
+  console.log('--- ŞantiyeGO REKLAM VE SIRALAMA TEST RAPORU ---');
   results.forEach((r) => console.log(r));
   console.log(`Sonuç: ${passed ? 'TÜM TESTLER BAŞARILI' : 'BAZI TESTLER BAŞARISIZ'}`);
   process.exit(passed ? 0 : 1);

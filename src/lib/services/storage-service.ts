@@ -1,5 +1,5 @@
 /**
- * ŞANTİYE GO – GERÇEK DOSYA VE GÖRSEL DEPOLAMA SERVİSİ
+ * ŞantiyeGO – GERÇEK DOSYA VE GÖRSEL DEPOLAMA SERVİSİ
  * Prompt 8: Supabase Storage entegrasyonu, dosya boyutu ve MIME türü denetimi,
  * güvenli yükleme, silme ve URL çözümleme.
  */

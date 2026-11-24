@@ -29,7 +29,7 @@ export default function KvkkPage() {
 
         <div className="space-y-4 text-sm text-slate-600 leading-relaxed">
           <p>
-            <strong>ŞANTİYE GO</strong> olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu (&quot;KVKK&quot;) ve ilgili mevzuat hükümleri uyarınca veri sorumlusu sıfatıyla, kullanıcılarımızın kişisel verilerinin gizliliğini ve güvenliğini en üst düzeyde korumayı taahhüt ediyoruz.
+            <strong>ŞantiyeGO</strong> olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu (&quot;KVKK&quot;) ve ilgili mevzuat hükümleri uyarınca veri sorumlusu sıfatıyla, kullanıcılarımızın kişisel verilerinin gizliliğini ve güvenliğini en üst düzeyde korumayı taahhüt ediyoruz.
           </p>
 
           <h2 className="text-lg font-bold text-navy-900 pt-2">1. Kişisel Verilerin İşlenme Amacı</h2>

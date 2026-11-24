@@ -24,7 +24,7 @@ export const DEMO_REVIEWS: VerifiedReviewWithUser[] = [
     comment:
       'Tuzla şantiyemizdeki temel kazısı için kiraladık. CAT 320D ekskavatör tam vaktinde geldi. Operatör son derece tecrübeli ve İSG kurallarına tam uyumluydu. Teşekkürler.',
     company_reply:
-      'Güzel yorumunuz için teşekkür ederiz Ahmet Bey. Şantiye GO üzerinden her zaman yanınızdayız.',
+      'Güzel yorumunuz için teşekkür ederiz Ahmet Bey. ŞantiyeGO üzerinden her zaman yanınızdayız.',
     company_reply_at: new Date(Date.now() - 86400000 * 2).toISOString(),
     is_verified: true,
     is_demo: true,

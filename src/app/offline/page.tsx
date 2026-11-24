@@ -19,7 +19,7 @@ export default function OfflinePage() {
         <div className="space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-[11px] font-bold text-slate-600">
             <HardHat className="w-3.5 h-3.5 text-orange-500" />
-            ŞANTİYE GO ÇEVRİMDIŞI MOD
+            Çevrimdışı mod
           </div>
           <h1 className="text-2xl font-black text-navy-900 tracking-tight">
             İnternet Bağlantısı Yok
@@ -32,7 +32,7 @@ export default function OfflinePage() {
         <button
           type="button"
           onClick={handleReload}
-          className="w-full py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 active:scale-[0.98] text-white font-black text-xs shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 transition"
+          className="w-full py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-lg flex items-center justify-center gap-2 transition"
         >
           <RotateCcw className="w-4 h-4" />
           Bağlantıyı Yenile ve Tekrar Dene

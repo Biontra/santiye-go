@@ -544,7 +544,7 @@ export default function MessagesClient() {
               <ShieldAlert className="w-4 h-4" />
             </div>
             <div className="text-[11px] leading-tight font-medium">
-              <strong className="font-bold text-navy-900">Şantiye GO Güvence Sistemi:</strong> Komisyon kaçağını önlemek ve dolandırıcılık mağduriyeti yaşamamak için tüm ödemeler platform üzerinden Havuz (Escrow) sistemiyle yapılmalıdır. Dışarıdan veya elden ödeme yapmayınız.
+              <strong className="font-bold text-navy-900">ŞantiyeGO Güvence Sistemi:</strong> Komisyon kaçağını önlemek ve dolandırıcılık mağduriyeti yaşamamak için tüm ödemeler platform üzerinden Havuz (Escrow) sistemiyle yapılmalıdır. Dışarıdan veya elden ödeme yapmayınız.
             </div>
           </div>
           <button
@@ -667,7 +667,7 @@ export default function MessagesClient() {
                         </h2>
                         {realtimeStatus === 'connected' ? (
                           <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-1.5 py-0.5 rounded-md">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                             Canlı
                           </span>
                         ) : (
@@ -729,7 +729,7 @@ export default function MessagesClient() {
                 {realtimeStatus === 'disconnected' && (
                   <div className="bg-amber-100/90 border-b border-amber-300 px-4 py-2 text-xs text-amber-900 flex items-center justify-between gap-3 font-semibold">
                     <div className="flex items-center gap-2">
-                      <AlertCircle className="w-4 h-4 text-amber-700 shrink-0 animate-pulse" />
+                      <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
                       <span>Canlı bağlantı koptu, yeniden bağlanılıyor... (Yedek yenileme devrede)</span>
                     </div>
                     <button
@@ -998,10 +998,10 @@ export default function MessagesClient() {
 
                 <ul className="space-y-2 list-disc list-inside text-slate-700">
                   <li>
-                    <strong className="text-navy-900">Havuz Güvencesi:</strong> Ödemeleriniz Şantiye GO Havuz (Escrow) hesabında tutulur, iş veya teslimat onaylanana kadar firmaya aktarılmaz.
+                    <strong className="text-navy-900">Havuz Güvencesi:</strong> Ödemeleriniz ŞantiyeGO Havuz (Escrow) hesabında tutulur, iş veya teslimat onaylanana kadar firmaya aktarılmaz.
                   </li>
                   <li>
-                    <strong className="text-navy-900">Mağduriyet Sorumluluğu:</strong> Platform dışından yapılan ödemeler güvence kapsamı dışındadır ve doğabilecek dolandırıcılık veya anlaşmazlıklardan Şantiye GO sorumlu tutulamaz.
+                    <strong className="text-navy-900">Mağduriyet Sorumluluğu:</strong> Platform dışından yapılan ödemeler güvence kapsamı dışındadır ve doğabilecek dolandırıcılık veya anlaşmazlıklardan ŞantiyeGO sorumlu tutulamaz.
                   </li>
                   <li>
                     <strong className="text-navy-900">Hesap Kapatma Cezası:</strong> Komisyon kaçağı ve sistem dışı işlem teklifinde bulunan kullanıcı ve firmaların hesapları süresiz askıya alınır.
@@ -1013,10 +1013,10 @@ export default function MessagesClient() {
                 <button
                   type="button"
                   onClick={handleAcceptPaymentWarning}
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs sm:text-sm tracking-wide transition shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs sm:text-sm tracking-wide transition shadow-lg flex items-center justify-center gap-2"
                 >
                   <Check className="w-4 h-4" />
-                  <span>KURALLARI OKUDUM VE KABUL EDİYORUM</span>
+                  <span>Kuralları okudum, kabul ediyorum</span>
                 </button>
               </div>
             </div>

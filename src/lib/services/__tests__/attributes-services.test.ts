@@ -3,7 +3,7 @@ import { searchListings } from '../listing-service';
 import { CATEGORIES } from '@/lib/mock-data';
 
 async function runTests() {
-  console.log('--- ŞANTİYE GO - PROMPT 6 UNIT TESTS ---');
+  console.log('--- ŞantiyeGO - PROMPT 6 UNIT TESTS ---');
   let passed = 0;
   let failed = 0;
 

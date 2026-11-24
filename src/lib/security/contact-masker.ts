@@ -1,5 +1,5 @@
 /**
- * ŞANTİYE GO – MERKEZİ İLETİŞİM BİLGİSİ TARAYICI VE MASKELEME MOTORU (PROMPT 9A)
+ * ŞantiyeGO – MERKEZİ İLETİŞİM BİLGİSİ TARAYICI VE MASKELEME MOTORU (PROMPT 9A)
  * Platform dışı anlaşma ve komisyon kaçağını engellemek için telefon, e-posta,
  * IBAN, web linki ve harici mesajlaşma yönlendirmelerini tespit eder ve maskeler.
  * 

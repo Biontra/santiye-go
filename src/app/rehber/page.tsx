@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { BookOpen, Calendar, ArrowRight, Tag } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Şantiye & İnşaat Rehberi | Şantiye GO',
+  title: 'Şantiye & İnşaat Rehberi | ŞantiyeGO',
   description: 'İş makinesi kiralama, iskele mevzuatı, hakediş ve şantiye yönetim rehberleri.',
   alternates: {
     canonical: 'https://santiyego.com/rehber',
@@ -43,9 +43,9 @@ export default function GuideIndexPage() {
       <div className="max-w-5xl mx-auto space-y-8">
         {/* Header */}
         <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 text-orange-700 text-xs font-black uppercase tracking-wider">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 text-orange-700 text-xs font-black">
             <BookOpen className="w-3.5 h-3.5 text-orange-500" />
-            <span>Şantiye GO Akademi & Rehber</span>
+            <span>ŞantiyeGO Akademi & Rehber</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-navy-900 tracking-tight">
             Şantiye Yönetimi ve Ekipman Rehberi

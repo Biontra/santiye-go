@@ -41,7 +41,7 @@ export default function DistanceSalesAgreementPage() {
             </p>
             <p>
               <strong>1.2. HİZMET SAĞLAYICI (Satıcı / Kiralayan Tedarikçi):</strong><br />
-              Şantiye GO platformu üzerinden ilan veren, vergi levhası doğrulanmış gerçek veya tüzel kişi alt üye işyeridir.
+              ŞantiyeGO platformu üzerinden ilan veren, vergi levhası doğrulanmış gerçek veya tüzel kişi alt üye işyeridir.
             </p>
             <p>
               <strong>1.3. ALICI (Müşteri / Müteahhit):</strong><br />
@@ -52,14 +52,14 @@ export default function DistanceSalesAgreementPage() {
           <section className="space-y-2">
             <h2 className="text-base font-extrabold text-navy-900">MADDE 2 – SÖZLEŞMENİN KONUSU</h2>
             <p>
-              İşbu sözleşmenin konusu, ALICI&apos;nın Şantiye GO dijital pazaryeri platformu üzerinden elektronik ortamda rezervasyonunu veya siparişini oluşturduğu iş makinesi kiralama, yapı malzemesi satışı veya nakliye hizmetinin sunumu, bedelinin iyzico güvenli havuz hesabı üzerinden tahsili ve tarafların 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği hükümleri uyarınca hak ve yükümlülüklerinin belirlenmesidir.
+              İşbu sözleşmenin konusu, ALICI&apos;nın ŞantiyeGO dijital pazaryeri platformu üzerinden elektronik ortamda rezervasyonunu veya siparişini oluşturduğu iş makinesi kiralama, yapı malzemesi satışı veya nakliye hizmetinin sunumu, bedelinin iyzico güvenli havuz hesabı üzerinden tahsili ve tarafların 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği hükümleri uyarınca hak ve yükümlülüklerinin belirlenmesidir.
             </p>
           </section>
 
           <section className="space-y-2">
             <h2 className="text-base font-extrabold text-navy-900">MADDE 3 – GÜVENLİ PAZARYERİ VE ÖDEME MODELİ</h2>
             <p>
-              3.1. Şantiye GO, 6563 sayılı Elektronik Ticaretin Düzenlenmesi Hakkında Kanun kapsamında &quot;Aracı Hizmet Sağlayıcı&quot; sıfatına haizdir.
+              3.1. ŞantiyeGO, 6563 sayılı Elektronik Ticaretin Düzenlenmesi Hakkında Kanun kapsamında &quot;Aracı Hizmet Sağlayıcı&quot; sıfatına haizdir.
             </p>
             <p>
               3.2. ALICI tarafından yapılan ödemeler, ödeme sağlayıcısı (iyzico) nezdindeki havuz hesabında bloke edilir. İş makinesi veya malzemenin şantiye sahasına ulaşıp teslim alınmasıyla birlikte onaylanan tutar tedarikçiye aktarılır.

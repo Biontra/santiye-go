@@ -19,7 +19,7 @@ export default function CancellationAndRefundPage() {
           <div>
             <strong>Yasal Uyarı & Taslak Bildirimi:</strong>
             <p className="text-slate-600 mt-0.5">
-              İşbu İptal ve İade Koşulları metni Şantiye GO pazaryeri mimarisi için hazırlanmış taslak hukuki çerçevedir. Şirketinizin resmi unvanı, MERSİS numarası ve lojistik/operasyonel sözleşmeleriyle harmonize edilerek canlıya alınmadan önce mutlaka hukuk müşaviriniz tarafından onaylanmalıdır.
+              İşbu İptal ve İade Koşulları metni ŞantiyeGO pazaryeri mimarisi için hazırlanmış taslak hukuki çerçevedir. Şirketinizin resmi unvanı, MERSİS numarası ve lojistik/operasyonel sözleşmeleriyle harmonize edilerek canlıya alınmadan önce mutlaka hukuk müşaviriniz tarafından onaylanmalıdır.
             </p>
           </div>
         </div>
@@ -68,7 +68,7 @@ export default function CancellationAndRefundPage() {
           <section className="space-y-2">
             <h2 className="text-base font-extrabold text-navy-900">1. GENEL PRENSİP VE EMANET (ESCROW) HAVUZ SİSTEMİ</h2>
             <p>
-              Şantiye GO üzerinden yapılan tüm kiralama ve satın alma ödemeleri, 6563 sayılı Kanun ve BDDK/TCMB lisanslı ödeme kuruluşu (iyzico) nezdindeki güvenli havuz hesabında bloke edilir.
+              ŞantiyeGO üzerinden yapılan tüm kiralama ve satın alma ödemeleri, 6563 sayılı Kanun ve BDDK/TCMB lisanslı ödeme kuruluşu (iyzico) nezdindeki güvenli havuz hesabında bloke edilir.
             </p>
             <p>
               Alıcı ödemeyi yaptığı anda tutar doğrudan satıcının hesabına geçmez; iş makinesinin sahada faaliyete geçmesi, yapı malzemesinin sevk irsaliyesiyle şantiyede eksiksiz teslim alınması veya nakliye hizmetinin ifa edilmesi sonrasında alıcı onayı veya platform doğrulama süresi neticesinde tedarikçiye aktarılır.
@@ -118,14 +118,14 @@ export default function CancellationAndRefundPage() {
           <section className="space-y-2">
             <h2 className="text-base font-extrabold text-navy-900">5. İADE TUTARININ HESABA YANSIMA SÜRESİ</h2>
             <p>
-              Şantiye GO tarafından onaylanan iadeler, anlaşmalı ödeme kuruluşu iyzico altyapısı üzerinden aynı gün bankaya iletilir. Bankaların işlem prosedürlerine bağlı olarak tutarın kredi kartı ekstresine veya banka kartı hesabına yansıması ortalama 1 ila 7 iş günü sürebilmektedir.
+              ŞantiyeGO tarafından onaylanan iadeler, anlaşmalı ödeme kuruluşu iyzico altyapısı üzerinden aynı gün bankaya iletilir. Bankaların işlem prosedürlerine bağlı olarak tutarın kredi kartı ekstresine veya banka kartı hesabına yansıması ortalama 1 ila 7 iş günü sürebilmektedir.
             </p>
           </section>
 
           <section className="space-y-2 border-t pt-4">
             <h2 className="text-base font-extrabold text-navy-900">6. İTİRAZ VE UYUŞMAZLIK ÇÖZÜMÜ</h2>
             <p>
-              Alıcı ve Tedarikçi arasındaki saha teslimat ve performans uyuşmazlıklarında Şantiye GO arabulucu rolü üstlenerek platform üzerindeki konum logları, fotoğraf ekleri, mesajlaşma geçmişi ve iş teslim tutanakları üzerinden değerlendirme yapar. Çözülemeyen ihtilaflarda Tüketici Hakem Heyetleri ve T.C. Ticaret Mahkemeleri yetkilidir.
+              Alıcı ve Tedarikçi arasındaki saha teslimat ve performans uyuşmazlıklarında ŞantiyeGO arabulucu rolü üstlenerek platform üzerindeki konum logları, fotoğraf ekleri, mesajlaşma geçmişi ve iş teslim tutanakları üzerinden değerlendirme yapar. Çözülemeyen ihtilaflarda Tüketici Hakem Heyetleri ve T.C. Ticaret Mahkemeleri yetkilidir.
             </p>
           </section>
         </div>

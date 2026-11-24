@@ -38,7 +38,7 @@ export default function LocationPicker({
           className: 'picker-marker',
           html: `
             <div style="
-              background-color: #EA580C;
+              background-color: #C75512;
               color: white;
               width: 32px;
               height: 32px;
@@ -50,7 +50,7 @@ export default function LocationPicker({
               border: 2px solid white;
               box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             ">
-              <span style="transform: rotate(45deg); font-weight: 900; font-size: 14px;">📍</span>
+              <span style="transform: rotate(45deg); font-weight: 700; font-size: 14px;">📍</span>
             </div>
           `,
           iconSize: [32, 32],

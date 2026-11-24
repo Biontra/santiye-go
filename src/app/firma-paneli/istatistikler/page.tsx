@@ -82,7 +82,7 @@ function CompanyStatisticsPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-bold uppercase tracking-wider">Görüntülenme</span>
+            <span className="text-xs font-bold">Görüntülenme</span>
             <Eye className="w-4 h-4 text-blue-500" />
           </div>
           <div className="text-2xl sm:text-3xl font-black text-navy-900">
@@ -93,7 +93,7 @@ function CompanyStatisticsPage() {
 
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-bold uppercase tracking-wider">Tekil Ziyaretçi</span>
+            <span className="text-xs font-bold">Tekil Ziyaretçi</span>
             <Users className="w-4 h-4 text-emerald-500" />
           </div>
           <div className="text-2xl sm:text-3xl font-black text-navy-900">
@@ -104,7 +104,7 @@ function CompanyStatisticsPage() {
 
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-bold uppercase tracking-wider">İletişim Talebi</span>
+            <span className="text-xs font-bold">İletişim Talebi</span>
             <Phone className="w-4 h-4 text-orange-500" />
           </div>
           <div className="text-2xl sm:text-3xl font-black text-navy-900">
@@ -117,7 +117,7 @@ function CompanyStatisticsPage() {
 
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-slate-500">
-            <span className="text-xs font-bold uppercase tracking-wider">Dönüşüm Oranı</span>
+            <span className="text-xs font-bold">Dönüşüm Oranı</span>
             <Percent className="w-4 h-4 text-purple-500" />
           </div>
           <div className="text-2xl sm:text-3xl font-black text-purple-700">
@@ -208,7 +208,7 @@ function CompanyStatisticsPage() {
 
           <div className="grid grid-cols-3 gap-3">
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center">
-              <div className="text-xs text-slate-500 font-bold uppercase">Reklam Gösterimi</div>
+              <div className="text-xs text-slate-500 font-bold">Reklam Gösterimi</div>
               <div className="text-2xl font-black text-navy-900 mt-1">
                 {stats.adImpressions.toLocaleString('tr-TR')}
               </div>
@@ -216,7 +216,7 @@ function CompanyStatisticsPage() {
             </div>
 
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center">
-              <div className="text-xs text-slate-500 font-bold uppercase">Reklam Tıklaması</div>
+              <div className="text-xs text-slate-500 font-bold">Reklam Tıklaması</div>
               <div className="text-2xl font-black text-navy-900 mt-1">
                 {stats.adClicks.toLocaleString('tr-TR')}
               </div>
@@ -224,7 +224,7 @@ function CompanyStatisticsPage() {
             </div>
 
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center">
-              <div className="text-xs text-slate-500 font-bold uppercase">Tıklama Oranı (CTR)</div>
+              <div className="text-xs text-slate-500 font-bold">Tıklama Oranı (CTR)</div>
               <div className="text-2xl font-black text-orange-600 mt-1">
                 %{stats.adCtr}
               </div>
@@ -234,7 +234,7 @@ function CompanyStatisticsPage() {
 
           {/* Campaigns list preview */}
           <div className="pt-2">
-            <h3 className="text-xs font-bold uppercase text-slate-500 mb-2">Aktif Kampanyalar</h3>
+            <h3 className="text-xs font-bold text-slate-500 mb-2">Aktif Kampanyalar</h3>
             <div className="space-y-2">
               {myCampaigns.map((c) => (
                 <div
@@ -269,7 +269,7 @@ function CompanyStatisticsPage() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs sm:text-sm">
-            <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase text-[11px]">
+            <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold text-[11px]">
               <tr>
                 <th className="py-3 px-4">İlan Başlığı</th>
                 <th className="py-3 px-4">Kategori</th>

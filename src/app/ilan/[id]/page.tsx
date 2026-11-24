@@ -21,6 +21,7 @@ import { getCompanyReviews } from '@/lib/services/review-service';
 import ListingMap from '@/components/map/ListingMap';
 import ListingActionBox from '@/components/listings/ListingActionBox';
 import ReviewList from '@/components/reviews/ReviewList';
+import { specLabel, specValue } from '@/lib/spec-labels';
 
 interface ListingPageProps {
   params: Promise<{ id: string }>;
@@ -29,7 +30,7 @@ interface ListingPageProps {
 export async function generateMetadata({ params }: ListingPageProps) {
   const { id } = await params;
   const listing = await getListingBySlugOrId(id);
-  if (!listing) return { title: 'İlan Bulunamadı | ŞANTİYE GO' };
+  if (!listing) return { title: 'İlan Bulunamadı | ŞantiyeGO' };
 
   const rawTitle = listing.title.replace(/^\[DEMO\]\s*/i, '');
   const displayTitle = listing.is_demo
@@ -37,7 +38,7 @@ export async function generateMetadata({ params }: ListingPageProps) {
     : rawTitle;
 
   return {
-    title: `${displayTitle} | ŞANTİYE GO`,
+    title: `${displayTitle} | ŞantiyeGO`,
     description: listing.description.slice(0, 160),
   };
 }
@@ -54,7 +55,7 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
   const displayTitle = listing.is_demo
     ? (rawTitle.toLowerCase().startsWith('örnek') ? rawTitle : `Örnek: ${rawTitle}`)
     : rawTitle;
-  const displayCompanyName = (listing.company?.name || 'Onaylı Şantiye GO Tedarikçisi').replace(/^\[DEMO\]\s*/i, '');
+  const displayCompanyName = (listing.company?.name || 'Onaylı ŞantiyeGO Tedarikçisi').replace(/^\[DEMO\]\s*/i, '');
 
   const reviews = await getCompanyReviews(listing.company_id || 'f0000000-0000-0000-0000-000000000001');
 
@@ -62,7 +63,7 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
   const whatsappNumber = (listing.company?.whatsapp || companyPhone).replace(/[^0-9]/g, '');
 
   const whatsappMessage = encodeURIComponent(
-    `Merhaba, Şantiye GO üzerinden "${displayTitle}" başlıklı ilanınız hakkında bilgi ve teklif almak istiyorum.`
+    `Merhaba, ŞantiyeGO üzerinden "${displayTitle}" başlıklı ilanınız hakkında bilgi ve teklif almak istiyorum.`
   );
 
   return (
@@ -84,7 +85,7 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
               </span>
             )}
             <span
-              className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wide text-white ${
+              className={`px-3 py-1 rounded-full text-xs font-black text-white ${
                 listing.listing_type === 'rental' ? 'bg-navy-900' : 'bg-emerald-700'
               }`}
             >
@@ -152,7 +153,7 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
 
             {/* Inclusions Strip */}
             <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <h2 className="text-xs font-black text-slate-500 uppercase tracking-wider mb-3">
+              <h2 className="text-xs font-black text-slate-500 mb-3">
                 Hizmet & Fiyat Kapsamı
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -241,10 +242,8 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
                       key={key}
                       className="flex items-center justify-between py-2 border-b border-slate-100 text-xs sm:text-sm"
                     >
-                      <span className="font-semibold text-slate-500 capitalize">
-                        {key.replace('_', ' ')}
-                      </span>
-                      <span className="font-bold text-navy-900">{String(val)}</span>
+                      <span className="text-slate-500">{specLabel(key)}</span>
+                      <span className="font-medium text-navy-900 text-right">{specValue(val)}</span>
                     </div>
                   ))}
                 </div>

@@ -46,3 +46,4 @@ santiye-go/
 # Runtime data
 .runtime-data/
 
+.design-review/

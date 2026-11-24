@@ -104,7 +104,7 @@ export default function AdminAnalyticsPage() {
       {/* Revenue Breakdown Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-1">
-          <span className="text-xs font-bold uppercase text-slate-500">Toplam Platform Geliri</span>
+          <span className="text-xs font-bold text-slate-500">Toplam Platform Geliri</span>
           <div className="text-2xl sm:text-3xl font-black text-navy-900">
             {formatTRY(revenueSummary.totalCents)}
           </div>
@@ -112,7 +112,7 @@ export default function AdminAnalyticsPage() {
         </div>
 
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-1">
-          <span className="text-xs font-bold uppercase text-emerald-700">Rezervasyon Komisyonları</span>
+          <span className="text-xs font-bold text-emerald-700">Rezervasyon Komisyonları</span>
           <div className="text-2xl font-black text-emerald-950">
             {formatTRY(revenueSummary.commissionCents)}
           </div>
@@ -120,7 +120,7 @@ export default function AdminAnalyticsPage() {
         </div>
 
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-1">
-          <span className="text-xs font-bold uppercase text-blue-700">Firma Üyelik Paketleri</span>
+          <span className="text-xs font-bold text-blue-700">Firma Üyelik Paketleri</span>
           <div className="text-2xl font-black text-blue-950">
             {formatTRY(revenueSummary.membershipCents)}
           </div>
@@ -128,7 +128,7 @@ export default function AdminAnalyticsPage() {
         </div>
 
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-1">
-          <span className="text-xs font-bold uppercase text-orange-600">Reklam & Vitrin Geliri</span>
+          <span className="text-xs font-bold text-orange-600">Reklam & Vitrin Geliri</span>
           <div className="text-2xl font-black text-orange-600">
             {formatTRY(revenueSummary.advertisingCents)}
           </div>
@@ -140,7 +140,7 @@ export default function AdminAnalyticsPage() {
       <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm space-y-4 p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-4">
           <div>
-            <div className="flex items-center gap-1.5 text-xs font-black text-red-600 uppercase tracking-wider">
+            <div className="flex items-center gap-1.5 text-xs font-black text-red-600">
               <AlertTriangle className="w-4 h-4 text-red-500" />
               <span>Platform Büyüme Fırsatları</span>
             </div>
@@ -155,7 +155,7 @@ export default function AdminAnalyticsPage() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs sm:text-sm">
-            <thead className="bg-slate-50 border-b text-slate-500 font-bold uppercase text-[11px]">
+            <thead className="bg-slate-50 border-b text-slate-500 font-bold text-[11px]">
               <tr>
                 <th className="py-3 px-4">Bölge & İl</th>
                 <th className="py-3 px-4">Talep Edilen Kategori</th>
@@ -202,11 +202,11 @@ export default function AdminAnalyticsPage() {
 
                   <td className="py-3.5 px-4 text-center">
                     {report.status === 'critical_shortage' ? (
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-red-100 text-red-800 uppercase tracking-wide">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-red-100 text-red-800">
                         Kritik Açık ({report.gapScore}x)
                       </span>
                     ) : (
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 uppercase tracking-wide">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800">
                         Dengeli
                       </span>
                     )}

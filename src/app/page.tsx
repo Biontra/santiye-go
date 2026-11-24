@@ -8,17 +8,85 @@ import {
   HardHat,
   Hammer,
   ArrowRight,
-  Sparkles,
-  MapPin,
-  PlusCircle,
-  FileText,
   Calculator,
+  FileSpreadsheet,
+  Repeat,
 } from 'lucide-react';
 import HeroSearch from '@/components/search/HeroSearch';
 import ListingCard from '@/components/listings/ListingCard';
 import { CATEGORIES } from '@/lib/mock-data';
 import { getActiveAdsForSlot } from '@/lib/services/ad-service';
 import { searchListings } from '@/lib/services/listing-service';
+import type { Listing } from '@/types/database';
+
+const categoryIcons: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number }>> = {
+  'is-makineleri': Wrench,
+  'yapi-malzemeleri': Boxes,
+  nakliye: Truck,
+  'iskele-kalip': Layers,
+  'asansor-platform': ChevronsUp,
+  'santiye-ekipmanlari': HardHat,
+  'insaat-hizmetleri': Hammer,
+};
+
+function SectionHeader({
+  title,
+  description,
+  href,
+  linkLabel,
+}: {
+  title: string;
+  description?: string;
+  href?: string;
+  linkLabel?: string;
+}) {
+  return (
+    <div className="flex items-end justify-between gap-4 mb-5">
+      <div>
+        <h2 className="section-title">{title}</h2>
+        {description && <p className="section-sub">{description}</p>}
+      </div>
+      {href && linkLabel && (
+        <Link
+          href={href}
+          className="shrink-0 text-sm font-medium text-navy-900 hover:text-orange-600 inline-flex items-center gap-1 transition-colors"
+        >
+          {linkLabel}
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      )}
+    </div>
+  );
+}
+
+function ListingGrid({ listings }: { listings: Listing[] }) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {listings.map((item) => (
+        <ListingCard key={item.id} listing={item} />
+      ))}
+    </div>
+  );
+}
+
+function EmptyListings({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="bg-white border border-slate-200 rounded-md px-6 py-10 sm:flex items-center justify-between gap-6">
+      <div>
+        <h3 className="font-semibold text-navy-900">{title}</h3>
+        <p className="text-sm text-slate-500 mt-1 max-w-xl">{text}</p>
+      </div>
+      <div className="mt-4 sm:mt-0 flex gap-2 shrink-0">
+        <Link href="/teklif-iste" className="btn-primary">
+          Teklif iste
+        </Link>
+        <Link href="/kayit?role=company" className="btn-secondary">
+          Firma olarak ilan ver
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 export default async function HomePage() {
   const { listings: showcaseListings } = getActiveAdsForSlot({
@@ -27,284 +95,206 @@ export default async function HomePage() {
   });
 
   const nearbyRes = await searchListings({ sort: 'distance', limit: 3 });
-  const newestRes = await searchListings({ sort: 'newest', limit: 3 });
+  const newestRes = await searchListings({ sort: 'newest', limit: 6 });
 
   const nearbyListings = nearbyRes.listings;
   const newestListings = newestRes.listings;
 
-  const categoryIcons: Record<string, React.ReactNode> = {
-    'is-makineleri': <Wrench className="w-8 h-8 text-orange-500" />,
-    'yapi-malzemeleri': <Boxes className="w-8 h-8 text-orange-500" />,
-    'nakliye': <Truck className="w-8 h-8 text-orange-500" />,
-    'iskele-kalip': <Layers className="w-8 h-8 text-orange-500" />,
-    'asansor-platform': <ChevronsUp className="w-8 h-8 text-orange-500" />,
-    'santiye-ekipmanlari': <HardHat className="w-8 h-8 text-orange-500" />,
-    'insaat-hizmetleri': <Hammer className="w-8 h-8 text-orange-500" />,
-  };
-
-  const categoryDescriptions: Record<string, string> = {
-    'is-makineleri': 'Ekskavatör, JCB, dozer, vinç ve operatörlü kiralama',
-    'yapi-malzemeleri': 'Çimento, hazır beton, inşaat demiri, tuğla ve yalıtım',
-    'nakliye': 'Hafriyat kamyonu, lowbed ağır nakliye ve vinç taşımacılığı',
-    'iskele-kalip': 'Güvenlikli cephe iskelesi, kule iskele, endüstriyel kalıp ve montaj',
-    'asansor-platform': 'İnşaat cephe asansörleri, manlift, makaslı ve eklemli platformlar',
-    'santiye-ekipmanlari': 'Şantiye konteynerleri, dizel jeneratörler, aydınlatma ve İSG',
-    'insaat-hizmetleri': 'Hafriyat, temel kazısı, beton dökümü, mantolama ve mühendislik',
-  };
-
   return (
-    <div className="space-y-12 sm:space-y-16 pb-16">
-      {/* 1. Hero Search Banner */}
+    <div className="pb-16">
       <HeroSearch />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14 sm:space-y-18">
-        {/* 2. Popüler Kategoriler */}
-        <section className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-200 pb-4">
-            <div>
-              <span className="text-xs font-black text-orange-600 uppercase tracking-wider">
-                Geniş Tedarik Ağı
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-black text-navy-900 tracking-tight">
-                Popüler Kategoriler
-              </h2>
-            </div>
-            <Link
-              href="/ilanlar"
-              className="text-xs font-extrabold text-navy-900 hover:text-orange-600 flex items-center gap-1 group transition"
-            >
-              <span>Tüm Kategorileri İncele</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {CATEGORIES.map((cat) => (
-              <div
-                key={cat.id}
-                className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow group flex flex-col justify-between space-y-4"
-              >
-                <div className="space-y-3">
-                  <div className="w-14 h-14 rounded-xl bg-orange-50 flex items-center justify-center border border-orange-100 group-hover:scale-110 transition-transform">
-                    {categoryIcons[cat.slug] || <Wrench className="w-8 h-8 text-orange-500" />}
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-black text-navy-900 group-hover:text-orange-600 transition">
-                      {cat.name}
-                    </h3>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {categoryDescriptions[cat.slug] || 'Şantiye ekipmanı, malzeme ve inşaat hizmetleri'}
-                    </p>
-                  </div>
-
-                  {/* Subcategory Pills */}
-                  <div className="flex flex-wrap gap-1.5 pt-2">
-                    {cat.subcategories?.slice(0, 4).map((sub) => (
-                      <Link
-                        key={sub.id}
-                        href={`/ilanlar?category=${sub.slug}`}
-                        className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-orange-50 hover:text-orange-600 text-[11px] font-semibold text-slate-600 transition"
-                      >
-                        {sub.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="pt-2 border-t border-slate-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14 mt-12">
+        {/* Kategoriler */}
+        <section>
+          <SectionHeader title="Kategoriler" href="/ilanlar" linkLabel="Tüm ilanlar" />
+          <div className="grid grid-cols-2 lg:grid-cols-4 border-t border-l border-slate-200 bg-white">
+            {CATEGORIES.map((cat) => {
+              const Icon = categoryIcons[cat.slug] || Wrench;
+              return (
+                <div key={cat.id} className="border-r border-b border-slate-200 p-4 sm:p-5 group">
                   <Link
                     href={`/ilanlar?category=${cat.slug}`}
-                    className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1"
+                    className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3"
                   >
-                    <span>İlanları Görüntüle</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <Icon className="w-5 h-5 text-orange-500 shrink-0" strokeWidth={1.75} />
+                    <h3 className="text-sm sm:text-base font-semibold text-navy-900 leading-snug group-hover:text-orange-600 transition-colors">
+                      {cat.name}
+                    </h3>
                   </Link>
+                  <ul className="hidden sm:block mt-3 space-y-1.5 text-sm">
+                    {cat.subcategories?.slice(0, 4).map((sub) => (
+                      <li key={sub.id}>
+                        <Link
+                          href={`/ilanlar?category=${sub.slug}`}
+                          className="text-slate-600 hover:text-navy-900 hover:underline underline-offset-2"
+                        >
+                          {sub.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                  {(cat.subcategories?.length || 0) > 4 && (
+                    <Link
+                      href={`/ilanlar?category=${cat.slug}`}
+                      className="hidden sm:inline-block mt-3 text-sm font-medium text-orange-600 hover:text-orange-700"
+                    >
+                      +{(cat.subcategories?.length || 0) - 4} alt kategori
+                    </Link>
+                  )}
                 </div>
+              );
+            })}
+            <Link
+              href="/teklif-iste"
+              className="col-span-2 lg:col-span-1 border-r border-b border-slate-200 p-4 sm:p-5 bg-slate-50 hover:bg-slate-100 transition-colors flex flex-col justify-between"
+            >
+              <div>
+                <h3 className="font-semibold text-navy-900">Aradığınızı bulamadınız mı?</h3>
+                <p className="text-sm text-slate-600 mt-2">
+                  İhtiyacınızı yazın, bölgenizdeki firmalar size fiyat göndersin.
+                </p>
               </div>
+              <span className="mt-4 text-sm font-medium text-orange-600 inline-flex items-center gap-1">
+                Teklif iste <ArrowRight className="w-4 h-4" />
+              </span>
+            </Link>
+          </div>
+        </section>
+
+        {showcaseListings.length > 0 && (
+          <section>
+            <SectionHeader title="Öne çıkan ilanlar" description="Sponsorlu" />
+            <ListingGrid listings={showcaseListings} />
+          </section>
+        )}
+
+        {/* Yakındaki ilanlar */}
+        <section>
+          <SectionHeader
+            title="Size yakın ilanlar"
+            description="Konumunuza göre en yakın firmalar"
+            href="/ilanlar?sort=distance"
+            linkLabel="Tümünü gör"
+          />
+          {nearbyListings.length === 0 ? (
+            <EmptyListings
+              title="Bölgenizde henüz ilan yok"
+              text="Bölgenizdeki makine sahipleri ve tedarikçilerden fiyat almak için ücretsiz teklif talebi oluşturabilirsiniz."
+            />
+          ) : (
+            <ListingGrid listings={nearbyListings} />
+          )}
+        </section>
+
+        {/* Teklif akışı */}
+        <section className="bg-white border border-slate-200 rounded-md">
+          <div className="grid lg:grid-cols-[1fr_1.4fr]">
+            <div className="p-6 sm:p-8 lg:border-r border-slate-200">
+              <h2 className="section-title">Tek talep, birden fazla teklif</h2>
+              <p className="text-slate-600 mt-3 leading-relaxed">
+                Makine, malzeme ya da nakliye ihtiyacınızı bir kez yazın. Talebiniz bölgenizde ilgili
+                kategoride hizmet veren firmalara iletilir; gelen teklifleri tek ekranda karşılaştırırsınız.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-2">
+                <Link href="/teklif-iste" className="btn-primary">
+                  Teklif talebi oluştur
+                </Link>
+                <Link href="/kesif-yukle" className="btn-secondary">
+                  Keşif listesi yükle
+                </Link>
+              </div>
+            </div>
+            <ol className="grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 border-t lg:border-t-0 border-slate-200">
+              {[
+                ['Talebinizi yazın', 'Ne lazım, ne zaman, nerede? Birkaç dakikanızı alır, ücret alınmaz.'],
+                ['Firmalar fiyat versin', 'Talep, yakınınızdaki uygun firmalara iletilir ve teklifler gelir.'],
+                ['Karşılaştırıp seçin', 'Fiyatları ve şartları karşılaştırın, uygun teklifi kabul edin.'],
+              ].map(([title, text], i) => (
+                <li key={title} className="p-6 sm:p-8">
+                  <span className="font-mono text-sm text-orange-600">0{i + 1}</span>
+                  <h3 className="mt-2 font-semibold text-navy-900">{title}</h3>
+                  <p className="mt-1.5 text-sm text-slate-600 leading-relaxed">{text}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* Yeni ilanlar */}
+        <section>
+          <SectionHeader title="Son eklenen ilanlar" href="/ilanlar?sort=newest" linkLabel="Tümünü gör" />
+          {newestListings.length === 0 ? (
+            <EmptyListings
+              title="Henüz yayında ilan yok"
+              text="İlk ilanı siz yayınlayın; bölgenizdeki müteahhit ve şantiyelere ulaşın."
+            />
+          ) : (
+            <ListingGrid listings={newestListings} />
+          )}
+        </section>
+
+        {/* Araçlar */}
+        <section>
+          <SectionHeader title="Şantiye araçları" />
+          <div className="grid md:grid-cols-3 gap-5">
+            {[
+              {
+                href: '/hesaplayici',
+                icon: Calculator,
+                title: 'Metraj hesaplayıcı',
+                text: 'Beton, demir, duvar ve iskele metrajını hesaplayın; sonucu doğrudan teklif talebine aktarın.',
+              },
+              {
+                href: '/kesif-yukle',
+                icon: FileSpreadsheet,
+                title: 'Keşif listesi yükleme',
+                text: 'Excel veya PDF keşif listenizi yükleyin; kalemler kategorilere göre ilgili tedarikçilere dağıtılır.',
+              },
+              {
+                href: '/santiyeden-santiyeye',
+                icon: Repeat,
+                title: 'Şantiyeden şantiyeye',
+                text: 'Artan malzemenizi satın, boş dönen kamyonlar için yük bulun ya da ilan verin.',
+              },
+            ].map((tool) => (
+              <Link
+                key={tool.href}
+                href={tool.href}
+                className="group bg-white border border-slate-200 rounded-md p-6 hover:border-slate-400 transition-colors"
+              >
+                <tool.icon className="w-5 h-5 text-navy-900" strokeWidth={1.75} />
+                <h3 className="mt-4 font-semibold text-navy-900 group-hover:text-orange-600 transition-colors">
+                  {tool.title}
+                </h3>
+                <p className="mt-1.5 text-sm text-slate-600 leading-relaxed">{tool.text}</p>
+              </Link>
             ))}
           </div>
         </section>
 
-        {/* 2.5. Vitrin İlanları (Öne Çıkanlar) */}
-        {showcaseListings.length > 0 && (
-          <section className="space-y-6 p-6 rounded-3xl bg-gradient-to-r from-amber-50/60 via-orange-50/30 to-slate-50 border border-amber-200/80 shadow-sm">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-amber-200/60 pb-4">
-              <div>
-                <div className="flex items-center gap-1.5 text-xs font-black text-amber-950 uppercase tracking-wider">
-                  <Sparkles className="w-4 h-4 text-amber-600" />
-                  <span>Şantiye Vitrini • Sponsorlu</span>
-                </div>
-                <h2 className="text-2xl sm:text-3xl font-black text-navy-900 tracking-tight">
-                  Haftanın Öne Çıkan Makineleri & Tedarikçileri
-                </h2>
-              </div>
-              <Link
-                href="/ilanlar"
-                className="text-xs font-extrabold text-navy-900 hover:text-orange-600 flex items-center gap-1 group transition"
-              >
-                <span>Tüm Vitrin İlanları</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {showcaseListings.map((item) => (
-                <ListingCard key={`showcase-${item.id}`} listing={item} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* 3. Yakınımdaki İlanlar */}
-        <section className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-200 pb-4">
-            <div>
-              <div className="flex items-center gap-1.5 text-xs font-black text-orange-600 uppercase tracking-wider">
-                <MapPin className="w-4 h-4" />
-                <span>Gerçek PostGIS Konum Algoritması</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-navy-900 tracking-tight">
-                Yakınımdaki İlanlar
-              </h2>
-            </div>
+        {/* Firmalar için */}
+        <section className="bg-navy-900 text-white rounded-md px-6 py-8 sm:px-10 sm:py-10 md:flex items-center justify-between gap-8">
+          <div className="max-w-2xl">
+            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight">
+              Makinenizi, ürününüzü ya da aracınızı şantiyelere ulaştırın
+            </h2>
+            <p className="text-slate-300 mt-2 leading-relaxed">
+              Firma hesabı açmak ücretsizdir. İlanlarınızı yayınlayın, bölgenizdeki teklif taleplerini görün
+              ve doğrudan müşteriyle anlaşın.
+            </p>
+          </div>
+          <div className="mt-6 md:mt-0 flex gap-2 shrink-0">
+            <Link href="/kayit?role=company" className="btn-primary">
+              Firma hesabı aç
+            </Link>
             <Link
-              href="/ilanlar?sort=distance"
-              className="text-xs font-extrabold text-navy-900 hover:text-orange-600 flex items-center gap-1 group transition"
+              href="/giris?redirect=/firma-paneli/yeni-ilan"
+              className="inline-flex items-center justify-center px-4 py-2.5 rounded-md text-sm font-semibold border border-navy-600 text-white hover:bg-navy-800 transition-colors"
             >
-              <span>Tüm Yakındaki İlanlar</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              İlan ver
             </Link>
           </div>
-
-          {nearbyListings.length === 0 ? (
-            <div className="bg-white rounded-3xl border-2 border-dashed border-slate-200 p-8 text-center space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mx-auto">
-                <MapPin className="w-7 h-7" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-lg font-black text-navy-900">Yakınınızda Henüz İlan Bulunmuyor</h3>
-                <p className="text-xs text-slate-500 max-w-md mx-auto">
-                  Bölgenizdeki makine sahipleri ve tedarikçilerden doğrudan fiyat teklifi almak için ücretsiz talep açabilirsiniz.
-                </p>
-              </div>
-              <div className="pt-2 flex justify-center gap-3">
-                <Link
-                  href="/teklif-iste"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs shadow-md transition"
-                >
-                  <PlusCircle className="w-4 h-4" />
-                  <span>Ücretsiz Teklif İste</span>
-                </Link>
-                <Link
-                  href="/kayit?role=company"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-bold text-xs shadow-md transition"
-                >
-                  <HardHat className="w-4 h-4 text-orange-400" />
-                  <span>Firma Olarak İlan Ver</span>
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {nearbyListings.map((item) => (
-                <ListingCard key={item.id} listing={item} />
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* 4. Saha Metraj & Malzeme Hesaplayıcı CTA */}
-        <section className="bg-gradient-to-r from-navy-900 via-navy-950 to-slate-900 rounded-3xl p-6 sm:p-10 text-white relative overflow-hidden shadow-2xl border border-navy-800">
-          <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-            <div className="space-y-3 max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/20 text-orange-400 text-xs font-black uppercase tracking-wider border border-orange-500/30">
-                <Calculator className="w-4 h-4" />
-                <span>Akıllı Saha Araçları</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-snug">
-                Şantiye Metraj & Malzeme Hesaplayıcı
-              </h2>
-              <p className="text-sm text-slate-300 leading-relaxed">
-                Hazır beton, inşaat demiri tonajı, duvar malzemeleri (tuğla, bims, gazbeton) ve iskele-mantolama metrajını saniyeler içinde hesaplayın.
-                Tek tıkla civardaki onaylı tedarikçilerden toplu teklif toplayın.
-              </p>
-              <div className="flex flex-wrap gap-2 pt-1 text-xs text-slate-300">
-                <span className="px-2.5 py-1 rounded-lg bg-navy-800/80 border border-slate-700">🧱 Beton & Mikser Sayısı</span>
-                <span className="px-2.5 py-1 rounded-lg bg-navy-800/80 border border-slate-700">🏗️ Demir Tonajı</span>
-                <span className="px-2.5 py-1 rounded-lg bg-navy-800/80 border border-slate-700">🏠 Duvar & Harç</span>
-                <span className="px-2.5 py-1 rounded-lg bg-navy-800/80 border border-slate-700">🪜 İskele & Mantolama</span>
-              </div>
-            </div>
-
-            <div className="shrink-0 flex flex-col sm:flex-row lg:flex-col gap-3">
-              <Link
-                href="/hesaplayici"
-                className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm shadow-lg shadow-orange-500/30 transition active:scale-95 text-center"
-              >
-                <Calculator className="w-4 h-4" />
-                <span>HESAPLAYICIYI BAŞLAT</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/teklif-iste"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-navy-800 hover:bg-navy-700 text-slate-200 border border-slate-700 font-bold text-xs transition text-center"
-              >
-                <span>Doğrudan Teklif İste</span>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* 5. Yeni Eklenen İlanlar */}
-        <section className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-200 pb-4">
-            <div>
-              <div className="flex items-center gap-1.5 text-xs font-black text-orange-600 uppercase tracking-wider">
-                <Sparkles className="w-4 h-4" />
-                <span>Güncel Pazar Fırsatları</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-navy-900 tracking-tight">
-                Yeni Eklenen İlanlar
-              </h2>
-            </div>
-            <Link
-              href="/ilanlar?sort=newest"
-              className="text-xs font-extrabold text-navy-900 hover:text-orange-600 flex items-center gap-1 group transition"
-            >
-              <span>Tüm Yeni İlanlar</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-
-          {newestListings.length === 0 ? (
-            <div className="bg-white rounded-3xl border-2 border-dashed border-slate-200 p-8 text-center space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center mx-auto">
-                <FileText className="w-7 h-7" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-lg font-black text-navy-900">Henüz Yayınlanmış İlan Yok</h3>
-                <p className="text-xs text-slate-500 max-w-md mx-auto">
-                  İlk ilanı siz yayınlayarak bölgenizdeki yüzlerce müteahhit ve şantiyeye anında ulaşın.
-                </p>
-              </div>
-              <div className="pt-2">
-                <Link
-                  href="/kayit?role=company"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs shadow-md transition"
-                >
-                  <PlusCircle className="w-4 h-4" />
-                  <span>İlk İlanı Siz Ekleyin</span>
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {newestListings.map((item) => (
-                <ListingCard key={item.id} listing={item} />
-              ))}
-            </div>
-          )}
         </section>
       </div>
     </div>

@@ -106,7 +106,7 @@ function CompanyCreditsPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-black uppercase">
+              <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-black">
                 Firma Paneli
               </span>
               <span className="text-slate-400">•</span>
@@ -124,7 +124,7 @@ function CompanyCreditsPage() {
           <div className="flex items-center gap-2">
             <Link
               href="/firma-paneli/talepler"
-              className="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-orange-500/20"
+              className="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md"
             >
               <Zap className="w-4 h-4" />
               Açık Talepleri Gör
@@ -152,7 +152,7 @@ function CompanyCreditsPage() {
             <div className="flex items-center gap-2.5">
               <ShieldCheck className="w-5 h-5 shrink-0 text-orange-500" />
               <div>
-                <span className="font-extrabold uppercase tracking-wide">
+                <span className="font-extrabold">
                   Sistem Modu: {config.mode === 'ACTIVE' ? 'CANLI (AKTİF)' : config.mode === 'SHADOW' ? 'GÖLGE MOD (TEST/ÖLÇÜM)' : 'KAPALI'}
                 </span>
                 <p className="text-[11px] opacity-80 mt-0.5">
@@ -173,10 +173,9 @@ function CompanyCreditsPage() {
 
         {/* Balance Card & Quick Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-          <div className="bg-gradient-to-br from-navy-900 via-navy-800 to-navy-950 text-white rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between">
-            <div className="absolute right-[-15px] top-[-15px] w-32 h-32 bg-orange-500/10 rounded-full blur-2xl" />
+          <div className="bg-navy-900 text-white rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between">
             <div>
-              <span className="text-xs font-bold text-orange-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="text-xs font-bold text-orange-400 flex items-center gap-1.5">
                 <Coins className="w-4 h-4" />
                 Mevcut Kredi Bakiyesi
               </span>
@@ -191,7 +190,7 @@ function CompanyCreditsPage() {
 
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="text-xs font-bold text-slate-500 flex items-center gap-1.5">
                 <TrendingUp className="w-4 h-4 text-emerald-600" />
                 Toplam Kullanılan Teklif Kredisi
               </span>
@@ -207,7 +206,7 @@ function CompanyCreditsPage() {
 
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
             <div>
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="text-xs font-bold text-slate-500 flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-blue-600" />
                 Kredi İade Güvencesi
               </span>
@@ -312,7 +311,7 @@ function CompanyCreditsPage() {
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-600 uppercase text-[10px] font-extrabold border-b border-slate-200">
+              <thead className="bg-slate-50 text-slate-600 text-[10px] font-extrabold border-b border-slate-200">
                 <tr>
                   <th className="py-2.5 px-3">Tarih</th>
                   <th className="py-2.5 px-3">İşlem Türü</th>
@@ -343,7 +342,7 @@ function CompanyCreditsPage() {
                         </td>
                         <td className="py-2.5 px-3">
                           <span
-                            className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                            className={`px-2 py-0.5 rounded text-[10px] font-black ${
                               l.transaction_type === 'purchase'
                                 ? 'bg-emerald-100 text-emerald-800'
                                 : l.transaction_type === 'spend'

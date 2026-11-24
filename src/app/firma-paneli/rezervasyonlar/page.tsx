@@ -115,7 +115,7 @@ export default function CompanyBookingsPage() {
         {/* Header */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-black uppercase">
+            <span className="px-2.5 py-0.5 rounded bg-orange-100 text-orange-800 text-xs font-black">
               Firma Paneli
             </span>
             <h1 className="text-2xl font-black text-navy-900 mt-1">
@@ -214,7 +214,7 @@ export default function CompanyBookingsPage() {
 
                     <div className="lg:col-span-4 flex flex-col justify-between items-end border-t lg:border-t-0 lg:border-l lg:border-slate-100 lg:pl-5 pt-3 lg:pt-0">
                       <div className="text-right w-full">
-                        <span className="text-[10px] text-slate-400 uppercase font-bold block">
+                        <span className="text-[10px] text-slate-400 font-bold block">
                           Tahmini Tutar
                         </span>
                         <span className="text-2xl font-black text-orange-600">

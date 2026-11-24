@@ -842,7 +842,7 @@ export default function NewListingPage() {
             </div>
 
             {imageError && (
-              <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center gap-2 animate-pulse">
+              <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
                 <span className="font-bold">{imageError}</span>
               </div>
@@ -864,7 +864,7 @@ export default function NewListingPage() {
                 disabled={uploadingImage || images.length >= 10}
                 className="hidden"
               />
-              <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 text-orange-500 flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 text-orange-500 flex items-center justify-center mb-3 shadow-sm transition-transform">
                 {uploadingImage ? (
                   <span className="w-5 h-5 border-2 border-orange-500/30 border-t-orange-500 rounded-full animate-spin" />
                 ) : (
@@ -901,7 +901,7 @@ export default function NewListingPage() {
                         ✕
                       </button>
                       {i === 0 && (
-                        <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded bg-navy-900/90 text-white text-[10px] font-black tracking-wider uppercase shadow">
+                        <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded bg-navy-900/90 text-white text-[10px] font-black tracking-wider shadow">
                           Kapak Fotoğrafı
                         </span>
                       )}
@@ -930,14 +930,14 @@ export default function NewListingPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm tracking-wide shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 transition disabled:opacity-50"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-sm tracking-wide shadow-lg flex items-center justify-center gap-2 transition disabled:opacity-50"
             >
               {loading ? (
                 <span>Kaydediliyor...</span>
               ) : (
                 <>
                   <PlusCircle className="w-5 h-5" />
-                  <span>İLANIMI YAYINA AL</span>
+                  <span>İlanı yayınla</span>
                 </>
               )}
             </button>

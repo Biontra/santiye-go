@@ -173,7 +173,7 @@ function ListingCard({ item, onInquire }: { item: MarketListing; onInquire: () =
         <CalendarDays className="h-3.5 w-3.5" aria-hidden /> {formatDate(item.available_until)} tarihine kadar {truck ? 'müsait' : 'geçerli'}
       </p>
       <div className="mt-auto">
-        <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{truck ? 'Nakliye bedeli' : 'Toplam fiyat'}</p>
+        <p className="text-xs font-bold text-slate-500">{truck ? 'Nakliye bedeli' : 'Toplam fiyat'}</p>
         <p className="text-2xl font-black">{formatPrice(item.price)}</p>
         {item.discount_note && <p className="text-xs font-semibold text-emerald-700">{item.discount_note}</p>}
       </div>

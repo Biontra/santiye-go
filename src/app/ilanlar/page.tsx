@@ -3,7 +3,7 @@ import SearchClient from './SearchClient';
 import { Loader2 } from 'lucide-react';
 
 export const metadata = {
-  title: 'İlanlar | ŞANTİYE GO - İş Makineleri, Yapı Malzemeleri ve Nakliye',
+  title: 'İlanlar | ŞantiyeGO - İş Makineleri, Yapı Malzemeleri ve Nakliye',
   description: 'Şantiyenize en yakın kiralık iş makineleri, satılık yapı malzemeleri ve nakliye hizmetleri.',
 };
 

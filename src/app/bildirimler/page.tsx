@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import NotificationsClient from './NotificationsClient';
 
 export const metadata: Metadata = {
-  title: 'Bildirimler | ŞANTİYE GO',
+  title: 'Bildirimler | ŞantiyeGO',
   robots: { index: false, follow: false },
 };
 

@@ -1,5 +1,5 @@
 /**
- * ŞANTİYE GO – SEO SLUG & PROGRAMMATIC URL HELPER
+ * ŞantiyeGO – SEO SLUG & PROGRAMMATIC URL HELPER
  * Türkçe karakterleri uluslararası standartta temiz URL slug'ına dönüştürür.
  */
 

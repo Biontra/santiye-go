@@ -102,7 +102,7 @@ export default function BookingModal({ listing, isOpen, onClose }: BookingModalP
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
           <div>
-            <span className="text-[10px] font-bold uppercase text-orange-600 tracking-wider">
+            <span className="text-[10px] font-bold text-orange-600 tracking-wider">
               Rezervasyon Talebi
             </span>
             <h3 className="font-black text-navy-900 text-base line-clamp-1">
@@ -179,7 +179,7 @@ export default function BookingModal({ listing, isOpen, onClose }: BookingModalP
                 </span>
               </div>
               <div className="text-right">
-                <span className="text-[10px] uppercase font-bold text-orange-700 block">
+                <span className="text-[10px] font-bold text-orange-700 block">
                   Tahmini Toplam Tutar
                 </span>
                 <span className="text-lg font-black text-orange-600">

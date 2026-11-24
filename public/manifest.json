@@ -1,14 +1,14 @@
 {
   "id": "/",
-  "name": "ŞANTİYE GO - Akıllı Şantiye ve Yapı Marketiniz",
-  "short_name": "ŞANTİYE GO",
-  "description": "Şantiyenizin akıllı çözüm ortağı. İş makinesi kiralama, yapı malzemesi ve nakliye pazaryeri.",
+  "name": "ŞantiyeGO – İş Makinesi, Malzeme ve Nakliye Pazaryeri",
+  "short_name": "ŞantiyeGO",
+  "description": "İş makinesi kiralama, yapı malzemesi ve nakliye pazaryeri.",
   "lang": "tr",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#0B192C",
-  "theme_color": "#0B192C",
+  "background_color": "#17191C",
+  "theme_color": "#17191C",
   "orientation": "portrait",
   "icons": [
     {

@@ -152,37 +152,37 @@ export default function AdminSecurityCompliancePage() {
       {/* KPI Stats Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Maskelenen</div>
+          <div className="text-[11px] font-bold text-slate-400">Maskelenen</div>
           <div className="text-2xl font-black text-navy-900">{stats.totalMasked}</div>
           <div className="text-[10px] text-slate-500">Otomatik taranan</div>
         </div>
 
         <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Telefon / GSM</div>
+          <div className="text-[11px] font-bold text-slate-400">Telefon / GSM</div>
           <div className="text-2xl font-black text-orange-600">{stats.phoneCount}</div>
           <div className="text-[10px] text-slate-500">Türkiye formatları</div>
         </div>
 
         <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">IBAN Tespiti</div>
+          <div className="text-[11px] font-bold text-slate-400">IBAN Tespiti</div>
           <div className="text-2xl font-black text-purple-600">{stats.ibanCount}</div>
           <div className="text-[10px] text-slate-500">TR+24 hane</div>
         </div>
 
         <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Sosyal & WP</div>
+          <div className="text-[11px] font-bold text-slate-400">Sosyal & WP</div>
           <div className="text-2xl font-black text-blue-600">{stats.socialCount}</div>
           <div className="text-[10px] text-slate-500">Harici yönlendirme</div>
         </div>
 
         <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">İtiraz Kuyruğu</div>
+          <div className="text-[11px] font-bold text-slate-400">İtiraz Kuyruğu</div>
           <div className="text-2xl font-black text-amber-600">{stats.disputeCount}</div>
           <div className="text-[10px] text-slate-500">Yanlış alarm bildirimi</div>
         </div>
 
         <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Numara Göster</div>
+          <div className="text-[11px] font-bold text-slate-400">Numara Göster</div>
           <div className="text-2xl font-black text-emerald-600">{stats.softModeRevealCount}</div>
           <div className="text-[10px] text-slate-500">Yumuşak mod kullanımı</div>
         </div>
@@ -215,12 +215,12 @@ export default function AdminSecurityCompliancePage() {
               </select>
               {revealRule === 'odeme' && (
                 <p className="text-[11px] text-amber-700 bg-amber-50 p-2 rounded-lg border border-amber-200 mt-2 font-semibold">
-                  ⚠️ Uyarı: Canlı online ödeme kapısı devreye alınana kadar &apos;odeme&apos; modu kullanıcıların iletişim görmesini engelleyebilir. Varsayılan &apos;teklif_kabul&apos; önerilir.
+                  Uyarı: Canlı online ödeme kapısı devreye alınana kadar &apos;odeme&apos; modu kullanıcıların iletişim görmesini engelleyebilir. Varsayılan &apos;teklif_kabul&apos; önerilir.
                 </p>
               )}
               {revealRule === 'numara_goster_butonu' && (
                 <p className="text-[11px] text-emerald-800 bg-emerald-50 p-2 rounded-lg border border-emerald-200 mt-2 font-semibold">
-                  💡 Yumuşak Mod: Platformun erken aşamasında kullanıcıyı ürkütmemek için, SMS onaylı hesaplara günlük sınırla &quot;Numarayı Göster&quot; butonu verir.
+                  Yumuşak Mod: Platformun erken aşamasında kullanıcıyı ürkütmemek için, SMS onaylı hesaplara günlük sınırla &quot;Numarayı Göster&quot; butonu verir.
                 </p>
               )}
             </div>
@@ -329,7 +329,7 @@ export default function AdminSecurityCompliancePage() {
                   </div>
 
                   <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-700 space-y-1">
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    <div className="text-[10px] font-bold text-slate-400">
                       Kullanıcı İtiraz Açıklaması:
                     </div>
                     <div className="font-medium italic text-slate-800">
@@ -397,7 +397,7 @@ export default function AdminSecurityCompliancePage() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-600 font-bold uppercase tracking-wider text-[10px] border-b">
+            <thead className="bg-slate-50 text-slate-600 font-bold text-[10px] border-b">
               <tr>
                 <th className="p-3">Kullanıcı / Firma</th>
                 <th className="p-3">Rol</th>

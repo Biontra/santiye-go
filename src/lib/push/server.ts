@@ -1,5 +1,5 @@
 /**
- * ŞANTİYE GO – Web Push gönderimi (YALNIZCA SUNUCU).
+ * ŞantiyeGO – Web Push gönderimi (YALNIZCA SUNUCU).
  * İstemci bileşenlerinden import edilmemelidir (web-push + service_role kullanır).
  */
 import webpush from 'web-push';

@@ -112,15 +112,15 @@ export default function ListingMap({
           icon: userIcon,
           zIndexOffset: 1000,
         }).addTo(map);
-        userMarker.bindTooltip('📍 Arama Konumunuz', { permanent: false, direction: 'top' });
+        userMarker.bindTooltip('Arama konumunuz', { permanent: false, direction: 'top' });
         userMarkerRef.current = userMarker;
 
         // Radius circle
         if (radiusKm && radiusKm > 0) {
           const circle = L.circle([userCoords.lat, userCoords.lng], {
             radius: radiusKm * 1000, // meters
-            color: '#F97316',
-            fillColor: '#F97316',
+            color: '#E0661B',
+            fillColor: '#E0661B',
             fillOpacity: 0.12,
             weight: 2,
             dashArray: '6, 6',
@@ -149,8 +149,8 @@ export default function ListingMap({
           className: 'custom-listing-marker',
           html: `
             <div style="
-              background-color: #0B192C;
-              border: 2px solid #F97316;
+              background-color: #17191C;
+              border: 2px solid #E0661B;
               color: white;
               width: 34px;
               height: 34px;
@@ -162,7 +162,7 @@ export default function ListingMap({
               box-shadow: 0 4px 10px rgba(0,0,0,0.35);
               transition: transform 0.2s;
             ">
-              <span style="transform: rotate(45deg); font-weight: 900; font-size: 14px;">${symbol}</span>
+              <span style="transform: rotate(45deg); font-weight: 700; font-size: 14px;">${symbol}</span>
             </div>
           `,
           iconSize: [34, 34],
@@ -191,33 +191,33 @@ export default function ListingMap({
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; width: 220px; overflow: hidden; border-radius: 8px;">
             <div style="position: relative; height: 90px; width: 100%; background: #e2e8f0;">
               <img src="${imageThumb}" alt="${listing.title}" style="width: 100%; height: 100%; object-fit: cover;" />
-              <div style="position: absolute; top: 6px; left: 6px; background: #0B192C; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; text-transform: uppercase;">
+              <div style="position: absolute; top: 6px; left: 6px; background: #17191C; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 600; ">
                 ${listing.listing_type === 'rental' ? 'Kiralık' : 'Satılık'}
               </div>
             </div>
             <div style="padding: 8px;">
-              <div style="font-size: 10px; font-weight: 700; color: #EA580C; text-transform: uppercase;">
+              <div style="font-size: 10px; font-weight: 700; color: #C75512; ">
                 ${listing.category?.name || 'İlan'}
               </div>
-              <div style="font-weight: 800; font-size: 12px; margin: 2px 0 4px; color: #0B192C; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+              <div style="font-weight: 600; font-size: 12px; margin: 2px 0 4px; color: #17191C; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                 ${listing.title}
               </div>
               <div style="font-size: 11px; color: #64748B; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
                 <span>📍 ${listing.city_name || ''}${listing.district_name ? ', ' + listing.district_name : ''}</span>
-                ${listing.distance_km !== undefined ? `<strong style="color: #EA580C;">${listing.distance_km} km</strong>` : ''}
+                ${listing.distance_km !== undefined ? `<strong style="color: #C75512;">${listing.distance_km} km</strong>` : ''}
               </div>
-              <div style="font-size: 14px; font-weight: 900; color: #0B192C; margin-bottom: 8px;">
+              <div style="font-size: 14px; font-weight: 700; color: #17191C; margin-bottom: 8px;">
                 ${priceText}
               </div>
               <a href="/ilan/${listing.slug || listing.id}" style="
                 display: block;
                 text-align: center;
-                background-color: #F97316;
+                background-color: #E0661B;
                 color: white;
                 padding: 6px;
                 border-radius: 6px;
                 font-size: 11px;
-                font-weight: 800;
+                font-weight: 600;
                 text-decoration: none;
               ">
                 İncele & Teklif Al →
@@ -263,7 +263,7 @@ export default function ListingMap({
         <button
           type="button"
           onClick={handleSearchCurrentArea}
-          className="absolute top-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 bg-navy-900 hover:bg-orange-600 text-white font-bold text-xs rounded-full shadow-xl flex items-center gap-1.5 transition active:scale-95 animate-bounce"
+          className="absolute top-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 bg-navy-900 hover:bg-orange-600 text-white font-bold text-xs rounded-full shadow-xl flex items-center gap-1.5 transition animate-bounce"
         >
           <RefreshCw className="w-3.5 h-3.5 text-orange-400" />
           <span>Bu Bölgede Ara</span>

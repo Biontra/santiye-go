@@ -1,5 +1,5 @@
 /**
- * ŞANTİYE GO – PROMPT 8: UÇTAN UCA GERÇEK SİSTEM DOĞRULAMA TESTLERİ
+ * ŞantiyeGO – PROMPT 8: UÇTAN UCA GERÇEK SİSTEM DOĞRULAMA TESTLERİ
  * 
  * 6 Temel Senaryo:
  * 1. Alıcı Kaydı & Doğrulamalar (E-posta + Telefon SMS OTP + Giriş)
@@ -39,7 +39,7 @@ function record(scenario: string, step: string, passed: boolean, evidence: strin
 
 async function runE2ETests() {
   console.log('====================================================');
-  console.log('🧪 ŞANTİYE GO – PROMPT 8 UÇTAN UCA SİSTEM TESTLERİ');
+  console.log('🧪 ŞantiyeGO – PROMPT 8 UÇTAN UCA SİSTEM TESTLERİ');
   console.log('====================================================\n');
 
   // ---------------------------------------------------------------------------

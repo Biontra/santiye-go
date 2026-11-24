@@ -107,7 +107,7 @@ export default function CompanyMembershipPage() {
         <div className="bg-navy-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full bg-orange-500 text-white text-[11px] font-black uppercase tracking-wider">
+              <span className="px-3 py-1 rounded-full bg-orange-500 text-white text-[11px] font-black">
                 Mevcut Üyeliğiniz
               </span>
               <span className="text-slate-400">•</span>
@@ -205,7 +205,7 @@ export default function CompanyMembershipPage() {
               >
                 <div className="space-y-5">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs uppercase tracking-wider text-slate-400">
+                    <span className="font-bold text-xs text-slate-400">
                       {plan.id === 'premium' ? 'Tavsiye Edilen' : 'Plan'}
                     </span>
                     {isCurrent && (
@@ -282,7 +282,7 @@ export default function CompanyMembershipPage() {
                       type="button"
                       disabled={upgrading}
                       onClick={() => handleUpgrade(plan.id as 'pro' | 'premium')}
-                      className="w-full py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md shadow-orange-500/20 transition flex items-center justify-center gap-1.5"
+                      className="w-full py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs shadow-md transition flex items-center justify-center gap-1.5"
                     >
                       <Sparkles className="w-4 h-4" />
                       <span>{upgrading ? 'İşleniyor...' : 'Bu Pakete Yükselt'}</span>
@@ -302,7 +302,7 @@ export default function CompanyMembershipPage() {
               Abonelik Süresi Bittiğinde İlanlarıma Ne Olur?
             </div>
             <p className="text-slate-500 leading-relaxed">
-              Şantiye GO politikasında ilanlarınız asla silinmez. Üyeliğiniz sona ererse hesabınız otomatik olarak Ücretsiz Başlangıç paketine geçer. Limit üzerindeki eski ilanlarınız pasife alınır ve dilediğiniz an paketinizi yenileyerek tek tıkla tekrar yayına alabilirsiniz.
+              ŞantiyeGO politikasında ilanlarınız asla silinmez. Üyeliğiniz sona ererse hesabınız otomatik olarak Ücretsiz Başlangıç paketine geçer. Limit üzerindeki eski ilanlarınız pasife alınır ve dilediğiniz an paketinizi yenileyerek tek tıkla tekrar yayına alabilirsiniz.
             </p>
           </div>
         </div>

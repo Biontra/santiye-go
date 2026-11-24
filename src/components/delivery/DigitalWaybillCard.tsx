@@ -57,16 +57,15 @@ export default function DigitalWaybillCard({ waybill, onClose }: Props) {
     <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden max-w-xl w-full text-navy-900 animate-in fade-in zoom-in-95">
       {/* İrsaliye Üst Başlık (Official e-İrsaliye Şeridi) */}
       <div className="bg-navy-900 text-white p-5 sm:p-6 relative overflow-hidden">
-        <div className="absolute right-0 top-0 translate-x-10 -translate-y-10 w-44 h-44 bg-orange-500/10 rounded-full blur-2xl pointer-events-none" />
 
         <div className="flex items-center justify-between gap-3 relative z-10">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center font-black shadow-md shadow-orange-500/30">
+            <div className="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center font-black shadow-md">
               <Truck className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-[10px] font-black uppercase tracking-wider text-orange-400 block">
-                ŞANTİYE GO RESMİ DİJİTAL SEVK İRSALİYESİ
+              <span className="text-[10px] font-black text-orange-400 block">
+                ŞantiyeGO Dijital Sevk İrsaliyesi
               </span>
               <h2 className="text-base sm:text-lg font-black tracking-tight">
                 Dijital Teslimat & QR Fişi
@@ -79,7 +78,7 @@ export default function DigitalWaybillCard({ waybill, onClose }: Props) {
               #{waybill.id.slice(-8).toUpperCase()}
             </span>
             <span
-              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase mt-1 ${
+              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold mt-1 ${
                 isDelivered
                   ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
                   : 'bg-orange-500/20 text-orange-300 border border-orange-500/40'
@@ -96,7 +95,7 @@ export default function DigitalWaybillCard({ waybill, onClose }: Props) {
         <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 space-y-3">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <span className="text-[10px] font-bold text-slate-400 uppercase">
+              <span className="text-[10px] font-bold text-slate-400">
                 Malzeme / Ekipman
               </span>
               <h3 className="text-sm sm:text-base font-black text-navy-900 leading-snug">
@@ -104,7 +103,7 @@ export default function DigitalWaybillCard({ waybill, onClose }: Props) {
               </h3>
             </div>
             <div className="text-right shrink-0">
-              <span className="text-[10px] font-bold text-slate-400 uppercase">Miktar</span>
+              <span className="text-[10px] font-bold text-slate-400">Miktar</span>
               <div className="text-sm font-black text-orange-600">
                 {waybill.quantity} {waybill.unit}
               </div>
@@ -134,8 +133,8 @@ export default function DigitalWaybillCard({ waybill, onClose }: Props) {
         </div>
 
         {/* QR KOD & 6 HANELİ PIN KODU KUTUSU (Güneş altında şantiye dostu) */}
-        <div className="bg-gradient-to-b from-orange-50/70 to-white rounded-3xl p-5 border-2 border-orange-200 text-center space-y-4">
-          <div className="flex items-center justify-center gap-1.5 text-xs font-black text-navy-900 uppercase tracking-wide">
+        <div className="bg-white rounded-3xl p-5 border-2 border-orange-200 text-center space-y-4">
+          <div className="flex items-center justify-center gap-1.5 text-xs font-black text-navy-900">
             <QrCode className="w-4 h-4 text-orange-500" />
             <span>Şantiyede Görevliye Okutunuz</span>
           </div>
@@ -168,7 +167,7 @@ export default function DigitalWaybillCard({ waybill, onClose }: Props) {
 
           {/* 6 Haneli Sayısal PIN Kodu (Eldiven / Güneş Işığı Koruması) */}
           <div className="pt-2 border-t border-orange-100">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+            <span className="text-[11px] font-bold text-slate-500 block mb-1">
               Kamera Çalışmazsa 6 Haneli Teslimat PIN Kodu:
             </span>
             <div className="inline-flex items-center gap-2 bg-navy-900 text-white px-5 py-2.5 rounded-2xl shadow-md border border-navy-800">
@@ -209,7 +208,7 @@ export default function DigitalWaybillCard({ waybill, onClose }: Props) {
           <Link
             href={`/teslimat-onay/${waybill.delivery_token}`}
             target="_blank"
-            className="flex-1 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs text-center transition shadow-md shadow-orange-500/20 flex items-center justify-center gap-1.5"
+            className="flex-1 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs text-center transition shadow-md flex items-center justify-center gap-1.5"
           >
             <span>Onay Ekranını Aç</span>
             <ExternalLink className="w-3.5 h-3.5" />
