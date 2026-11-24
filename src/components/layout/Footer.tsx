@@ -2,6 +2,14 @@ import Link from 'next/link';
 import { HardHat, ShieldCheck, MapPin, PhoneCall } from 'lucide-react';
 
 export default function Footer() {
+  const companyTitle = process.env.NEXT_PUBLIC_COMPANY_TITLE;
+  const companyTaxInfo = process.env.NEXT_PUBLIC_COMPANY_TAX_INFO;
+  const companyAddress = process.env.NEXT_PUBLIC_COMPANY_ADDRESS;
+  const companyKep = process.env.NEXT_PUBLIC_COMPANY_KEP;
+  const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL;
+
+  const showKunye = Boolean(companyTitle || companyTaxInfo || companyAddress || companyKep);
+
   return (
     <footer className="bg-navy-950 text-slate-300 pt-12 pb-24 md:pb-12 border-t border-navy-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -148,26 +156,39 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Zorunlu Yasal Şirket Künye Alanı (Elektronik Ticaret Mevzuatı Uyarınca) */}
+        {/* Zorunlu Yasal Şirket Künye Alanı (6563 Sayılı Kanun Uyarınca - Yalnızca Tanımlıysa Görünür) */}
         <div className="pt-6 border-t border-navy-800 text-[11px] text-slate-300 space-y-2">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 border-b border-navy-900 pb-4">
-            <div>
-              <span className="text-slate-300 block font-bold">Ticari Unvan:</span>
-              <span className="text-slate-300 font-mono">[Şirket Ticari Unvanı]</span>
+          {showKunye && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 border-b border-navy-900 pb-4">
+              {companyTitle && (
+                <div>
+                  <span className="text-slate-300 block font-bold">Ticari Unvan:</span>
+                  <span className="text-slate-300 font-mono">{companyTitle}</span>
+                </div>
+              )}
+              {companyTaxInfo && (
+                <div>
+                  <span className="text-slate-300 block font-bold">MERSİS / Vergi No:</span>
+                  <span className="text-slate-300 font-mono">{companyTaxInfo}</span>
+                </div>
+              )}
+              {companyAddress && (
+                <div>
+                  <span className="text-slate-300 block font-bold">Merkez Adres:</span>
+                  <span className="text-slate-300">{companyAddress}</span>
+                </div>
+              )}
+              {(supportEmail || companyKep) && (
+                <div>
+                  <span className="text-slate-300 block font-bold">İletişim & KEP:</span>
+                  <span className="text-slate-300">
+                    {supportEmail || 'destek@santiyego.com'}
+                    {companyKep ? ` • ${companyKep}` : ''}
+                  </span>
+                </div>
+              )}
             </div>
-            <div>
-              <span className="text-slate-300 block font-bold">MERSİS / Vergi No:</span>
-              <span className="text-slate-300 font-mono">[MERSİS No] • [Vergi No]</span>
-            </div>
-            <div>
-              <span className="text-slate-300 block font-bold">Merkez Adres:</span>
-              <span className="text-slate-300">[Şirket Kayıtlı Tebligat Adresi]</span>
-            </div>
-            <div>
-              <span className="text-slate-300 block font-bold">İletişim & KEP:</span>
-              <span className="text-slate-300">destek@santiyego.com • [KEP Adresi]</span>
-            </div>
-          </div>
+          )}
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-1">
             <p>© {new Date().getFullYear()} ŞANTİYE GO. Tüm hakları saklıdır.</p>
